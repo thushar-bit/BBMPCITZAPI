@@ -1,0 +1,6 @@
+@SakalaAPI_HostAddress = http://localhost:5104
+
+GET {{SakalaAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
