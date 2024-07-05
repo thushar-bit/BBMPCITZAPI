@@ -43,6 +43,22 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("GetMasterTablesData")]
+        public ActionResult<DataSet> GetMasterTablesData(string UlbCode)
+        {
+            try
+            {
+                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterTablesData(UlbCode);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                throw;
+            }
+        }
         [HttpGet("GET_PROPERTY_PENDING_CITZ_NCLTEMP")]
         public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_NCLTEMP(int UlbCode, int propertyid)
         {

@@ -9,6 +9,7 @@ namespace BBMPCITZAPI.Services.Interfaces
         #region InitialRegion
         DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int Propertycode);
         DataSet GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int ULBCODE, int Propertycode);
+        DataSet GetMasterTablesData(string ULBCODE);
         int Insert_PROPERTY_ADDRESS_TEMP(Insert_PROPERTY_ADDRESS_TEMP insertCITZProperty);
         #endregion
         #region AreaDimension

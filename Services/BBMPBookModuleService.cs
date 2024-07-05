@@ -57,6 +57,45 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public DataSet GetMasterTablesData(string ULBCODE)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE.GET_MST_DET_ULB";
+                OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_ULBCODE",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("CUR_USERPROPDET",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_BLOCKMST",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_STREETMST",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_VILLAGEMST",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_WARDMST",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_ApartDet",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_PROPCategory",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_MULTIOWNER",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_IDENTIFIERTYPE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_IDENTITYDOC",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_LIAB",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_FLOORTYPE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_ROOFTYPE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_WOODTYPE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_BUILDTYPE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_FLOORNUM",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_FEATUREHEAD",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_BUILDINGUSAGE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_DOCUMENTTYPEUPL",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_PROPERTYCLASS",OracleDbType.RefCursor,ParameterDirection.Output)
+                    };
+
+                prm[0].Value = ULBCODE;
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT stored procedure.");
+                throw;
+            }
+        }
 
         public DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int Propertycode)
         {
