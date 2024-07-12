@@ -10,6 +10,8 @@ using Newtonsoft.Json.Linq;
 using System.Reflection.Metadata;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 
 namespace BBMPCITZAPI.Services
@@ -436,7 +438,7 @@ namespace BBMPCITZAPI.Services
             }
         }
 
-        public int DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG, decimal ownUseArea, decimal rentedArea)
+        public int DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG)
         {
             try
             {
@@ -469,7 +471,7 @@ namespace BBMPCITZAPI.Services
 
                 prm[0].Value = NCLBLDG.FEATUREID;
                 prm[1].Value = NCLBLDG.PROPERTYCODE;
-                prm[2].Value = ownUseArea;
+                prm[2].Value = NCLBLDG.ownUseArea;
                 prm[3].Value = NCLBLDG.WOODTYPEID;
                 prm[4].Value = NCLBLDG.FEATUREHEADID;
                 prm[5].Value = NCLBLDG.FLOORTYPEID;
@@ -488,7 +490,7 @@ namespace BBMPCITZAPI.Services
                 prm[18].Value = NCLBLDG.ISWATERMETERNOAVAILABLE;
                 prm[19].Value = NCLBLDG.BUILDINGNUMBERID;
                 prm[20].Value = NCLBLDG.BUILDINGBLOCKNAME;
-                prm[21].Value = rentedArea;
+                prm[21].Value = NCLBLDG.rentedArea;
                 prm[22].Value = NCLBLDG.CREATEDIP;
 
 
@@ -529,7 +531,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public int INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT, string PARKINGAREA)
+        public int INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT)
         {
             try
             {
@@ -566,11 +568,11 @@ namespace BBMPCITZAPI.Services
                 prm[7].Value = NCLAPT.PLOTAREAOWNERSHARE_FRACTION;
                 prm[8].Value = NCLAPT.PARKINGAVAILABLE;
                 prm[9].Value = NCLAPT.PARKINGUNITS;
-                prm[10].Value = PARKINGAREA;
+                prm[10].Value = NCLAPT.PARKINGAREA;
                 prm[11].Value = NCLAPT.RRNO;
                 prm[12].Value = NCLAPT.BUILDINGUSAGETYPEID;
-                // prm[13].Value = NCLAPT.FEATUREHEADID;
-                // prm[14].Value = NCLAPT.FEATUREID;
+                prm[13].Value = NCLAPT.FEATUREHEADID;
+                prm[14].Value = NCLAPT.FEATUREID;
                 prm[15].Value = NCLAPT.YEAROFCONSTRUCTION;
                 prm[16].Value = NCLAPT.CREATEDIP;
                 prm[17].Value = NCLAPT.CREATEDBY;
@@ -823,7 +825,7 @@ namespace BBMPCITZAPI.Services
           //make GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION in EKYC EditOwnerDetailsFromEKYCData(transactionNo)
         #endregion
         #region Property Rights
-        public int INS_UPD_NCL_PROPERTY_APARTMENT_TEMP( int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
+        public int NCL_PROPERTY_RIGHTS_TEMP_INS( int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
         {
             try
             {
@@ -860,7 +862,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public int UpdateNCLPropertyRights(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
+        public int NCL_PROPERTY_RIGHTS_TEMP_UPD(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
         {
             try
             {
@@ -899,7 +901,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public int UpdateNCLPropertyRights(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
+        public int NCL_PROPERTY_RIGHTS_TEMP_DEL(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
         {
             try
             {
@@ -1298,5 +1300,22 @@ namespace BBMPCITZAPI.Services
         #region eSignCode
         //will check this later.
         #endregion
+
+        [DllImport(@"D:\\NameMatchJulyFinal2023.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "_GetMatchScore")]
+        public static extern float CPlus_NameMatchJulyFinal2023(string n1, string n2);
+
+        public float Fn_CPlus_NameMatchJulyFinal2023(string n1_input, string n2_input)
+        {
+            float NameMatchPercentageResult = 0;
+            try
+            {
+                NameMatchPercentageResult = CPlus_NameMatchJulyFinal2023(n1_input, n2_input);
+            }
+            catch (Exception ex)
+            {
+                NameMatchPercentageResult = 0;
+            }
+            return NameMatchPercentageResult;
+        }
     }
 }

@@ -25,6 +25,8 @@ namespace BBMPCITZAPI.Controllers
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
         }
+        NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
+        NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
         #region Initial
 
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT")]
@@ -43,9 +45,31 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+
+        [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT1")]
+        public ActionResult<DataSet> GET_PROPERTY_PENDING_CIT(int UlbCode, int propertyid)
+        {
+            
+            try
+            {
+               // DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode, propertyid);
+               
+                var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode,propertyid);
+
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                throw;
+            }
+        }
         [HttpGet("GetMasterTablesData")]
         public ActionResult<DataSet> GetMasterTablesData(string UlbCode)
         {
+            
             try
             {
                 DataSet dataSet = _IBBMPBOOKMODULE.GetMasterTablesData(UlbCode);
@@ -141,6 +165,22 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        //[HttpPost("UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA1")]
+        //public ActionResult<int> UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA1(UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA)
+        //{
+        //    try
+        //    {
+               
+        //        string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+        //        return Ok(json);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error occurred while executing stored procedure.");
+        //        throw;
+        //    }
+        //}
         #endregion
         #region Site Details Events
         [HttpPost("UPD_NCL_PROPERTY_SITE_TEMP_USAGE")]
@@ -226,11 +266,11 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("DEL_INS_SEL_NCL_PROP_BUILDING_TEMP")]
-        public ActionResult<int> DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG, decimal ownUseArea, decimal rentedArea)
+        public ActionResult<int> DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG)
         {
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(ULBCODE, NCLBLDG, ownUseArea, rentedArea);
+                int dataSet = _IBBMPBOOKMODULE.DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(ULBCODE, NCLBLDG);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -246,6 +286,7 @@ namespace BBMPCITZAPI.Controllers
         [HttpGet("GET_NCL_MOB_TEMP_FLOOR_AREA")]
         public ActionResult<DataSet> GET_NCL_MOB_TEMP_FLOOR_AREA(int PROPERTYCODE)
         {
+          
             try
             {
                 DataSet dataSet = _IBBMPBOOKMODULE.GET_NCL_MOB_TEMP_FLOOR_AREA(PROPERTYCODE);
@@ -260,11 +301,11 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("INS_UPD_NCL_PROPERTY_APARTMENT_TEMP1")]
-        public ActionResult<int> INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT, string PARKINGAREA)
+        public ActionResult<int> INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT)
         {
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(ULBCODE, NCLAPT, PARKINGAREA);
+                int dataSet = _IBBMPBOOKMODULE.INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(ULBCODE, NCLAPT);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -309,15 +350,31 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY")]
+        public ActionResult<DataSet> UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(int propertyCode, int ownerNumber, int IDENTIFIERTYPE, string IDENTIFIERNAME_EN, string MOBILENUMBER, string MOBILEVERIFY, string loginId)
+        {
+            try
+            {
+                DataSet dataSet  = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY( propertyCode,  ownerNumber,  IDENTIFIERTYPE,  IDENTIFIERNAME_EN,  MOBILENUMBER,  MOBILEVERIFY,  loginId);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                throw;
+            }
+        }
 
         #endregion
         #region Property Rights
-        [HttpPost("INS_UPD_NCL_PROPERTY_APARTMENT_TEMP")]
-        public ActionResult<int> INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
+        [HttpPost("NCL_PROPERTY_RIGHTS_TEMP_INS")]
+        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_INS(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
         {
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.INS_UPD_NCL_PROPERTY_APARTMENT_TEMP( ID_BASIC_PROPERTY, NCLPropRight);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_INS( ID_BASIC_PROPERTY, NCLPropRight);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -328,12 +385,12 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("UpdateNCLPropertyRights")]
-        public ActionResult<int> UpdateNCLPropertyRights(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
+        [HttpPost("NCL_PROPERTY_RIGHTS_TEMP_UPD")]
+        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_UPD(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
         {
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.UpdateNCLPropertyRights( ID_BASIC_PROPERTY, NCLPropRight);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_UPD( ID_BASIC_PROPERTY, NCLPropRight);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -344,12 +401,12 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpGet("UpdateNCLPropertyRights2")]
-        public ActionResult<int> UpdateNCLPropertyRights(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
+        [HttpGet("NCL_PROPERTY_RIGHTS_TEMP_DEL")]
+        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_DEL(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
         {
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.UpdateNCLPropertyRights( RIGHTSID,  ID_BASIC_PROPERTY,  ULBCODE,  PROPERTYCODE);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_DEL( RIGHTSID,  ID_BASIC_PROPERTY,  ULBCODE,  PROPERTYCODE);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -547,5 +604,28 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region eSignCode
         #endregion
+        [HttpGet("NameMatchScore2323")]
+        public ActionResult<bool> GET_NameMatches(string ownerName1,string ownerName2)
+        {
+            try
+            {
+                float NAMEMATCHSCORE = _IBBMPBOOKMODULE.Fn_CPlus_NameMatchJulyFinal2023(ownerName1, ownerName2);
+              
+                //int NAMEMATCHSCORE = 27;
+                if (NAMEMATCHSCORE > 80)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

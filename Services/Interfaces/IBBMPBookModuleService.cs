@@ -25,11 +25,11 @@ namespace BBMPCITZAPI.Services.Interfaces
         public int DEL_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG);
         public DataSet GET_NCL_FLOOR_AREA(NCLBuilding NCLBLDG);
         public DataSet GET_NCL_TEMP_FLOOR_PRE(NCLBuilding NCLBLDG);
-        public int DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG, decimal ownUseArea, decimal rentedArea);
+        public int DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG);
         #endregion
         #region MultiStory Details Events
         public DataSet GET_NCL_MOB_TEMP_FLOOR_AREA(int PROPERTYCODE);
-        public int INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT, string PARKINGAREA);
+        public int INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT);
         #endregion
         #region Owner Details Events
         public DataSet COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int propertyCode, int ownerNumber);
@@ -37,9 +37,9 @@ namespace BBMPCITZAPI.Services.Interfaces
         public void INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ID_BASIC_PROPERTY, NCLPropOwner NCLOwner, NCLPropOwnerID NCLOwnerID, NCLPropOwnerIDDoc NCLOwnerIDDOC, NCLPropOwnerPhoto NCLOwnerPhoto, string digilockerid);
         #endregion
         #region Property Rights
-        int INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight);
-        int UpdateNCLPropertyRights(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight);
-        int UpdateNCLPropertyRights(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE);
+        int NCL_PROPERTY_RIGHTS_TEMP_INS(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight);
+        int NCL_PROPERTY_RIGHTS_TEMP_UPD(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight);
+        int NCL_PROPERTY_RIGHTS_TEMP_DEL(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE);
         #endregion
         #region Document Upload Events
          int InsertNCLPropertyID(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID);
@@ -62,5 +62,6 @@ namespace BBMPCITZAPI.Services.Interfaces
         #endregion
         #region eSignCode
         #endregion
+        float Fn_CPlus_NameMatchJulyFinal2023(string n1_input, string n2_input);
     }
 }

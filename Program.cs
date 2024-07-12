@@ -1,7 +1,7 @@
 using BBMPCITZAPI.Database;
 using BBMPCITZAPI.Services.Interfaces;
 using BBMPCITZAPI.Services;
-
+using BBMPCITZAPI.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<EKYCSettings>(builder.Configuration.GetSection("EKYCSettings"));
+builder.Services.Configure<BBMPSMSSETTINGS>(builder.Configuration.GetSection("BBMPSMSSETTINGS"));
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
 builder.Services.AddCors(options =>
