@@ -16,6 +16,11 @@
         public string? BBMP_SENDER_ADDRESS_ctz { get; set; }
         public string? BBMP_SMS_USERNAME_ctz { get; set; }
         public string? BBMP_SMS_PASSWORD_ctz { get; set; }
-     
+
+    }
+    public class OTPResponse
+    {
+        public string OTPResponseMessage { get; set; }
+        public string OTP { get; set; }
     }
 }

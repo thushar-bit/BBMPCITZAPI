@@ -419,12 +419,12 @@ namespace BBMPCITZAPI.Controllers
         }
         #endregion
         #region Document Upload Events
-        [HttpPost("InsertNCLPropertyID")]
-        public ActionResult<int> InsertNCLPropertyID(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
+        [HttpPost("NCL_PROPERTY_ID_TEMP_INS")]
+        public ActionResult<int> NCL_PROPERTY_ID_TEMP_INS(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
         {
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.InsertNCLPropertyID( ID_BASIC_PROPERTY, NCLPropID);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_INS( ID_BASIC_PROPERTY, NCLPropID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -451,12 +451,12 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("DeleteToNclPropIdTemp")]
-        public ActionResult<DataSet> DeleteToNclPropIdTemp(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
+        [HttpPost("NCL_PROPERTY_ID_TEMP_DEL")]
+        public ActionResult<DataSet> NCL_PROPERTY_ID_TEMP_DEL(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
         {
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DeleteToNclPropIdTemp( ID_BASIC_PROPERTY, NCLPropID);
+                DataSet dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_DEL( ID_BASIC_PROPERTY, NCLPropID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

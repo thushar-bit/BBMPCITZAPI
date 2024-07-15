@@ -936,7 +936,7 @@ namespace BBMPCITZAPI.Services
         }
         #endregion
         #region Document Upload Events
-        public int InsertNCLPropertyID( int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
+        public int NCL_PROPERTY_ID_TEMP_INS( int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
         {
             try
             {
@@ -1018,7 +1018,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet DeleteToNclPropIdTemp(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
+        public DataSet NCL_PROPERTY_ID_TEMP_DEL(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
         {
             try
             {

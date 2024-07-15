@@ -42,9 +42,9 @@ namespace BBMPCITZAPI.Services.Interfaces
         int NCL_PROPERTY_RIGHTS_TEMP_DEL(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE);
         #endregion
         #region Document Upload Events
-         int InsertNCLPropertyID(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID);
+         int NCL_PROPERTY_ID_TEMP_INS(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID);
          DataSet GetNCLDocView(int DOCUMENTID, int PROPERTYCODE);
-         DataSet DeleteToNclPropIdTemp(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID);
+         DataSet NCL_PROPERTY_ID_TEMP_DEL(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID);
          DataSet GetMasterDocByCategoryOrClaimType(int ULBCODE, int CATEGORYID, int ClaimTypeID);
         #endregion
         #region Classification Document Upload Events
