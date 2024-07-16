@@ -219,5 +219,22 @@
         public int? MUTAPPLID { get; set; }// NUMBER;
         public string? CREATEDIP { get; set; }
     }
+    public class NCLClassPropIdentification
+    {
+        public DateTime? UPDATEDON { get; set; }// DATE;
+        public string? DOCUMENTNUMBER { get; set; }// VARCHAR2(200);
+        public string? CREATEDBY { get; set; }// VARCHAR2(20);
+        public string? DOCUMENTEXTENSION { get; set; }// VARCHAR2(100);
+        public int? PROPERTYCODE { get; set; }// NUMBER;
+        public string? DOCUMENTDETAILS { get; set; }// VARCHAR2(2000);
+       public byte[]? SCANNEDDOCUMENT { get; set; }// BFILE;
+        public int? DOCUMENTID { get; set; }// NUMBER;
+        public DateTime? DOCUMENTDATE { get; set; }// DATE;
+        public int? DOCUMENTTYPEID { get; set; }// NUMBER;
+        public int? CLASSIFICATIONID { get; set; }
+        public int? SUBCLASSIFICATIONID { get; set; }
+
+        public string? CREATEDIP { get; set; }
+    }
 
 }

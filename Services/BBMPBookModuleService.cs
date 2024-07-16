@@ -1080,7 +1080,7 @@ namespace BBMPCITZAPI.Services
         }
         #endregion
         #region Classification Document Upload Events
-        public DataSet INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTTYPEID, int CLASSIFICATIONID, int SUBCLASSIFICATIONID, string DOCUMENTDETAILS, string DOCUMENTNUMBER, string DOCUMENTDATE, string DOCUMENTEXTENSION, byte[] SCANNEDDOCUMENT, string CREATEDBY)
+        public DataSet INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(NCLClassPropIdentification nCLClassPropIdentification)
         {
             try
             {
@@ -1092,23 +1092,23 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_SUBCLASSIFICATIONID",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTDETAILS",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTNUMBER",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_DOCUMENTDATE",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_DOCUMENTDATE",OracleDbType.Date,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTEXTENSION",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_SCANNEDDOCUMENT",OracleDbType.Blob,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
-                prm[0].Value = PROPERTYCODE;
-                prm[1].Value = DOCUMENTTYPEID;
-                prm[2].Value = CLASSIFICATIONID;
-                prm[3].Value = SUBCLASSIFICATIONID;
-                prm[4].Value = DOCUMENTDETAILS;
-                prm[5].Value = DOCUMENTNUMBER;
-                prm[6].Value = DOCUMENTDATE;
-                prm[7].Value = DOCUMENTEXTENSION;
-                prm[8].Value = SCANNEDDOCUMENT;
-                prm[9].Value = CREATEDBY;
+                prm[0].Value = nCLClassPropIdentification.PROPERTYCODE;
+                prm[1].Value = nCLClassPropIdentification.DOCUMENTTYPEID;
+                prm[2].Value = nCLClassPropIdentification.CLASSIFICATIONID;
+                prm[3].Value = nCLClassPropIdentification.SUBCLASSIFICATIONID;
+                prm[4].Value = nCLClassPropIdentification.DOCUMENTDETAILS;
+                prm[5].Value = nCLClassPropIdentification.DOCUMENTNUMBER;
+                prm[6].Value = nCLClassPropIdentification.DOCUMENTDATE;
+                prm[7].Value = nCLClassPropIdentification.DOCUMENTEXTENSION;
+                prm[8].Value = nCLClassPropIdentification.SCANNEDDOCUMENT;
+                prm[9].Value = nCLClassPropIdentification.CREATEDBY;
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);

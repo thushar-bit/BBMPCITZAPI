@@ -486,11 +486,11 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region Classification Document Upload Events
         [HttpPost("INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP")]
-        public ActionResult<DataSet> INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTTYPEID, int CLASSIFICATIONID, int SUBCLASSIFICATIONID, string DOCUMENTDETAILS, string DOCUMENTNUMBER, string DOCUMENTDATE, string DOCUMENTEXTENSION, byte[] SCANNEDDOCUMENT, string CREATEDBY)
+        public ActionResult<DataSet> INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(NCLClassPropIdentification nCLClassPropIdentification)
         {
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE,  DOCUMENTTYPEID,  CLASSIFICATIONID,  SUBCLASSIFICATIONID,  DOCUMENTDETAILS,  DOCUMENTNUMBER,  DOCUMENTDATE,  DOCUMENTEXTENSION,  SCANNEDDOCUMENT,  CREATEDBY);
+                DataSet dataSet = _IBBMPBOOKMODULE.INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(nCLClassPropIdentification);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
