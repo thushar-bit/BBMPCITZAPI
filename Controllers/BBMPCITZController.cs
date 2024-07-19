@@ -27,6 +27,7 @@ namespace BBMPCITZAPI.Controllers
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
+     //   NUPMS_BA.CitizenBA ciTz= new NUPMS_BA.CitizenBA();
         #region Initial
 
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT")]
@@ -34,7 +35,7 @@ namespace BBMPCITZAPI.Controllers
         {
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode, propertyid);
+                var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode, propertyid);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -72,7 +73,8 @@ namespace BBMPCITZAPI.Controllers
             
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterTablesData(UlbCode);
+                var dataSet = objModule.GetMasterTablesData(UlbCode);
+                
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -88,7 +90,7 @@ namespace BBMPCITZAPI.Controllers
         {
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP(UlbCode, propertyid);
+                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP(UlbCode, propertyid);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

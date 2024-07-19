@@ -63,5 +63,6 @@ namespace BBMPCITZAPI.Services.Interfaces
         #region eSignCode
         #endregion
         float Fn_CPlus_NameMatchJulyFinal2023(string n1_input, string n2_input);
+        DataSet GetUserCitizen(string userId);
     }
 }

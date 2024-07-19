@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
+using NUPMS_DA;
 
 
 namespace BBMPCITZAPI.Services
@@ -1316,6 +1317,23 @@ namespace BBMPCITZAPI.Services
                 NameMatchPercentageResult = 0;
             }
             return NameMatchPercentageResult;
+        }
+        public DataSet GetUserCitizen(string userId)
+        {
+            string commandText = "BBMP.getUserPwd";
+            OracleParameter[] array = new OracleParameter[2]
+            {
+            new OracleParameter(),
+            null
+            };
+            array[0].OracleDbType = OracleDbType.Varchar2;
+            array[0].ParameterName = "p_UserId";
+            array[0].Value = userId;
+            array[1] = new OracleParameter();
+            array[1].OracleDbType = OracleDbType.RefCursor;
+            array[1].ParameterName = "cur_user";
+            array[1].Direction = ParameterDirection.Output;
+            return _databaseService.ExecuteDataset(commandText, array);
         }
     }
 }
