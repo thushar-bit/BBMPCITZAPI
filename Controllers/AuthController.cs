@@ -29,6 +29,7 @@ namespace BBMPCITZAPI.Controllers
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
         }
         NUPMS_BA.CitizenBA Citz = new NUPMS_BA.CitizenBA();
+
         
         [HttpPost("CitizenLogin")]
         public ActionResult<bool> CitizenLogin(string UserId, string Password, bool IsOTPGenerated)
@@ -61,7 +62,44 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-       
+
+        [HttpGet("GetCitzMobileNumber")]
+        public ActionResult<string> GetMobileNumber(string UserId)
+        {
+            try
+            {
+               
+                    DataSet dsUserDetails = Citz.getUserdata(UserId);
+                    if (dsUserDetails != null && dsUserDetails.Tables.Count > 0 && dsUserDetails.Tables[0].Rows.Count > 0)
+                    {
+
+                    DataTable userTable = dsUserDetails.Tables[0];
+                    DataRow userRow = userTable.Rows[0];
+
+                    if (userTable.Columns.Contains("MOBILENO") && userRow["MOBILENO"] != DBNull.Value)
+                    {
+                        string mobileNumber = userRow["MOBILENO"].ToString();
+                        return mobileNumber;
+                    }
+                    else
+                    {
+                        return "Mobile number is not available.";
+                    }
+                }
+                    else
+                    {
+                    return "INVALID USER ID";
+                    }
+               
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                throw;
+            }
+        }
+
         private bool IsAuthenticatedUser(string userId, string password, string salt)
         {
             bool result = false;

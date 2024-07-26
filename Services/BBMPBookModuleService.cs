@@ -145,33 +145,40 @@ namespace BBMPCITZAPI.Services
             try
             {
                 string sp_name = "OBJECTIONMODULE.INS_UPD_NCL_PROPERTY_ADDRESS_TEMP";
-            OracleParameter[] prm = new OracleParameter[] {
-              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_STREETID",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_DOORNO",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_BUILDINGNAME",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_AREAORLOCALITY",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_LANDMARK",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_PINCODE",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_PROPERTYPHOTO",OracleDbType.Blob,ParameterDirection.Input),
-              new OracleParameter("P_PROPERTYCATEGORYID",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_PUID",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
-                    };
+                OracleParameter[] prm = new OracleParameter[] {
+    new OracleParameter("P_PROPERTYCODE", OracleDbType.Int32, ParameterDirection.Input),
+    new OracleParameter("P_STREETID", OracleDbType.Int32, ParameterDirection.Input),
+    new OracleParameter("P_DOORNO", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_BUILDINGNAME", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_AREAORLOCALITY", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_LANDMARK", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_PINCODE", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_PROPERTYPHOTO", OracleDbType.Blob, ParameterDirection.Input),
+    new OracleParameter("P_PROPERTYCATEGORYID", OracleDbType.Int32, ParameterDirection.Input),
+    new OracleParameter("P_PUID", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2, ParameterDirection.Input),
+     new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+    new OracleParameter("P_LATITUDE", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_LONGITUDE", OracleDbType.Varchar2, ParameterDirection.Input)
+};
 
-            prm[0].Value = insertCITZProperty.propertyCode;
-            prm[1].Value = insertCITZProperty.STREETID;
-            prm[2].Value = insertCITZProperty.DOORNO;
-            prm[3].Value = insertCITZProperty.BUILDINGNAME;
-            prm[4].Value = insertCITZProperty.AREAORLOCALITY;
-            prm[5].Value = insertCITZProperty.LANDMARK;
-            prm[6].Value = insertCITZProperty.PINCODE;
-            prm[7].Value = insertCITZProperty.PROPERTYPHOTO;
-            prm[8].Value = insertCITZProperty.categoryId;
-            prm[9].Value = insertCITZProperty.PUIDNo;
-            prm[10].Value = insertCITZProperty.loginId;
+                // Assign values to parameters
+                prm[0].Value = insertCITZProperty.propertyCode;
+                prm[1].Value = insertCITZProperty.STREETID;
+                prm[2].Value = insertCITZProperty.DOORNO;
+                prm[3].Value = insertCITZProperty.BUILDINGNAME;
+                prm[4].Value = insertCITZProperty.AREAORLOCALITY;
+                prm[5].Value = insertCITZProperty.LANDMARK;
+                prm[6].Value = insertCITZProperty.PINCODE;
+                prm[7].Value = insertCITZProperty.PROPERTYPHOTO;
+                prm[8].Value = insertCITZProperty.categoryId;  // Ensure this matches the type expected
+                prm[9].Value = insertCITZProperty.PUIDNo;
+                prm[10].Value = insertCITZProperty.loginId;
+                prm[11].Value = insertCITZProperty.EIDAPPNO;
+                prm[12].Value = insertCITZProperty.Latitude;
+                prm[13].Value = insertCITZProperty.Longitude;
 
-           
+
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
             catch (Exception ex)
@@ -206,7 +213,8 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_NSODDSITE2FT",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_NSODDSITE3FT",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_NSODDSITE4FT",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+                    new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.propertyCode;
@@ -227,7 +235,7 @@ namespace BBMPCITZAPI.Services
                 prm[15].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE3FT;
                 prm[16].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE4FT;
                 prm[17].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
-
+                prm[18].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.EIDAPPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -248,7 +256,8 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_CHECKBANDI_SOUTH_EN",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_CHECKBANDI_EAST_EN",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_CHECKBANDI_WEST_EN",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+                     new OracleParameter("P_EIDAPPNO",OracleDbType.Varchar2,ParameterDirection.Input),
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.propertyCode;
@@ -257,7 +266,7 @@ namespace BBMPCITZAPI.Services
                 prm[3].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.CHECKBANDI_EAST;
                 prm[4].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.CHECKBANDI_WEST;
                 prm[5].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.loginId;
-
+                prm[6].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.EIDAPPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -277,7 +286,8 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_CARPETAREA",OracleDbType.Decimal,ParameterDirection.Input),
               new OracleParameter("P_ADDITIONALAREA",OracleDbType.Decimal,ParameterDirection.Input),
               new OracleParameter("P_SUPERBUILTUPAREA",OracleDbType.Decimal,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+                  new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.propertyCode;
@@ -285,7 +295,7 @@ namespace BBMPCITZAPI.Services
                 prm[2].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.ADDITIONALAREA;
                 prm[3].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.SUPERBUILTUPAREA;
                 prm[4].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.loginId;
-
+                prm[5].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.EIDAPPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -307,7 +317,8 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_FEATUREHEADID",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_FEATUREID",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_BUILTYEAR",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+                   new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.propertyCode;
@@ -315,7 +326,7 @@ namespace BBMPCITZAPI.Services
                 prm[2].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.FEATUREID;
                 prm[3].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.BUILTYEAR;
                 prm[4].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.loginId;
-
+                prm[5].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.EIDAPPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -351,27 +362,27 @@ namespace BBMPCITZAPI.Services
         }
         #endregion
         #region Buidling Details Events
-        public int DEL_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG)
+        public DataSet DEL_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG)
         {
             try
             {
                 string sp_name = "OBJECTIONMODULE.DEL_SEL_NCL_PROP_BUILDING_TEMP";
                 OracleParameter[] prm = new OracleParameter[] {
-             new OracleParameter("P_ULBCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_BULDINGBLOCKID",OracleDbType.Int32,ParameterDirection.Input),// VARCHAR2(20);
-             new OracleParameter("P_FLOORNUMBERID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_ULBCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_FLOORTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
              new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
-                prm[0].Value = NCLBLDG.ULBCODE;
-                prm[1].Value = NCLBLDG.PROPERTYCODE;
-                prm[2].Value = NCLBLDG.BUILDINGNUMBERID;
-                prm[3].Value = NCLBLDG.FLOORNUMBERID;
+                prm[0].Value = NCLBLDG.PROPERTYCODE;
+                prm[1].Value = ULBCODE;
+                prm[2].Value = NCLBLDG.FLOORTYPEID;
+                prm[3].Value = NCLBLDG.EIDAPPNO;
                 prm[4].Value = null;
 
 
-                return _databaseService.ExecuteNonQuery(sp_name, prm);
+                return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
             {
@@ -383,7 +394,7 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "NCL.GET_NCL_TEMP_FLOOR_AREA";
+                string sp_name = "NCL.GET_OBJECTIONMODULE_FLOOR_AREA";
                 OracleParameter[] prm = new OracleParameter[] {
              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;             
              new OracleParameter("P_FLOORNUMBERID",OracleDbType.Int32),// NUMBER;
@@ -445,54 +456,49 @@ namespace BBMPCITZAPI.Services
             {
                 string sp_name = "OBJECTIONMODULE.DEL_INS_SEL_NCL_PROP_BUILDING_TEMP";
                 OracleParameter[] prm = new OracleParameter[] {
-             new OracleParameter("P_FEATUREID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_OWNUSAGEAREA",OracleDbType.Decimal,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_WOODTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_FEATUREHEADID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_FLOORTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_FLOORNUMBERID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_BUILDINGUSAGETYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
-             new OracleParameter("P_ROOFTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_ULBCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_BUILTYEAR",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_BUILDINGTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_DEMOLISHED",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output),// NUPMS.NCL_TEMP.t_cursor;
-             new OracleParameter("P_RRNO",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
-             new OracleParameter("P_WATERMETERNO",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
-             new OracleParameter("P_ISWATERMETERNOAVAILABLE",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);             
+             new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_BULDINGBLOCKID",OracleDbType.Int32,ParameterDirection.Input),// VARCHAR2(20);
              new OracleParameter("P_BULDINGBLOCKNAME",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
+             new OracleParameter("P_FLOORID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_FLOORNUMBERID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_FEATUREHEADID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_FEATUREID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;    
+             new OracleParameter("P_BUILTYEAR",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_BUILDINGUSAGETYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_OWNUSAGEAREA",OracleDbType.Decimal,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_RENTEDAREA",OracleDbType.Decimal,ParameterDirection.Input),
-             new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input)
+             new OracleParameter("P_ACCOUNTID",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
+             new OracleParameter("P_ISWATERMETERNOAVAILABLE",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);             
+             new OracleParameter("P_WATERMETERNO",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
+             new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
+             new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
+             new OracleParameter("P_FLOORTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
+             new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+             new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output)// NUPMS.OBJECTIONMODULE.t_cursor;
                     };
-
-                prm[0].Value = NCLBLDG.FEATUREID;
-                prm[1].Value = NCLBLDG.PROPERTYCODE;
-                prm[2].Value = NCLBLDG.ownUseArea;
-                prm[3].Value = NCLBLDG.WOODTYPEID;
-                prm[4].Value = NCLBLDG.FEATUREHEADID;
-                prm[5].Value = NCLBLDG.FLOORTYPEID;
+                prm[0].Value = NCLBLDG.PROPERTYCODE;
+                prm[1].Value = NCLBLDG.ULBCODE;
+                prm[2].Value = 0;
+                prm[3].Value = NCLBLDG.BUILDINGNUMBERID;
+                prm[4].Value = NCLBLDG.BUILDINGBLOCKNAME;
+                prm[5].Value = NCLBLDG.FLOORID;
                 prm[6].Value = NCLBLDG.FLOORNUMBERID;
-                prm[7].Value = NCLBLDG.BUILDINGUSAGETYPEID;
-                prm[8].Value = NCLBLDG.CREATEDBY;
-                prm[9].Value = NCLBLDG.ROOFTYPEID;
-                prm[10].Value = 0;
-                prm[11].Value = NCLBLDG.ULBCODE;
-                prm[12].Value = NCLBLDG.BUILTYEAR;
-                prm[13].Value = NCLBLDG.BUILDINGTYPEID;
-                prm[14].Value = NCLBLDG.DEMOLISHED;
-                prm[15].Value = null;
-                prm[16].Value = NCLBLDG.RRNO;
-                prm[17].Value = NCLBLDG.WATERMETERNO;
-                prm[18].Value = NCLBLDG.ISWATERMETERNOAVAILABLE;
-                prm[19].Value = NCLBLDG.BUILDINGNUMBERID;
-                prm[20].Value = NCLBLDG.BUILDINGBLOCKNAME;
-                prm[21].Value = NCLBLDG.rentedArea;
-                prm[22].Value = NCLBLDG.CREATEDIP;
+                prm[7].Value = NCLBLDG.FEATUREHEADID;
+                prm[8].Value = NCLBLDG.FEATUREID;
+                prm[9].Value = NCLBLDG.BUILTYEAR;
+                prm[10].Value = NCLBLDG.BUILDINGUSAGETYPEID;
+                prm[11].Value = NCLBLDG.ownUseArea;
+                prm[12].Value = NCLBLDG.rentedArea;
+                prm[13].Value = NCLBLDG.RRNO;
+                prm[14].Value = NCLBLDG.ISWATERMETERNOAVAILABLE;
+                prm[15].Value = NCLBLDG.WATERMETERNO;
+                prm[16].Value = NCLBLDG.CREATEDIP;
+                prm[17].Value = NCLBLDG.CREATEDBY;
+                prm[18].Value = NCLBLDG.FLOORTYPEID;
+                prm[19].Value = NCLBLDG.EIDAPPNO;
+                prm[20].Value = null;
 
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -556,7 +562,8 @@ namespace BBMPCITZAPI.Services
                        new OracleParameter("P_FEATUREID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER
                        new OracleParameter("P_BUILTYEAR",OracleDbType.Int32,ParameterDirection.Input),// NUMBER
                        new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
-                      new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+                      new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+                        new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = NCLAPT.PROPERTYCODE;
@@ -577,7 +584,7 @@ namespace BBMPCITZAPI.Services
                 prm[15].Value = NCLAPT.YEAROFCONSTRUCTION;
                 prm[16].Value = NCLAPT.CREATEDIP;
                 prm[17].Value = NCLAPT.CREATEDBY;
-
+                prm[18].Value = NCLAPT.EIDAPPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -589,7 +596,7 @@ namespace BBMPCITZAPI.Services
         }
         #endregion
         #region Owner Details Events
-        public DataSet COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int propertyCode, int ownerNumber)
+        public DataSet COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int EIDAPPNO, int propertyCode, int ownerNumber)
         {
             try
             {
@@ -597,12 +604,14 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_OWNERNUMBER",OracleDbType.Int32,ParameterDirection.Input),
+                      new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("C_OWNERRECORD1",OracleDbType.RefCursor,ParameterDirection.Output),
               new OracleParameter("C_OWNERRECORD2",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = propertyCode;
                 prm[1].Value = ownerNumber;
+                prm[2].Value = EIDAPPNO;
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -612,7 +621,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet DEL_SEL_NCL_PROP_OWNER_TEMP(int propertyCode, int ownerNumber)
+        public DataSet DEL_SEL_NCL_PROP_OWNER_TEMP(int EIDAPPNO,int propertyCode, int ownerNumber)
         {
             try
             {
@@ -620,12 +629,15 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_OWNERNUMBER",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("C_OWNERRECORD1",OracleDbType.RefCursor,ParameterDirection.Output),
-              new OracleParameter("C_OWNERRECORD2",OracleDbType.RefCursor,ParameterDirection.Output)
+              new OracleParameter("C_OWNERRECORD2",OracleDbType.RefCursor,ParameterDirection.Output),
+          
                     };
 
                 prm[0].Value = propertyCode;
                 prm[1].Value = ownerNumber;
+                prm[2].Value = EIDAPPNO;
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -650,7 +662,7 @@ namespace BBMPCITZAPI.Services
                   new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,20),// VARCHAR2(20);
                   new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
                   new OracleParameter("P_OWNERADDRESS",OracleDbType.Varchar2,2000),// VARCHAR2(2000);
-                  new OracleParameter("P_OWNERNUMBER",OracleDbType.Int32),// NUPMS.NCL_TEMP.T_CURSOR;
+                  new OracleParameter("P_OWNERNUMBER",OracleDbType.Int32),// NUPMS.OBJECTIONMODULE.T_CURSOR;
                   new OracleParameter("P_CITIZENID",OracleDbType.Int32),// NUMBER;     
                   new OracleParameter("P_COMPNAME",OracleDbType.Varchar2,500),// VARCHAR2(2000);
                   new OracleParameter("P_ISCOMPANY",OracleDbType.Char),// Char(1);
@@ -830,7 +842,7 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "NCL_TEMP.NCL_PROPERTY_RIGHTS_TEMP_INS";
+                string sp_name = "OBJECTIONMODULE.NCL_PROPERTY_RIGHTS_TEMP_INS";
 
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,20),// VARCHAR2(20);
@@ -838,7 +850,10 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
-              new OracleParameter("CUR_USER",OracleDbType.RefCursor)// SYS_REFCURSOR;
+              new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("CUR_USER",OracleDbType.RefCursor)
+              
+
             };
 
                 prm[0].Value = NCLPropRight.CREATEDBY;
@@ -851,8 +866,11 @@ namespace BBMPCITZAPI.Services
                 prm[3].Value = NCLPropRight.ULBCODE;
                 prm[4].Direction = ParameterDirection.Input;
                 prm[4].Value = ID_BASIC_PROPERTY;
-                prm[5].Direction = ParameterDirection.Output;
-                prm[5].Value = null;
+                prm[5].Direction = ParameterDirection.Input;
+                prm[5].Value = NCLPropRight.EIDAPPNO; 
+                prm[6].Direction = ParameterDirection.Output;
+                prm[6].Value = null;
+              
 
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -867,7 +885,7 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "NCL_TEMP.NCL_PROPERTY_RIGHTS_TEMP_UPD";
+                string sp_name = "OBJECTIONMODULE.NCL_PROPERTY_RIGHTS_TEMP_UPD";
 
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,20),// VARCHAR2(20);
@@ -875,8 +893,10 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
+              new OracleParameter("P_PROPERTYRIGHTSID",OracleDbType.Int32),
+               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_USER",OracleDbType.RefCursor),// DATE;
-              new OracleParameter("P_PROPERTYRIGHTSID",OracleDbType.Int32),// NUMBER;
+              
             };
                 prm[0].Value = NCLPropRight.CREATEDBY;
                 prm[0].Direction = ParameterDirection.Input;
@@ -888,10 +908,13 @@ namespace BBMPCITZAPI.Services
                 prm[3].Value = NCLPropRight.ULBCODE;
                 prm[4].Direction = ParameterDirection.Input;
                 prm[4].Value = ID_BASIC_PROPERTY;
-                prm[5].Direction = ParameterDirection.Output;
-                prm[5].Value = null;
+                prm[5].Direction = ParameterDirection.Input;
+                prm[5].Value = NCLPropRight.PROPERTYRIGHTSID;
                 prm[6].Direction = ParameterDirection.Input;
-                prm[6].Value = NCLPropRight.PROPERTYRIGHTSID;
+                prm[6].Value = NCLPropRight.EIDAPPNO;
+                prm[7].Direction = ParameterDirection.Output;
+                prm[7].Value = null;
+              
 
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -902,18 +925,20 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public int NCL_PROPERTY_RIGHTS_TEMP_DEL(int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
+        public int NCL_PROPERTY_RIGHTS_TEMP_DEL(int EIDAPPNO ,int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
         {
             try
             {
-                string sp_name = "CITIZEN.NCL_PROPERTY_RIGHTS_TEMP_DEL";
+                string sp_name = "OBJECTIONMODULE.NCL_PROPERTY_RIGHTS_TEMP_DEL";
 
                 OracleParameter[] prm = new OracleParameter[] {
-              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;              
+            new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;              
               new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;              
-              new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
-              new OracleParameter("CUR_USER",OracleDbType.RefCursor),// T_CURSOR;
-              new OracleParameter("P_PROPERTYRIGHTSID",OracleDbType.Int32)// NUMBER;
+              new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;              
+              new OracleParameter("P_PROPERTYRIGHTSID",OracleDbType.Int32),// NUMBER;
+              new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output)// T_CURSOR;
+           
             };
 
                 prm[0].Value = PROPERTYCODE;
@@ -922,9 +947,11 @@ namespace BBMPCITZAPI.Services
                 prm[1].Direction = ParameterDirection.Input;
                 prm[2].Direction = ParameterDirection.Input;
                 prm[2].Value = ID_BASIC_PROPERTY;
-                prm[3].Direction = ParameterDirection.Output;
-                prm[4].Direction = ParameterDirection.Input;
-                prm[4].Value = RIGHTSID;
+                prm[3].Direction = ParameterDirection.Input;
+                prm[3].Value = RIGHTSID;
+                prm[4].Value = EIDAPPNO;
+
+
 
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -941,7 +968,7 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "CITIZEN.NCL_PROPERTY_ID_TEMP_INS";
+                string sp_name = "OBJECTIONMODULE.NCL_PROPERTY_ID_TEMP_INS";
 
                 OracleParameter[] prm = new OracleParameter[] {
                         new OracleParameter("P_ORDERNUMBER",OracleDbType.Varchar2,200),// VARCHAR2(200);
@@ -954,8 +981,10 @@ namespace BBMPCITZAPI.Services
                         new OracleParameter("P_SCANNEDDOCUMENT",OracleDbType.Blob),// BLOB;
                         new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
                         new OracleParameter("P_ORDERDATE",OracleDbType.TimeStamp),// DATE;
-                         new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,25),
-                         new OracleParameter("CUR_USER",OracleDbType.RefCursor)// SYS_REFCURSOR;
+                          new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+                         new OracleParameter("CUR_USER",OracleDbType.RefCursor)
+                         
+                         // SYS_REFCURSOR;
                     };
                 prm[0].Value = NCLPropID.ORDERNUMBER;
                 prm[0].Direction = ParameterDirection.Input;
@@ -978,7 +1007,7 @@ namespace BBMPCITZAPI.Services
                 prm[9].Direction = ParameterDirection.Input;
                 prm[9].Value = NCLPropID.ORDERDATE;
                 prm[10].Direction = ParameterDirection.Input;
-                prm[10].Value = NCLPropID.CREATEDIP;
+                prm[10].Value = NCLPropID.EIDAPPNO;
                 prm[11].Direction = ParameterDirection.Output;
                 prm[11].Value = null;
 
@@ -995,7 +1024,7 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "CITIZEN.GET_DOC_VIEW";
+                string sp_name = "OBJECTIONMODULE.GET_DOC_VIEW";
 
                 OracleParameter[] prm = new OracleParameter[] {
                    new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;  
@@ -1023,14 +1052,16 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "CITIZEN.NCL_PROPERTY_ID_TEMP_DEL";
+                string sp_name = "OBJECTIONMODULE.NCL_PROPERTY_ID_TEMP_DEL";
 
                 OracleParameter[] prm = new OracleParameter[] {
                         new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;
                         new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
                         new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
-                        new OracleParameter("CUR_USER",OracleDbType.RefCursor),// NUPMS.NCL_TEMP.t_cursor;
-                        new OracleParameter("P_DOCUMENTID",OracleDbType.Int32)// NUMBER;
+                         new OracleParameter("P_DOCUMENTID",OracleDbType.Int32),// NUMBER;
+                            new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+                        new OracleParameter("CUR_USER",OracleDbType.RefCursor),// NUPMS.OBJECTIONMODULE.t_cursor;
+                       
                     };
 
                 prm[0].Value = NCLPropID.PROPERTYCODE;
@@ -1039,10 +1070,14 @@ namespace BBMPCITZAPI.Services
                 prm[1].Direction = ParameterDirection.Input;
                 prm[2].Value = NCLPropID.ULBCODE;
                 prm[2].Direction = ParameterDirection.Input;
-                prm[3].Direction = ParameterDirection.Output;
-                prm[3].Value = null;
+                prm[3].Value = NCLPropID.DOCUMENTID;
+                prm[3].Direction = ParameterDirection.Input;
+                prm[4].Value = NCLPropID.EIDAPPNO;
                 prm[4].Direction = ParameterDirection.Input;
-                prm[4].Value = NCLPropID.DOCUMENTID;
+                prm[5].Value = null;
+                prm[5].Direction = ParameterDirection.Output;
+               
+               
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -1097,7 +1132,9 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_DOCUMENTEXTENSION",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_SCANNEDDOCUMENT",OracleDbType.Blob,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output)
+               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output),
+               
                     };
 
                 prm[0].Value = nCLClassPropIdentification.PROPERTYCODE;
@@ -1110,6 +1147,7 @@ namespace BBMPCITZAPI.Services
                 prm[7].Value = nCLClassPropIdentification.DOCUMENTEXTENSION;
                 prm[8].Value = nCLClassPropIdentification.SCANNEDDOCUMENT;
                 prm[9].Value = nCLClassPropIdentification.CREATEDBY;
+                prm[10].Value = nCLClassPropIdentification.EIDAPPNO;
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
@@ -1120,7 +1158,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID)
+        public DataSet DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID,int EIDAPPNO)
         {
             try
             {
@@ -1128,11 +1166,13 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTROWID",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = PROPERTYCODE;
                 prm[1].Value = DOCUMENTROWID;
+                prm[2].Value = EIDAPPNO;
 
 
 
@@ -1225,7 +1265,7 @@ namespace BBMPCITZAPI.Services
         {
             try
             {
-                string sp_name = "CITIZEN.INSERT_BBMP_PROPERTYTAX_RESPONSE";
+                string sp_name = "OBJECTIONMODULE.INSERT_BBMP_PROPERTYTAX_RESPONSE";
 
                 OracleParameter[] prm = new OracleParameter[] {
                   new OracleParameter("P_ULBCODE",OracleDbType.Int32),
@@ -1253,6 +1293,29 @@ namespace BBMPCITZAPI.Services
 
 
 
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                throw;
+            }
+        }
+        public DataSet GetTaxDetails(string applicationNo)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE.SEL_OFFLINE_PTAX_BY_APPLICATION";
+
+                OracleParameter[] prm = new OracleParameter[] {
+                  new OracleParameter("P_APPLICATIONNO",OracleDbType.Varchar2),
+                   new OracleParameter("CUR_TAXDATA",OracleDbType.RefCursor),
+                 
+            };
+                prm[0].Value = applicationNo;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = null;
+                prm[1].Direction = ParameterDirection.Output;
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)

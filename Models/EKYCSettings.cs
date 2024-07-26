@@ -23,4 +23,9 @@
         public string OTPResponseMessage { get; set; }
         public string OTP { get; set; }
     }
+    public class PropertyDetails
+    {
+        public string PROPERTYCODE { get; set; }
+        public string PROPERTYID { get; set; }
+    }
 }

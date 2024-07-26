@@ -57,7 +57,7 @@ namespace BBMPCITZAPI.Controllers
                 string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
                 EKYCTokenRequest = EKYCTokenRequest.Replace("\"", "'");
                 NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-                transactionNo = obj.INSERT_EKYC_REQUEST_OWNER(104931, OwnerNumber, transacDateTime, EKYCTokenRequest, "crc");
+                transactionNo = obj.INSERT_EKYC_REQUEST_OWNER(701, 1135783, OwnerNumber, transacDateTime, EKYCTokenRequest, "crc");
                 EKYCTokenRequest = EKYCTokenRequest.Replace("transactionNo", transactionNo.ToString());
 
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
