@@ -2,13 +2,17 @@
 using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NUPMS_BA;
 using NUPMS_DA;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using static BBMPCITZAPI.Controllers.AuthController;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -19,49 +23,93 @@ namespace BBMPCITZAPI.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
+        private readonly TokenService _tokenService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
 
-        public AuthController(ILogger<AuthController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE)
+        public AuthController(ILogger<AuthController> logger, TokenService tokenService, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE)
         {
             _logger = logger;
+            _tokenService = tokenService;
             _configuration = configuration;
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
         }
         NUPMS_BA.CitizenBA Citz = new NUPMS_BA.CitizenBA();
+        public class TokenService
+        {
+            private readonly string _key;
+            private readonly string _issuer;
+            private readonly string _audience;
 
-        
+            public TokenService(IConfiguration configuration)
+            {
+                _key = configuration["Jwt:Key"];
+                _issuer = configuration["Jwt:Issuer"];
+                _audience = configuration["Jwt:Audience"];
+            }
+
+            public string GenerateToken(string username)
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_key);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                new Claim(ClaimTypes.Name, username)
+                    }),
+                    Expires = DateTime.UtcNow.AddHours(1),
+                    Issuer = _issuer,
+                    Audience = _audience,
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return tokenHandler.WriteToken(token);
+            }
+        }
+
+
+
         [HttpPost("CitizenLogin")]
-        public ActionResult<bool> CitizenLogin(string UserId, string Password, bool IsOTPGenerated)
+        public IActionResult CitizenLogin(string userId, string password, bool isOtpGenerated)
         {
             try
             {
-                if (IsOTPGenerated)
+                if (isOtpGenerated)
                 {
-                    DataSet dsUserDetails = Citz.getUserdata(UserId);
+                    var dsUserDetails = Citz.getUserdata(userId);
                     if (dsUserDetails != null && dsUserDetails.Tables.Count > 0 && dsUserDetails.Tables[0].Rows.Count > 0)
                     {
-                        return true;
+                        var token = _tokenService.GenerateToken(userId); 
+                        return Ok(new { Token = token });
                     }
                     else
                     {
-                       return false;
+                        return Ok(false);
                     }
                 }
                 else
                 {
                     var salt = CreateSalt(5);
-                    var b = IsAuthenticatedUser(UserId, Password, salt);
-                    return b;
+                    var isAuthenticated = IsAuthenticatedUser(userId, password, salt);
+                    if (isAuthenticated)
+                    {
+                        var token = _tokenService.GenerateToken(userId);
+                        return Ok(new { Token = token });
+                    }
+                    else
+                    {
+                        return Ok(false);
+                    }
                 }
-                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.");
-                throw;
+                _logger.LogError(ex, "Error occurred while executing the login process.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error.");
             }
         }
+
 
         [HttpGet("GetCitzMobileNumber")]
         public ActionResult<string> GetMobileNumber(string UserId)
