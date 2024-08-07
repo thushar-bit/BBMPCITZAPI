@@ -13,7 +13,7 @@
         public int? categoryId { get; set; }
         public string? PUIDNo { get; set; }
         public string? loginId { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
         public string? Latitude { get; set; }   
             public string? Longitude { get; set; }
     }
@@ -37,7 +37,7 @@
          public decimal? NSODDSITE3FT { get; set; }
          public decimal? NSODDSITE4FT { get; set; }
         public string? loginId { get; set; }
-        public int? EIDAPPNO { get; set; }  
+        public int? P_BOOKS_PROP_APPNO { get; set; }  
     }
     public class UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI
     {
@@ -47,7 +47,7 @@
         public string? CHECKBANDI_EAST { get; set; }
         public string? CHECKBANDI_WEST { get; set; }
         public string? loginId { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA 
     {
@@ -56,7 +56,7 @@
         public decimal? ADDITIONALAREA { get; set; }
         public decimal? SUPERBUILTUPAREA { get; set; }
         public string? loginId { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class UPD_NCL_PROPERTY_SITE_TEMP_USAGE 
     {
@@ -65,7 +65,7 @@
         public int? FEATUREID { get; set; }
         public int? BUILTYEAR { get; set; }
         public string? loginId { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLBuilding
     {
@@ -99,7 +99,7 @@
         public string? CREATEDIP { get; set; }
         public decimal? ownUseArea { get; set; }
         public decimal? rentedArea { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class NCLAPARTMENT
@@ -136,7 +136,7 @@
         public int? BUILDINGUSAGETYPEID { get; set; }//NUMBER, 
         public int? BHKID { get; set; } //number
         public string? CREATEDIP { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class NCLPropOwner
@@ -158,7 +158,7 @@
         public string? ISCOMPANY { get; set; }
         public int? PROPERTYTYPE { get; set; }
         public string? CREATEDIP { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropOwnerID
     {
@@ -174,7 +174,7 @@
         public int? ULBCODE { get; set; }// NUMBER;
         public string? AADHAARNO { get; set; }// VARCHAR2(20);
         public string? ENCRYPT { get; set; }// VARCHAR2(3);
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropOwnerIDDoc
     {
@@ -187,7 +187,7 @@
         public int? ULBCODE { get; set; }// NUMBER;
         public DateTime? CREATEDON { get; set; }// DATE;
         public byte[]? SCANNEDIDENEITY { get; set; }// BFILE;
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class NCLPropOwnerPhoto
@@ -201,7 +201,7 @@
         public int? PHOTOID { get; set; }// NUMBER;
         public int? ULBCODE { get; set; }// NUMBER;
         public string? UPDATEDBYE { get; set; }// VARCHAR2(20);
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropRights
     {
@@ -214,7 +214,7 @@
         public DateTime? CREATEDON { get; set; }// DATE;
         public int? ULBCODE { get; set; }// NUMBER;
 
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropIdentification
     {
@@ -233,7 +233,7 @@
         public int? ULBCODE { get; set; }// NUMBER;
         public int? MUTAPPLID { get; set; }// NUMBER;
         public string? CREATEDIP { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLClassPropIdentification
     {
@@ -251,7 +251,7 @@
         public int? SUBCLASSIFICATIONID { get; set; }
 
         public string? CREATEDIP { get; set; }
-        public int? EIDAPPNO { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
     }
 
 }

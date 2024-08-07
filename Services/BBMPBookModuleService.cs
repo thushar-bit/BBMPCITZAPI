@@ -157,7 +157,7 @@ namespace BBMPCITZAPI.Services
     new OracleParameter("P_PROPERTYCATEGORYID", OracleDbType.Int32, ParameterDirection.Input),
     new OracleParameter("P_PUID", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2, ParameterDirection.Input),
-     new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+     new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
     new OracleParameter("P_LATITUDE", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_LONGITUDE", OracleDbType.Varchar2, ParameterDirection.Input)
 };
@@ -174,7 +174,7 @@ namespace BBMPCITZAPI.Services
                 prm[8].Value = insertCITZProperty.categoryId;  // Ensure this matches the type expected
                 prm[9].Value = insertCITZProperty.PUIDNo;
                 prm[10].Value = insertCITZProperty.loginId;
-                prm[11].Value = insertCITZProperty.EIDAPPNO;
+                prm[11].Value = insertCITZProperty.P_BOOKS_PROP_APPNO;
                 prm[12].Value = insertCITZProperty.Latitude;
                 prm[13].Value = insertCITZProperty.Longitude;
 
@@ -214,7 +214,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_NSODDSITE3FT",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_NSODDSITE4FT",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                    new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
+                    new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.propertyCode;
@@ -235,7 +235,7 @@ namespace BBMPCITZAPI.Services
                 prm[15].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE3FT;
                 prm[16].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE4FT;
                 prm[17].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
-                prm[18].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.EIDAPPNO;
+                prm[18].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -257,7 +257,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_CHECKBANDI_EAST_EN",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_CHECKBANDI_WEST_EN",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                     new OracleParameter("P_EIDAPPNO",OracleDbType.Varchar2,ParameterDirection.Input),
+                     new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Varchar2,ParameterDirection.Input),
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.propertyCode;
@@ -266,7 +266,7 @@ namespace BBMPCITZAPI.Services
                 prm[3].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.CHECKBANDI_EAST;
                 prm[4].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.CHECKBANDI_WEST;
                 prm[5].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.loginId;
-                prm[6].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.EIDAPPNO;
+                prm[6].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -287,7 +287,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_ADDITIONALAREA",OracleDbType.Decimal,ParameterDirection.Input),
               new OracleParameter("P_SUPERBUILTUPAREA",OracleDbType.Decimal,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                  new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
+                  new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.propertyCode;
@@ -295,7 +295,7 @@ namespace BBMPCITZAPI.Services
                 prm[2].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.ADDITIONALAREA;
                 prm[3].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.SUPERBUILTUPAREA;
                 prm[4].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.loginId;
-                prm[5].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.EIDAPPNO;
+                prm[5].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -318,7 +318,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_FEATUREID",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_BUILTYEAR",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                   new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
+                   new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.propertyCode;
@@ -326,7 +326,7 @@ namespace BBMPCITZAPI.Services
                 prm[2].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.FEATUREID;
                 prm[3].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.BUILTYEAR;
                 prm[4].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.loginId;
-                prm[5].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.EIDAPPNO;
+                prm[5].Value = UPD_NCL_PROPERTY_SITE_TEMP_USAGE.P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -371,14 +371,14 @@ namespace BBMPCITZAPI.Services
              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_ULBCODE",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
              new OracleParameter("P_FLOORTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+             new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
              new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = NCLBLDG.PROPERTYCODE;
                 prm[1].Value = ULBCODE;
                 prm[2].Value = NCLBLDG.FLOORTYPEID;
-                prm[3].Value = NCLBLDG.EIDAPPNO;
+                prm[3].Value = NCLBLDG.P_BOOKS_PROP_APPNO;
                 prm[4].Value = null;
 
 
@@ -475,7 +475,7 @@ namespace BBMPCITZAPI.Services
              new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),// VARCHAR2(20);
              new OracleParameter("P_FLOORTYPEID",OracleDbType.Int32,ParameterDirection.Input),// NUMBER;
-             new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+             new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
              new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output)// NUPMS.OBJECTIONMODULE.t_cursor;
                     };
                 prm[0].Value = NCLBLDG.PROPERTYCODE;
@@ -497,7 +497,7 @@ namespace BBMPCITZAPI.Services
                 prm[16].Value = NCLBLDG.CREATEDIP;
                 prm[17].Value = NCLBLDG.CREATEDBY;
                 prm[18].Value = NCLBLDG.FLOORTYPEID;
-                prm[19].Value = NCLBLDG.EIDAPPNO;
+                prm[19].Value = NCLBLDG.P_BOOKS_PROP_APPNO;
                 prm[20].Value = null;
 
 
@@ -563,7 +563,7 @@ namespace BBMPCITZAPI.Services
                        new OracleParameter("P_BUILTYEAR",OracleDbType.Int32,ParameterDirection.Input),// NUMBER
                        new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                       new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                        new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input)
+                        new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
 
                 prm[0].Value = NCLAPT.PROPERTYCODE;
@@ -584,7 +584,7 @@ namespace BBMPCITZAPI.Services
                 prm[15].Value = NCLAPT.YEAROFCONSTRUCTION;
                 prm[16].Value = NCLAPT.CREATEDIP;
                 prm[17].Value = NCLAPT.CREATEDBY;
-                prm[18].Value = NCLAPT.EIDAPPNO;
+                prm[18].Value = NCLAPT.P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -596,7 +596,7 @@ namespace BBMPCITZAPI.Services
         }
         #endregion
         #region Owner Details Events
-        public DataSet COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int EIDAPPNO, int propertyCode, int ownerNumber)
+        public DataSet COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int P_BOOKS_PROP_APPNO, int propertyCode, int ownerNumber)
         {
             try
             {
@@ -604,14 +604,14 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_OWNERNUMBER",OracleDbType.Int32,ParameterDirection.Input),
-                      new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+                      new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("C_OWNERRECORD1",OracleDbType.RefCursor,ParameterDirection.Output),
               new OracleParameter("C_OWNERRECORD2",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = propertyCode;
                 prm[1].Value = ownerNumber;
-                prm[2].Value = EIDAPPNO;
+                prm[2].Value = P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -621,7 +621,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet DEL_SEL_NCL_PROP_OWNER_TEMP(int EIDAPPNO,int propertyCode, int ownerNumber)
+        public DataSet DEL_SEL_NCL_PROP_OWNER_TEMP(int P_BOOKS_PROP_APPNO,int propertyCode, int ownerNumber)
         {
             try
             {
@@ -629,7 +629,7 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_OWNERNUMBER",OracleDbType.Int32,ParameterDirection.Input),
-               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("C_OWNERRECORD1",OracleDbType.RefCursor,ParameterDirection.Output),
               new OracleParameter("C_OWNERRECORD2",OracleDbType.RefCursor,ParameterDirection.Output),
           
@@ -637,7 +637,7 @@ namespace BBMPCITZAPI.Services
 
                 prm[0].Value = propertyCode;
                 prm[1].Value = ownerNumber;
-                prm[2].Value = EIDAPPNO;
+                prm[2].Value = P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -850,7 +850,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
-              new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_USER",OracleDbType.RefCursor)
               
 
@@ -867,7 +867,7 @@ namespace BBMPCITZAPI.Services
                 prm[4].Direction = ParameterDirection.Input;
                 prm[4].Value = ID_BASIC_PROPERTY;
                 prm[5].Direction = ParameterDirection.Input;
-                prm[5].Value = NCLPropRight.EIDAPPNO; 
+                prm[5].Value = NCLPropRight.P_BOOKS_PROP_APPNO; 
                 prm[6].Direction = ParameterDirection.Output;
                 prm[6].Value = null;
               
@@ -894,7 +894,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
               new OracleParameter("P_PROPERTYRIGHTSID",OracleDbType.Int32),
-               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_USER",OracleDbType.RefCursor),// DATE;
               
             };
@@ -911,7 +911,7 @@ namespace BBMPCITZAPI.Services
                 prm[5].Direction = ParameterDirection.Input;
                 prm[5].Value = NCLPropRight.PROPERTYRIGHTSID;
                 prm[6].Direction = ParameterDirection.Input;
-                prm[6].Value = NCLPropRight.EIDAPPNO;
+                prm[6].Value = NCLPropRight.P_BOOKS_PROP_APPNO;
                 prm[7].Direction = ParameterDirection.Output;
                 prm[7].Value = null;
               
@@ -925,7 +925,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public int NCL_PROPERTY_RIGHTS_TEMP_DEL(int EIDAPPNO ,int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
+        public int NCL_PROPERTY_RIGHTS_TEMP_DEL(int P_BOOKS_PROP_APPNO ,int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
         {
             try
             {
@@ -936,7 +936,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;              
               new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;              
               new OracleParameter("P_PROPERTYRIGHTSID",OracleDbType.Int32),// NUMBER;
-              new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_USER",OracleDbType.RefCursor,ParameterDirection.Output)// T_CURSOR;
            
             };
@@ -949,7 +949,7 @@ namespace BBMPCITZAPI.Services
                 prm[2].Value = ID_BASIC_PROPERTY;
                 prm[3].Direction = ParameterDirection.Input;
                 prm[3].Value = RIGHTSID;
-                prm[4].Value = EIDAPPNO;
+                prm[4].Value = P_BOOKS_PROP_APPNO;
 
 
 
@@ -981,7 +981,7 @@ namespace BBMPCITZAPI.Services
                         new OracleParameter("P_SCANNEDDOCUMENT",OracleDbType.Blob),// BLOB;
                         new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
                         new OracleParameter("P_ORDERDATE",OracleDbType.TimeStamp),// DATE;
-                          new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+                          new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
                          new OracleParameter("CUR_USER",OracleDbType.RefCursor)
                          
                          // SYS_REFCURSOR;
@@ -1007,7 +1007,7 @@ namespace BBMPCITZAPI.Services
                 prm[9].Direction = ParameterDirection.Input;
                 prm[9].Value = NCLPropID.ORDERDATE;
                 prm[10].Direction = ParameterDirection.Input;
-                prm[10].Value = NCLPropID.EIDAPPNO;
+                prm[10].Value = NCLPropID.P_BOOKS_PROP_APPNO;
                 prm[11].Direction = ParameterDirection.Output;
                 prm[11].Value = null;
 
@@ -1059,7 +1059,7 @@ namespace BBMPCITZAPI.Services
                         new OracleParameter("P_ID_BASIC_PROPERTY",OracleDbType.Int32),// NUMBER;
                         new OracleParameter("P_ULBCODE",OracleDbType.Int32),// NUMBER;
                          new OracleParameter("P_DOCUMENTID",OracleDbType.Int32),// NUMBER;
-                            new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+                            new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
                         new OracleParameter("CUR_USER",OracleDbType.RefCursor),// NUPMS.OBJECTIONMODULE.t_cursor;
                        
                     };
@@ -1072,7 +1072,7 @@ namespace BBMPCITZAPI.Services
                 prm[2].Direction = ParameterDirection.Input;
                 prm[3].Value = NCLPropID.DOCUMENTID;
                 prm[3].Direction = ParameterDirection.Input;
-                prm[4].Value = NCLPropID.EIDAPPNO;
+                prm[4].Value = NCLPropID.P_BOOKS_PROP_APPNO;
                 prm[4].Direction = ParameterDirection.Input;
                 prm[5].Value = null;
                 prm[5].Direction = ParameterDirection.Output;
@@ -1132,7 +1132,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_DOCUMENTEXTENSION",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_SCANNEDDOCUMENT",OracleDbType.Blob,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output),
                
                     };
@@ -1147,7 +1147,7 @@ namespace BBMPCITZAPI.Services
                 prm[7].Value = nCLClassPropIdentification.DOCUMENTEXTENSION;
                 prm[8].Value = nCLClassPropIdentification.SCANNEDDOCUMENT;
                 prm[9].Value = nCLClassPropIdentification.CREATEDBY;
-                prm[10].Value = nCLClassPropIdentification.EIDAPPNO;
+                prm[10].Value = nCLClassPropIdentification.P_BOOKS_PROP_APPNO;
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
@@ -1158,7 +1158,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID,int EIDAPPNO)
+        public DataSet DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID,int P_BOOKS_PROP_APPNO)
         {
             try
             {
@@ -1166,13 +1166,13 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTROWID",OracleDbType.Int32,ParameterDirection.Input),
-               new OracleParameter("P_EIDAPPNO",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = PROPERTYCODE;
                 prm[1].Value = DOCUMENTROWID;
-                prm[2].Value = EIDAPPNO;
+                prm[2].Value = P_BOOKS_PROP_APPNO;
 
 
 

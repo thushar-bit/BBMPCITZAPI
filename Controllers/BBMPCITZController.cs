@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace BBMPCITZAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("v1/BBMPCITZAPI")]
     public class BBMPCITZController : ControllerBase
     {
@@ -21,30 +22,34 @@ namespace BBMPCITZAPI.Controllers
         private readonly DatabaseService _databaseService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
         private readonly PropertyDetails _PropertyDetails;
+        private readonly ICacheService _cacheService;
 
-        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails)
+        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails,
+            ICacheService cacheService)
         {
             _logger = logger;
             _configuration = configuration;
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _PropertyDetails = PropertyDetails.Value;
+            _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
         //   NUPMS_BA.CitizenBA ciTz= new NUPMS_BA.CitizenBA();
         #region Initial
-        [Authorize]
+       
 
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT")]
-        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int EID,int propertyid)
+        public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int P_BOOKS_PROP_APPNO,int propertyid)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_BBD_DRAFT");
             try
             {
-                var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode,EID, propertyid);
+                string cacheKey = "BBD_DRAFT_KEY" + propertyid;
+                var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode,P_BOOKS_PROP_APPNO, propertyid);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-
+                 await _cacheService.SetCacheDataAsync(cacheKey, json);
                 return Ok(json);
             }
             catch (Exception ex)
@@ -53,8 +58,25 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+    
+        [HttpGet("GetBBDRedisData")]
+        public async Task<IActionResult> GetBBDRedisDeta(int propertyid)
+        {
+            _logger.LogInformation("GET request received at GetBBDRedisData");
+            try
+            {
+                string cacheKey = "BBD_DRAFT_KEY" + propertyid;
+                var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
+                return Ok(cachedData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
+                throw;
+            }
+        }
 
-        [Authorize]
+       
         [HttpGet("GetMasterTablesData")]
         public ActionResult<DataSet> GetMasterTablesData(string UlbCode)
         {
@@ -73,21 +95,38 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [Authorize]
+    
         [HttpGet("GET_PROPERTY_PENDING_CITZ_NCLTEMP")]
-        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int EIDAPPNO, int Propertycode)
+        public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int P_BOOKS_PROP_APPNO, int Propertycode)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP");
             try
             {
-                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP( ULBCODE,  EIDAPPNO,  Propertycode);
+                string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
+                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP( ULBCODE, P_BOOKS_PROP_APPNO,  Propertycode);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-
+                await _cacheService.SetCacheDataAsync(cacheKey, json);
                 return Ok(json);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GET_PROPERTY_PENDING_CITZ_NCLTEMP");
+                throw;
+            }
+        }
+        [HttpGet("GetNCLRedisData")]
+        public async Task<IActionResult> GetNCLRedisData( int P_BOOKS_PROP_APPNO, int Propertycode)
+        {
+            _logger.LogInformation("GET request received at GetNCLRedisData");
+            try
+            {
+                string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
+                var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
+                return Ok(cachedData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
                 throw;
             }
         }
@@ -122,11 +161,11 @@ namespace BBMPCITZAPI.Controllers
 
                 if ((dsProperties != null && dsProperties.Tables.Count > 0 && dsProperties.Tables[0].Rows.Count > 0))
                 {
-                    string EID = dsProperties.Tables[0].Rows[0]["BOOKS_PROP_APPNO"].ToString()!;
+                    string P_BOOKS_PROP_APPNO = dsProperties.Tables[0].Rows[0]["BOOKS_PROP_APPNO"].ToString()!;
                     string PropertyId = dsProperties.Tables[0].Rows[0]["PROPERTYCODE"].ToString()!;
                     var data = new
                     {
-                        EID = EID,
+                        P_BOOKS_PROP_APPNO = P_BOOKS_PROP_APPNO,
                         PropertyId = PropertyId
                     };
                     string json = JsonConvert.SerializeObject(data, Formatting.Indented);
@@ -363,12 +402,12 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region Owner Details Events
         [HttpGet("COPY_OWNER_FROM_BBDDRAFT_NCLTEMP")]
-        public ActionResult<DataSet> COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int EIDAPPNO, int propertyCode, int ownerNumber)
+        public ActionResult<DataSet> COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int ownerNumber)
         {
             _logger.LogInformation("GET request received at COPY_OWNER_FROM_BBDDRAFT_NCLTEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.COPY_OWNER_FROM_BBDDRAFT_NCLTEMP( EIDAPPNO, propertyCode, ownerNumber);
+                DataSet dataSet = _IBBMPBOOKMODULE.COPY_OWNER_FROM_BBDDRAFT_NCLTEMP( P_BOOKS_PROP_APPNOAPPNO, propertyCode, ownerNumber);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -380,12 +419,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("DEL_SEL_NCL_PROP_OWNER_TEMP")]
-        public ActionResult<DataSet> DEL_SEL_NCL_PROP_OWNER_TEMP(int EIDAPPNO, int propertyCode, int ownerNumber)
+        public ActionResult<DataSet> DEL_SEL_NCL_PROP_OWNER_TEMP(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int ownerNumber)
         {
             _logger.LogInformation("GET request received at GET_NCL_TEMP_FLOOR_PRE DEL_SEL_NCL_PROP_OWNER_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DEL_SEL_NCL_PROP_OWNER_TEMP( EIDAPPNO, propertyCode,  ownerNumber);
+                DataSet dataSet = _IBBMPBOOKMODULE.DEL_SEL_NCL_PROP_OWNER_TEMP( P_BOOKS_PROP_APPNOAPPNO, propertyCode,  ownerNumber);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -397,12 +436,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY")]
-        public ActionResult<DataSet> UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(int EIDAPPNO, int propertyCode, int ownerNumber, int IDENTIFIERTYPE, string IDENTIFIERNAME_EN, string MOBILENUMBER, string MOBILEVERIFY, string loginId)
+        public ActionResult<DataSet> UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int ownerNumber, int IDENTIFIERTYPE, string IDENTIFIERNAME_EN, string MOBILENUMBER, string MOBILEVERIFY, string loginId)
         {
             _logger.LogInformation("GET request received at UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
             try
             {
-                DataSet dataSet  = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(EIDAPPNO, propertyCode,  ownerNumber,  IDENTIFIERTYPE,  IDENTIFIERNAME_EN,  MOBILENUMBER,  MOBILEVERIFY,  loginId);
+                DataSet dataSet  = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(P_BOOKS_PROP_APPNOAPPNO, propertyCode,  ownerNumber,  IDENTIFIERTYPE,  IDENTIFIERNAME_EN,  MOBILENUMBER,  MOBILEVERIFY,  loginId);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -451,12 +490,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("NCL_PROPERTY_RIGHTS_TEMP_DEL")]
-        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_DEL(int EIDAPPNO, int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
+        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_DEL(int P_BOOKS_PROP_APPNO, int RIGHTSID, int ID_BASIC_PROPERTY, int ULBCODE, int PROPERTYCODE)
         {
             _logger.LogInformation("GET request received at NCL_PROPERTY_RIGHTS_TEMP_DEL");
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_DEL( EIDAPPNO, RIGHTSID,  ID_BASIC_PROPERTY,  ULBCODE,  PROPERTYCODE);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_DEL(P_BOOKS_PROP_APPNO, RIGHTSID,  ID_BASIC_PROPERTY,  ULBCODE,  PROPERTYCODE);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -521,12 +560,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GetMasterDocByCategoryOrClaimType")]
-        public ActionResult<DataSet> GetMasterDocByCategoryOrClaimType(int ULBCODE, int CATEGORYID, int ClaimTypeID)
+        public ActionResult<DataSet> GetMasterDocByCategoryOrClaimType(int ULBCODE, int CATEGORYID, int ClaimTypP_BOOKS_PROP_APPNO)
         {
             _logger.LogInformation("GET request received at GetMasterDocByCategoryOrClaimType");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterDocByCategoryOrClaimType( ULBCODE,  CATEGORYID,  ClaimTypeID);
+                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterDocByCategoryOrClaimType( ULBCODE,  CATEGORYID,  ClaimTypP_BOOKS_PROP_APPNO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -557,12 +596,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP")]
-        public ActionResult<DataSet> DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID, int EIDAPPNO)
+        public ActionResult<DataSet> DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID, int P_BOOKS_PROP_APPNOAPPNO)
         {
             _logger.LogInformation("GET request received at DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE,  DOCUMENTROWID, EIDAPPNO);
+                DataSet dataSet = _IBBMPBOOKMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE,  DOCUMENTROWID, P_BOOKS_PROP_APPNOAPPNO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
