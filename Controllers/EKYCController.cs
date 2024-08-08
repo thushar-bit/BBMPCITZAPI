@@ -40,7 +40,7 @@ namespace BBMPCITZAPI.Controllers
             _BBMPSMSSETTINGS = BBMPSMSSETTINGS.Value;
         }
         [HttpPost("RequestEKYC")]
-        public string GetEKYCRequest(int OwnerNumber)
+        public string GetEKYCRequest(int OwnerNumber,int BOOK_APP_NO,int PROPERTY_CODE)
         {
             try
             {
@@ -51,13 +51,14 @@ namespace BBMPCITZAPI.Controllers
                 string EKYCServiceCode = _ekycSettings.EKYCServiceCode!;
                 string EKYCResponseRedirectURL = _ekycSettings.EKYCResponseRedirectURL!;
                 string EKYCRequestURL = _ekycSettings.EKYCRequestURL!;
+              
                 string transacDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 int transactionNo = 0;
 
                 string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
                 EKYCTokenRequest = EKYCTokenRequest.Replace("\"", "'");
                 NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-                transactionNo = obj.INSERT_EKYC_REQUEST_OWNER(701, 1135783, OwnerNumber, transacDateTime, EKYCTokenRequest, "crc");
+                transactionNo = obj.INSERT_EKYC_REQUEST_OWNER(BOOK_APP_NO, PROPERTY_CODE, OwnerNumber, transacDateTime, EKYCTokenRequest, "crc");
                 EKYCTokenRequest = EKYCTokenRequest.Replace("transactionNo", transactionNo.ToString());
 
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);

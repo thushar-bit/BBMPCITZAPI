@@ -36,20 +36,90 @@ namespace BBMPCITZAPI.Controllers
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
+        NUPMS_BA.GetReportData NUMPSdata = new NUPMS_BA.GetReportData();
+        NUPMS_BA.BBD_BA BBDBA = new NUPMS_BA.BBD_BA();
         //   NUPMS_BA.CitizenBA ciTz= new NUPMS_BA.CitizenBA();
         #region Initial
-       
 
+
+        [HttpGet("GetMasterZone")]
+        public ActionResult<DataSet> GetMasterZone()
+        {
+            _logger.LogInformation("GET request received at GetMasterZone");
+            try
+            {
+                var dataSet = BBDBA.GetZone();
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure GetMasterZone.");
+                throw;
+            }
+        }
+        [HttpGet("GetMasterWard")]
+        public ActionResult<DataSet> GetMasterWard(int ZoneId)
+        {
+            _logger.LogInformation("GET request received at GetMasterWard");
+            try
+            {
+                var dataSet = BBDBA.GetWardByZone(ZoneId);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure GetMasterWard.");
+                throw;
+            }
+        }
+        [HttpGet("LOAD_BBD_RECORDS_BY_WARD")]
+        public ActionResult<DataSet> LOAD_BBD_RECORDS_BY_WARD(int ZoneId, int WardId)
+        {
+            _logger.LogInformation("GET request received at LOAD_BBD_RECORDS_BY_WARD");
+            try
+            {
+                
+                var dataSet = NUMPSdata.GetBbdDraft(ZoneId,WardId);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+             
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure LOAD_BBD_RECORDS_BY_WARD.");
+                throw;
+            }
+        }
+        [HttpGet("LOAD_BBD_RECORDS")]
+        public ActionResult<DataSet> LOAD_BBD_RECORDS(int ZoneId, int WardId, int SerachType, string Search)
+        {
+            _logger.LogInformation("GET request received at LOAD_BBD_RECORDS_BY_WARD");
+            try
+            {
+
+                var dataSet = NUMPSdata.GetBbdDraft( ZoneId,  WardId,  SerachType,  Search);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure LOAD_BBD_RECORDS.");
+                throw;
+            }
+        }
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT")]
-        public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int P_BOOKS_PROP_APPNO,int propertyid)
+        public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int propertyid)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_BBD_DRAFT");
             try
             {
-                string cacheKey = "BBD_DRAFT_KEY" + propertyid;
-                var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode,P_BOOKS_PROP_APPNO, propertyid);
+              //  string cacheKey = "BBD_DRAFT_KEY" + propertyid;
+                var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode, propertyid);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-                 await _cacheService.SetCacheDataAsync(cacheKey, json);
+               //  await _cacheService.SetCacheDataAsync(cacheKey, json);
                 return Ok(json);
             }
             catch (Exception ex)
@@ -102,10 +172,10 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP");
             try
             {
-                string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
+              //  string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
                 DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP( ULBCODE, P_BOOKS_PROP_APPNO,  Propertycode);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-                await _cacheService.SetCacheDataAsync(cacheKey, json);
+            //    await _cacheService.SetCacheDataAsync(cacheKey, json);
                 return Ok(json);
             }
             catch (Exception ex)
@@ -419,12 +489,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("DEL_SEL_NCL_PROP_OWNER_TEMP")]
-        public ActionResult<DataSet> DEL_SEL_NCL_PROP_OWNER_TEMP(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int ownerNumber)
+        public ActionResult<DataSet> DEL_SEL_NCL_PROP_OWNER_TEMP(int P_BOOKS_PROP_APPNO, int propertyCode, int ownerNumber)
         {
             _logger.LogInformation("GET request received at GET_NCL_TEMP_FLOOR_PRE DEL_SEL_NCL_PROP_OWNER_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DEL_SEL_NCL_PROP_OWNER_TEMP( P_BOOKS_PROP_APPNOAPPNO, propertyCode,  ownerNumber);
+                DataSet dataSet = _IBBMPBOOKMODULE.DEL_SEL_NCL_PROP_OWNER_TEMP( P_BOOKS_PROP_APPNO, propertyCode,  ownerNumber);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -436,12 +506,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY")]
-        public ActionResult<DataSet> UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int ownerNumber, int IDENTIFIERTYPE, string IDENTIFIERNAME_EN, string MOBILENUMBER, string MOBILEVERIFY, string loginId)
+        public ActionResult<DataSet> UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(int P_BOOKS_PROP_APPNO, int propertyCode, int ownerNumber, int IDENTIFIERTYPE, string IDENTIFIERNAME_EN, string MOBILENUMBER, string MOBILEVERIFY, string loginId)
         {
             _logger.LogInformation("GET request received at UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
             try
             {
-                DataSet dataSet  = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(P_BOOKS_PROP_APPNOAPPNO, propertyCode,  ownerNumber,  IDENTIFIERTYPE,  IDENTIFIERNAME_EN,  MOBILENUMBER,  MOBILEVERIFY,  loginId);
+                DataSet dataSet  = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(P_BOOKS_PROP_APPNO, propertyCode,  ownerNumber,  IDENTIFIERTYPE,  IDENTIFIERNAME_EN,  MOBILENUMBER,  MOBILEVERIFY,  loginId);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
