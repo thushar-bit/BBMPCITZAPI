@@ -22,17 +22,17 @@ namespace BBMPCITZAPI.Controllers
         private readonly DatabaseService _databaseService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
         private readonly PropertyDetails _PropertyDetails;
-        private readonly ICacheService _cacheService;
+     //   private readonly ICacheService _cacheService;
 
-        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails,
-            ICacheService cacheService)
+        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails)
+           // ICacheService cacheService)
         {
             _logger = logger;
             _configuration = configuration;
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _PropertyDetails = PropertyDetails.Value;
-            _cacheService = cacheService;
+          //  _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
@@ -129,22 +129,22 @@ namespace BBMPCITZAPI.Controllers
             }
         }
     
-        [HttpGet("GetBBDRedisData")]
-        public async Task<IActionResult> GetBBDRedisDeta(int propertyid)
-        {
-            _logger.LogInformation("GET request received at GetBBDRedisData");
-            try
-            {
-                string cacheKey = "BBD_DRAFT_KEY" + propertyid;
-                var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
-                return Ok(cachedData);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
-                throw;
-            }
-        }
+        //[HttpGet("GetBBDRedisData")]
+        //public async Task<IActionResult> GetBBDRedisDeta(int propertyid)
+        //{
+        //    _logger.LogInformation("GET request received at GetBBDRedisData");
+        //    try
+        //    {
+        //        string cacheKey = "BBD_DRAFT_KEY" + propertyid;
+        //        var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
+        //        return Ok(cachedData);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
+        //        throw;
+        //    }
+        //}
 
        
         [HttpGet("GetMasterTablesData")]
@@ -184,22 +184,22 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpGet("GetNCLRedisData")]
-        public async Task<IActionResult> GetNCLRedisData( int P_BOOKS_PROP_APPNO, int Propertycode)
-        {
-            _logger.LogInformation("GET request received at GetNCLRedisData");
-            try
-            {
-                string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
-                var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
-                return Ok(cachedData);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
-                throw;
-            }
-        }
+        //[HttpGet("GetNCLRedisData")]
+        //public async Task<IActionResult> GetNCLRedisData( int P_BOOKS_PROP_APPNO, int Propertycode)
+        //{
+        //    _logger.LogInformation("GET request received at GetNCLRedisData");
+        //    try
+        //    {
+        //        string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
+        //        var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
+        //        return Ok(cachedData);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
+        //        throw;
+        //    }
+        //}
         [HttpPost("GET_PROPERTY_CTZ_PROPERTY")]
         public ActionResult<int> Insert_PROPERTY_ADDRESS_TEMP(Insert_PROPERTY_ADDRESS_TEMP insertCITZProperty)
         {
@@ -736,12 +736,12 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region  Tax Events
         [HttpGet("GetTaxDetails")]
-        public ActionResult<DataSet> GetTaxDetails(string applicationNo)
+        public ActionResult<DataSet> GetTaxDetails(string applicationNo,long propertycode, long P_BOOKS_PROP_APPNO,string loginId)
         {
             _logger.LogInformation("GET request received at GetTaxDetails");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetTaxDetails(applicationNo);
+                DataSet dataSet = _IBBMPBOOKMODULE.GetTaxDetails(applicationNo,  propertycode,  P_BOOKS_PROP_APPNO, loginId);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -813,6 +813,91 @@ namespace BBMPCITZAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while executing stored procedure.NameMatchScore2323");
+                throw;
+            }
+        }
+        [HttpGet("GET_PROPERTY_AREA_DIMENSION_DATA")]
+        public ActionResult<DataSet> GET_PROPERTY_AREA_DIMENSION_DATA(int BOOKS_PROP_APPNO, int Propertycode)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_AREA_DIMENSION_DATA");
+            try
+            {
+                DataSet dataSet = objModule.GET_PROPERTY_AREA_DIMENSION_DATA(BOOKS_PROP_APPNO, Propertycode);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.InsertBBMPPropertyTaxResponseObjectionEvents");
+                throw;
+            }
+        }
+        [HttpGet("GET_MST_FEATURE_BY_FEATUREHEADID")]
+        public ActionResult<DataSet> GET_MST_FEATURE_BY_FEATUREHEADID(int FEATUREHEADID)
+        {
+            _logger.LogInformation("GET request received at GET_MST_FEATURE_BY_FEATUREHEADID");
+            try
+            {
+                DataSet dataSet = objModule.GET_MST_FEATURE_BY_FEATUREHEADID(FEATUREHEADID);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GET_MST_FEATURE_BY_FEATUREHEADID");
+                throw;
+            }
+        }
+        [HttpGet("GET_PROPERTY_CATEGORYWISE_DATA")]
+        public ActionResult<DataSet> GET_PROPERTY_CATEGORYWISE_DATA(int BOOKS_PROP_APPNO, int Propertycode)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_CATEGORYWISE_DATA");
+            try
+            {
+                DataSet dataSet = objModule.GET_PROPERTY_AREA_DIMENSION_DATA(BOOKS_PROP_APPNO, Propertycode);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_CATEGORYWISE_DATA");
+                throw;
+            }
+        }
+        [HttpGet("VALIDATE_CATEGORY_DOC_UPLOAD")]
+        public ActionResult<DataSet> VALIDATE_CATEGORY_DOC_UPLOAD(int BOOKS_PROP_APPNO, int Propertycode)
+        {
+            _logger.LogInformation("GET request received at VALIDATE_CATEGORY_DOC_UPLOAD");
+            try
+            {
+                DataSet dataSet = objModule.GET_PROPERTY_AREA_DIMENSION_DATA(BOOKS_PROP_APPNO, Propertycode);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.VALIDATE_CATEGORY_DOC_UPLOAD");
+                throw;
+            }
+        }
+        [HttpGet("GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY")]
+        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY(int Propertycode)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY");
+            try
+            {
+                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY( Propertycode);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY");
                 throw;
             }
         }

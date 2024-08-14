@@ -8,9 +8,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using static BBMPCITZAPI.Controllers.AuthController;
 using Microsoft.OpenApi.Models;
-using StackExchange.Redis;
+//using StackExchange.Redis;
 using System.Configuration;
-using System.Text.Json.Serialization;
+//using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(options =>
@@ -32,19 +32,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 // Add services to the container.
-var redisConnectionString = builder.Configuration.GetValue<string>("Redis");
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
-builder.Services.AddControllers()
- .AddJsonOptions(options =>
-  {
-      options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-      options.JsonSerializerOptions.WriteIndented = true;
-  });
+//var redisConnectionString = builder.Configuration.GetValue<string>("Redis");
+//builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BBMP CITIZEN", Version = "v1" });
 
     // Configure JWT authentication in Swagger
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -76,7 +71,7 @@ builder.Services.Configure<BBMPSMSSETTINGS>(builder.Configuration.GetSection("BB
 builder.Services.Configure<PropertyDetails>(builder.Configuration.GetSection("PropertyDetails"));
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddSingleton<TokenService>();
-builder.Services.AddScoped<ICacheService, CacheService>();
+//builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // Read configuration from appsettings.json

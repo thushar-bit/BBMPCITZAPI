@@ -55,7 +55,7 @@ namespace BBMPCITZAPI.Services.Interfaces
          DataSet GetPropertySubClassByULBAndCategory(int PropCatID, int ulbcode);
         #endregion
         #region Tax Events
-        DataSet GetTaxDetails(string applicationNo);
+        DataSet GetTaxDetails(string applicationNo, long propertycode, long P_BOOKS_PROP_APPNO,string loginId);
          DataSet InsertBBMPPropertyTaxResponse(int UlbCode, string Json, string Response, string IpAddress, string Createdby, string oParamater);
         #endregion
         #region Objection Events

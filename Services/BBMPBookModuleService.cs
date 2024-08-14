@@ -1301,21 +1301,30 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet GetTaxDetails(string applicationNo)
+        public DataSet GetTaxDetails(string applicationNo,long propertycode,long P_BOOKS_PROP_APPNO,string loginId)
         {
             try
             {
                 string sp_name = "OBJECTIONMODULE.SEL_OFFLINE_PTAX_BY_APPLICATION";
 
                 OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64),
+                      new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int64),
                   new OracleParameter("P_APPLICATIONNO",OracleDbType.Varchar2),
+                       new OracleParameter("P_LOGINID",OracleDbType.Varchar2),
                    new OracleParameter("CUR_TAXDATA",OracleDbType.RefCursor),
                  
             };
-                prm[0].Value = applicationNo;
+                prm[0].Value = propertycode;
                 prm[0].Direction = ParameterDirection.Input;
-                prm[1].Value = null;
-                prm[1].Direction = ParameterDirection.Output;
+                prm[1].Value = P_BOOKS_PROP_APPNO;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = applicationNo;
+                prm[2].Direction = ParameterDirection.Input;
+                prm[3].Value = loginId;
+                prm[3].Direction = ParameterDirection.Input;
+                prm[4].Value = null;
+                prm[4].Direction = ParameterDirection.Output;
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)

@@ -15,10 +15,13 @@ using System.Runtime.InteropServices;
 using static System.Net.WebRequestMethods;
 using NUPMS_BA;
 using System.Xml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BBMPCITZAPI.Controllers
 {
+
     [ApiController]
+    [Authorize]
     [Route("v1/E-KYCAPI")]
     public class EKYCController : ControllerBase
     {
@@ -313,13 +316,34 @@ namespace BBMPCITZAPI.Controllers
         {
             try
             {
+                _logger.LogInformation("GET request received at UPDATE_EKYC_OWNER_VAULT_RESPONSE");
                 NUPMS_BA.ObjectionModuleBA objba = new ObjectionModuleBA();
                int response = objba.UPDATE_EKYC_OWNER_VAULT_RESPONSE(txnNo, success, vaultrefno, loginid);
+                _logger.LogInformation("GET  UPDATE_EKYC_OWNER_VAULT_RESPONSE response");
                 return response;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                throw;
+            }
+        }
+        [HttpGet("EKYCTEST")]
+        public string EKYCTEST(bool isConnected)
+        {
+            try
+            {
+                if (isConnected)
+                {
+                    return "React Page is CONNECTED TO API";
+                }
+                else
+                {
+                    return "React page is Not connected To API";
+                }
+            }
+            catch (Exception ex)
+            {
                 throw;
             }
         }
