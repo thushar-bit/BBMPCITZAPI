@@ -47,6 +47,7 @@ namespace BBMPCITZAPI.Controllers
         {
             try
             {
+                _logger.LogInformation( "EKYC Request Started");
                 string EKYCTokenURL = _ekycSettings.EKYCTokenURL!;
                 string EKYCDeptCode = _ekycSettings.EKYCDeptCode!;
                 string EKYCIntegrationKey = _ekycSettings.EKYCIntegrationKey!;
@@ -75,11 +76,13 @@ namespace BBMPCITZAPI.Controllers
 
                 EKYCTokenRequest = EKYCTokenRequest.Replace("transactionNo", transactionNo.ToString());
                 EKYCRequestURL = EKYCRequestURL + "?key=" + EKYCIntegrationKey + "&token=" + TokenValue;
+                obj.INSERT_EKYC_OWNER_TOKEN_RESPONSE(transactionNo, TokenValue, EKYCRequestURL, "crc");
+
                 return EKYCRequestURL;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing EKYC Request");
                 throw;
             }
         }
