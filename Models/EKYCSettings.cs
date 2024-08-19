@@ -27,5 +27,6 @@
     {
         public string PROPERTYCODE { get; set; }
         public string PROPERTYID { get; set; }
+        public string NameMatchURL { get; set; }    
     }
 }

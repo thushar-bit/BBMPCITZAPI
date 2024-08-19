@@ -9,6 +9,9 @@ using static BBMPCITZAPI.Services.BBMPBookModuleService;
 using NUPMS_BA;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
+using System.Net;
+using System.Text;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -795,25 +798,65 @@ namespace BBMPCITZAPI.Controllers
         public ActionResult<bool> GET_NameMatches(string ownerName1,string ownerName2)
         {
             _logger.LogInformation("GET request received at NameMatchScore2323");
-            try
-            {
-                float NAMEMATCHSCORE = _IBBMPBOOKMODULE.Fn_CPlus_NameMatchJulyFinal2023(ownerName1, ownerName2);
-              
-                //int NAMEMATCHSCORE = 27;
-                if (NAMEMATCHSCORE > 80)
+           
+                int nameMatchScore = 0;
+                string APIResponseStatus = "", APIResponse = "", jsonPayload = "";
+                try
                 {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                    string apiUrl = _PropertyDetails.NameMatchURL;
+                    //var parameters = new Dictionary<string, string> { { "name1", "" + name1 + "" }, { "name2", "" + name2 + "" } };
+                    ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.NameMatchScore2323");
-                throw;
+                    using (HttpClient client = new HttpClient())
+                    {
+                        jsonPayload = "{\"name1\": \"" + ownerName1 + "\", \"name2\": \"" + ownerName2 + "\"}";
+                        StringContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                        HttpResponseMessage response = client.PostAsync(apiUrl, content).Result;
+
+                        // Check if the response is successful (status code 200-299)
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Read the content as string
+                            string responseBody = response.Content.ReadAsStringAsync().Result;
+                            APIResponse = responseBody;
+
+                            JObject Obj_Json = JObject.Parse(responseBody);
+                            string requestStatus = (string)Obj_Json.SelectToken("Status");
+                            if (requestStatus == "Success")
+                            {
+                                APIResponseStatus = "SUCCESS" + response.StatusCode;
+                                nameMatchScore = (int)Obj_Json.SelectToken("Message");
+                            }
+                            else
+                            {
+                                string errormessage = (string)Obj_Json.SelectToken("Message");
+                                APIResponseStatus = "FAIL" + errormessage;
+                            }
+                        }
+                        else
+                        {
+                            APIResponse = Convert.ToString(response);
+                            APIResponseStatus = "FAIL" + response.StatusCode;
+                        }
+                    }
+                    if (nameMatchScore > 80)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError(ex, "CallNameMatchAPI");
+                    throw;
+
+                
             }
         }
         [HttpGet("GET_PROPERTY_AREA_DIMENSION_DATA")]

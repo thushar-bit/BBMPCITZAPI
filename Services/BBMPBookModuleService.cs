@@ -1374,22 +1374,10 @@ namespace BBMPCITZAPI.Services
         //will check this later.
         #endregion
 
-        [DllImport(@"D:\\NameMatchJulyFinal2023.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "_GetMatchScore")]
-        public static extern float CPlus_NameMatchJulyFinal2023(string n1, string n2);
+   //     [DllImport(@"D:\\NameMatchJulyFinal2023.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "_GetMatchScore")]
+        
 
-        public float Fn_CPlus_NameMatchJulyFinal2023(string n1_input, string n2_input)
-        {
-            float NameMatchPercentageResult = 0;
-            try
-            {
-                NameMatchPercentageResult = CPlus_NameMatchJulyFinal2023(n1_input, n2_input);
-            }
-            catch (Exception ex)
-            {
-                NameMatchPercentageResult = 0;
-            }
-            return NameMatchPercentageResult;
-        }
+      
         public DataSet GetUserCitizen(string userId)
         {
             string commandText = "BBMP.getUserPwd";
