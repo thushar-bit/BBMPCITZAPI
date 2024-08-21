@@ -69,6 +69,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<EKYCSettings>(builder.Configuration.GetSection("EKYCSettings"));
 builder.Services.Configure<BBMPSMSSETTINGS>(builder.Configuration.GetSection("BBMPSMSSETTINGS"));
 builder.Services.Configure<PropertyDetails>(builder.Configuration.GetSection("PropertyDetails"));
+builder.Services.Configure<KaveriSettings>(builder.Configuration.GetSection("KaveriSettings"));
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddSingleton<TokenService>();
 //builder.Services.AddScoped<ICacheService, CacheService>();

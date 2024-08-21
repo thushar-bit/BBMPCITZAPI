@@ -266,7 +266,7 @@ namespace BBMPCITZAPI.Controllers
                 string propertycode = _PropertyDetails.PROPERTYCODE;
                 string propertyid = _PropertyDetails.PROPERTYID;
                 _logger.LogInformation(" COPY_DATA_FROM_BBDDRAFT_NCLTEMP" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
-                int rowsEffected = objModule.COPY_DATA_FROM_BBDDRAFT_NCLTEMP(Convert.ToInt64(propertycode), Convert.ToString(LoginId));
+                DataSet rowsEffected = objModule.COPY_DATA_FROM_BBDDRAFT_NCLTEMP(Convert.ToInt64(propertycode), Convert.ToString(LoginId));
                 string json = JsonConvert.SerializeObject(rowsEffected, Formatting.Indented);
                 return Ok(json);
             }

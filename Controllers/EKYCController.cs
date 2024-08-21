@@ -26,24 +26,18 @@ namespace BBMPCITZAPI.Controllers
     public class EKYCController : ControllerBase
     {
         private readonly ILogger<EKYCController> _logger;
-        private readonly IConfiguration _configuration;
-        private readonly DatabaseService _databaseService;
-        private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
         private readonly EKYCSettings _ekycSettings;
         private readonly BBMPSMSSETTINGS _BBMPSMSSETTINGS;
 
-        public EKYCController(ILogger<EKYCController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<EKYCSettings> ekycSettings,
+        public EKYCController(ILogger<EKYCController> logger,  IOptions<EKYCSettings> ekycSettings,
             IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS)
         {
             _logger = logger;
-            _configuration = configuration;
-            _databaseService = databaseService;
-            _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _ekycSettings = ekycSettings.Value;
             _BBMPSMSSETTINGS = BBMPSMSSETTINGS.Value;
         }
         [HttpPost("RequestEKYC")]
-        public string GetEKYCRequest(int OwnerNumber,int BOOK_APP_NO,int PROPERTY_CODE)
+        public string GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
         {
             try
             {
@@ -57,7 +51,7 @@ namespace BBMPCITZAPI.Controllers
                 string EKYCRequestURL = _ekycSettings.EKYCRequestURL!;
               
                 string transacDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-                int transactionNo = 0;
+                long transactionNo = 0;
 
                 string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
                 EKYCTokenRequest = EKYCTokenRequest.Replace("\"", "'");
@@ -203,117 +197,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpPost]
-        [Route("api/ekyc")]
-        [ActionName("SaveEKYCResponseDetails")]
-        public HttpResponseMessage SaveEKYCResponseDetails(JObject jObject)
-        {
-            string response = string.Empty, jsonInput = string.Empty, VaultRefNumber = string.Empty, TxnNo = string.Empty;
-            string AddressEng = string.Empty, AddressKnd = string.Empty;
-            string OwnerNameEng = string.Empty, OwnerNameKnd = string.Empty;
-            string IdentifierNameEng = string.Empty, IdentifierNameKnd = string.Empty, maskedAadhaar = string.Empty;
-            string Gender = string.Empty, DateOfBirth = string.Empty;
-            bool isResponseStored = false;
-            byte[] photoBytes = null;
-            ObjectionModuleBA objObjectionModuleBA = new ObjectionModuleBA();
-
-            try
-            {
-                jsonInput = JsonConvert.SerializeObject(jObject);
-                XmlDocument xmlDocEKYC = new XmlDocument();
-                string jsonStringEKYC = "{ \"EKYCNode\": {" + jsonInput.Trim().TrimStart('{').TrimEnd('}') + "} }";
-                xmlDocEKYC = (XmlDocument)JsonConvert.DeserializeXmlNode(jsonStringEKYC);
-                DataSet dsEKYCData = new DataSet();
-                dsEKYCData.ReadXml(new XmlNodeReader(xmlDocEKYC));
-
-                if (dsEKYCData != null && dsEKYCData.Tables.Count > 0 && dsEKYCData.Tables["EKYCNode"].Rows.Count > 0)
-                {
-                    VaultRefNumber = Convert.ToString(dsEKYCData.Tables["EKYCNode"].Rows[0]["VaultRefNumber"]);
-                    TxnNo = Convert.ToString(dsEKYCData.Tables["EKYCNode"].Rows[0]["TxnNo"]);
-
-                    objObjectionModuleBA.UPDATE_EKYC_OWNER_API_RESPONSE(Convert.ToInt32(TxnNo), VaultRefNumber, jsonInput);
-                    isResponseStored = true;
-
-                    if (Convert.ToString(dsEKYCData.Tables["EKYCNode"].Rows[0]["FinalStatus"]) == "S")
-                    {
-                        if (dsEKYCData.Tables["eKYCData"].Rows.Count > 0)
-                        {
-                            AddressEng += Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["house"]);
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["street"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["street"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["loc"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["loc"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["vtc"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["vtc"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["subdist"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["subdist"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["dist"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["dist"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["state"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["state"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["country"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["country"])) : "";
-                            AddressEng += (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["pc"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["pc"])) : "";
-
-                            OwnerNameEng = (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["name"]) != "null") ? Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["name"]) : "";
-                            IdentifierNameEng = (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["co"]) != "null") ? Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["co"]) : "";
-                            Gender = (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["gender"]) != "null") ? Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["gender"]) : "";
-                            DateOfBirth = (Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["dob"]) != "null") ? Convert.ToString(dsEKYCData.Tables["eKYCData"].Rows[0]["dob"]) : "";
-
-                            if (dsEKYCData.Tables["localKYCData"].Rows.Count > 0)
-                            {
-                                AddressKnd += Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["house"]);
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["street"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["street"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["loc"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["loc"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["vtc"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["vtc"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["subdist"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["subdist"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["dist"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["dist"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["state"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["state"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["country"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["country"])) : "";
-                                AddressKnd += (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["pc"]) != "null") ? ("," + Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["pc"])) : "";
-
-                                OwnerNameKnd = (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["name"]) != "null") ? Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["name"]) : "";
-                                IdentifierNameKnd = (Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["co"]) != "null") ? Convert.ToString(dsEKYCData.Tables["localKYCData"].Rows[0]["co"]) : "";
-                            }
-
-                            response = "{Status:Success}";
-                        }
-                        else
-                        {
-                            response = "{Status:Failure,Message:NoeKYCData}";
-                        }
-                        maskedAadhaar = Convert.ToString(dsEKYCData.Tables["EKYCNode"].Rows[0]["maskedAadhaar"]);
-                        string photo = Convert.ToString(dsEKYCData.Tables["EKYCNode"].Rows[0]["Photo"]);
-                        if (photo != "")
-                        {
-                            try
-                            {
-                                photoBytes = Convert.FromBase64String(photo);
-                            }
-                            catch (Exception ex1)
-                            {
-
-                            }
-                        }
-                    }
-                    else
-                    {
-                        response = "{Status:Failure,Message:FinalStatusNotS}";
-                    }
-                }
-                else
-                {
-                    response = "{Status:Failure,Message:NoEKYCNodeData}";
-                }
-            }
-            catch (Exception ex)
-            {
-                response = "{Status:Failure,Message:" + ex.Message + "}";
-            }
-            finally
-            {
-                if (!isResponseStored)
-                    objObjectionModuleBA.UPDATE_EKYC_OWNER_API_RESPONSE(Convert.ToInt32(TxnNo), VaultRefNumber, jsonInput);
-                objObjectionModuleBA.UPDATE_EKYC_OWNER_API_RESPONSE_OWNERUPDATE(Convert.ToInt32(TxnNo), OwnerNameKnd, OwnerNameEng, IdentifierNameKnd, IdentifierNameEng, AddressKnd, AddressEng, photoBytes, response, maskedAadhaar, Gender, DateOfBirth);
-            }
-            return new HttpResponseMessage
-            {
-                Content = new StringContent(response, Encoding.UTF8, "application/xml")
-            };
-        }
+      
         [HttpGet("UPDATE_EKYC_OWNER_VAULT_RESPONSE")]
         public int UPDATE_EKYC_OWNER_VAULT_RESPONSE(int txnNo,string success,string vaultrefno,string loginid)
         {

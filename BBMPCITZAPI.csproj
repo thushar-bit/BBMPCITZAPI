@@ -32,6 +32,9 @@
     <Reference Include="NUPMS_BA">
       <HintPath>..\NUPMS_Citizen\bin\NUPMS_BA.dll</HintPath>
     </Reference>
+    <Reference Include="NUPMS_BO">
+      <HintPath>..\projectmapseaasthi\NUMPS\NUPMS_BO\bin\Debug\NUPMS_BO.dll</HintPath>
+    </Reference>
     <Reference Include="NUPMS_DA">
       <HintPath>..\NUPMS_Citizen\bin\NUPMS_DA.dll</HintPath>
     </Reference>

@@ -29,4 +29,14 @@
         public string PROPERTYID { get; set; }
         public string NameMatchURL { get; set; }    
     }
+    public class KaveriSettings
+    {
+        public string KaveriUsername { get; set; }
+        public string KaveriPassword { get; set; }
+        public string KaveriPublicKey { get; set; }
+        public string KaveriECAPI { get; set; }
+        public string KaveriDocDetailsAPI { get; set; }
+        public string KaveriECDocAPI { get; set; }
+
+    }
 }
