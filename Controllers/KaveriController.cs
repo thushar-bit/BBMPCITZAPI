@@ -160,10 +160,14 @@ namespace BBMPCITZAPI.Controllers
                     if (responseMessage == "Sucess")
                     {
                         string base64String = (string)Obj_Json.SelectToken("base64");
-                        return Ok(base64String);
+                        return Ok(new { success = true, data = base64String });
+                    }
+                    else
+                    {
+                        return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {responseMessage}" });
                     }
                 }
-                return BadRequest();
+                return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {respStat}" });
             }
             catch (Exception ex)
             {
