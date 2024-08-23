@@ -63,6 +63,13 @@
             public string pageCount { get; set; }
             public string documentReference { get; set; }
         }
+        public class EcData
+        {
+            public string Description { get; set; }
+            public string DISTRICT { get; set; }
+           
+        }
+
 
 
         public class KAVERI_API_DOC_DETAILS_RESPONSE

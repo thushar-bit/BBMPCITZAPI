@@ -77,6 +77,24 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("GetWardCordinates")]
+        public ActionResult<DataSet> GetWardCordinates(int wardNumber)
+        {
+            _logger.LogInformation("GET request received at GetWardCordinates");
+            try
+            {
+
+                var dataSet = objModule.GetWardCoordinates(wardNumber);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure GetWardCordinates.");
+                throw;
+            }
+        }
         [HttpGet("LOAD_BBD_RECORDS_BY_WARD")]
         public ActionResult<DataSet> LOAD_BBD_RECORDS_BY_WARD(int ZoneId, int WardId)
         {
@@ -220,15 +238,15 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-       
+
         [HttpGet("Get_Ctz_ObjectionModPendingAppl")]
-        public ActionResult<string> Get_Ctz_ObjectionModPendingAppl(string LoginId)
+        public ActionResult<string> Get_Ctz_ObjectionModPendingAppl(string LoginId,string propertycode, string propertyid)
         {
             _logger.LogInformation("GET request received at Get_Ctz_ObjectionModPendingAppl");
             try
             {
-                string propertycode = _PropertyDetails.PROPERTYCODE;
-                string propertyid = _PropertyDetails.PROPERTYID;
+              //  string propertycode = _PropertyDetails.PROPERTYCODE;
+               // string propertyid = _PropertyDetails.PROPERTYID;
                 _logger.LogInformation(" Get_Ctz_ObjectionModPendingAppl" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
                 DataSet dsProperties = objModule.Get_Ctz_ObjectionModPendingAppl("EID", LoginId, propertyid, "", 0, "");
 
@@ -258,13 +276,13 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("COPY_DATA_FROM_BBDDRAFT_NCLTEMP")]
-        public ActionResult<string> COPY_DATA_FROM_BBDDRAFT_NCLTEMP(string LoginId)
+        public ActionResult<string> COPY_DATA_FROM_BBDDRAFT_NCLTEMP(string LoginId, string propertycode, string propertyid)
         {
             _logger.LogInformation("GET request received at COPY_DATA_FROM_BBDDRAFT_NCLTEMP");
             try
             {
-                string propertycode = _PropertyDetails.PROPERTYCODE;
-                string propertyid = _PropertyDetails.PROPERTYID;
+          //      string propertycode = _PropertyDetails.PROPERTYCODE;
+            //    string propertyid = _PropertyDetails.PROPERTYID;
                 _logger.LogInformation(" COPY_DATA_FROM_BBDDRAFT_NCLTEMP" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
                 DataSet rowsEffected = objModule.COPY_DATA_FROM_BBDDRAFT_NCLTEMP(Convert.ToInt64(propertycode), Convert.ToString(LoginId));
                 string json = JsonConvert.SerializeObject(rowsEffected, Formatting.Indented);

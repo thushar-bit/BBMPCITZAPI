@@ -159,8 +159,10 @@ namespace BBMPCITZAPI.Controllers
                     string responseMessage = (string)Obj_Json.SelectToken("responseMessage");
                     if (responseMessage == "Sucess")
                     {
-                        string base64String = (string)Obj_Json.SelectToken("base64");
-                        return Ok(new { success = true, data = base64String });
+                        string base64String = (string)Obj_Json.SelectToken("json");
+                        var ECdocumentDetails = JsonConvert.DeserializeObject<KaveriData.EcData>(base64String);
+                        // string d = JsonConvert.DeserializeObject(s);
+                        return Ok(new { success = true, data = ECdocumentDetails });
                     }
                     else
                     {
