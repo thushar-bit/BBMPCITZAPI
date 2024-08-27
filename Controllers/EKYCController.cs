@@ -231,6 +231,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.");
                 throw;
             }
         }

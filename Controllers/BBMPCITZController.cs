@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Oracle.ManagedDataAccess.Client;
 using BBMPCITZAPI.Models;
 using BBMPCITZAPI.Database;
 using System.Data;
 using BBMPCITZAPI.Services.Interfaces;
 using Newtonsoft.Json;
-using static BBMPCITZAPI.Services.BBMPBookModuleService;
-using NUPMS_BA;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
+using Microsoft.Reporting.Map.WebForms.BingMaps;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -95,24 +93,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpGet("LOAD_BBD_RECORDS_BY_WARD")]
-        public ActionResult<DataSet> LOAD_BBD_RECORDS_BY_WARD(int ZoneId, int WardId)
-        {
-            _logger.LogInformation("GET request received at LOAD_BBD_RECORDS_BY_WARD");
-            try
-            {
-                
-                var dataSet = NUMPSdata.GetBbdDraft(ZoneId,WardId);
-                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-             
-                return Ok(json);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while executing stored procedure LOAD_BBD_RECORDS_BY_WARD.");
-                throw;
-            }
-        }
+       
         [HttpGet("LOAD_BBD_RECORDS")]
         public ActionResult<DataSet> LOAD_BBD_RECORDS(int ZoneId, int WardId, int SerachType, string Search)
         {
@@ -120,7 +101,7 @@ namespace BBMPCITZAPI.Controllers
             try
             {
 
-                var dataSet = NUMPSdata.GetBbdDraft( ZoneId,  WardId,  SerachType,  Search);
+                var dataSet = objModule.GET_EKHATA_BBD_RECORDS( ZoneId,  WardId,  SerachType,  Search);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -132,7 +113,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT")]
-        public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int propertyid)
+        public  IActionResult GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int propertyid)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_BBD_DRAFT");
             try
@@ -780,6 +761,23 @@ namespace BBMPCITZAPI.Controllers
             try
             {
                 DataSet dataSet = _IBBMPBOOKMODULE.InsertBBMPPropertyTaxResponse( UlbCode,  Json,  Response,  IpAddress,  Createdby,  oParamater);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure InsertBBMPPropertyTaxResponse.");
+                throw;
+            }
+        }
+        [HttpPost("INS_NCL_PROPERTY_SUBCLASS")]
+        public ActionResult<int> INS_NCL_PROPERTY_SUBCLASS(Int64 BOOKS_PROP_APPNO, Int64 propertyCode, int CLASSIFICATIONID, int SUBCLASSIFICATIONID, string CREATEDBY, string? SUBCLASSIFICATION)
+        {
+            _logger.LogInformation("GET request received at InsertBBMPPropertyTaxResponse");
+            try
+            {
+                int dataSet = objModule.INS_NCL_PROPERTY_SUBCLASS(BOOKS_PROP_APPNO, propertyCode, CLASSIFICATIONID, SUBCLASSIFICATIONID, CREATEDBY, SUBCLASSIFICATION);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

@@ -213,6 +213,9 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_NSODDSITE2FT",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_NSODDSITE3FT",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_NSODDSITE4FT",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_SIDE9",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_SIDE10",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_OddSiteSides",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
                     new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
                     };
@@ -234,8 +237,11 @@ namespace BBMPCITZAPI.Services
                 prm[14].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE2FT;
                 prm[15].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE3FT;
                 prm[16].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.NSODDSITE4FT;
-                prm[17].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
-                prm[18].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.P_BOOKS_PROP_APPNO;
+                prm[17].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.SIDE9;
+                prm[18].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.SIDE10;
+                prm[19].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.OddSiteSides;
+                prm[20].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
+                prm[21].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.P_BOOKS_PROP_APPNO;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }

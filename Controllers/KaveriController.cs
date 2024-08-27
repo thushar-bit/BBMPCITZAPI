@@ -1,15 +1,11 @@
 ﻿using BBMPCITZAPI.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
-using System.DirectoryServices.Protocols;
 using System.Net;
 using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
 using System.Text;
 
 namespace BBMPCITZAPI.Controllers
@@ -51,9 +47,13 @@ namespace BBMPCITZAPI.Controllers
                 return Convert.ToBase64String(encryptedData);
             }
         }
+        private class TransactionDetails
+        {
+            public HttpResponseMessage httpResponseMessage {  get; set; }   
+            public Int64 transactionId { get; set; }   
+        }
 
-
-        private HttpResponseMessage KaveriAPIRequest(string urlKeyWord, string RegistrationNoECNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
+        private async Task<TransactionDetails> KaveriAPIRequest(string urlKeyWord, string RegistrationNoECNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
             Int64 transactionNo = 0;
             //   ViewState["Kaveri_TransactionNo"] = transactionNo;
@@ -69,44 +69,49 @@ namespace BBMPCITZAPI.Controllers
             {
                 requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
                 //Json = "{\r\n  \"username\": \"" + username + "\",\r\n  \"password\": \"" + password + "\",\r\n  \"finalRegNumber\": \"" + RegistrationNo + "\"\r\n}";
-                Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"finalRegNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
-                transactionNo = obj.INS_KAVERI_API_DOCUMENT_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
+               Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"finalRegNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
+           //     transactionNo = obj.INS_KAVERI_API_DOCUMENT_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
             }
             else if (urlKeyWord == "KaveriECDocAPI")
             {
                 requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
                 Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
              //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
-                transactionNo = obj.INS_KAVERI_API_ECDOC_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
+           //     transactionNo = obj.INS_KAVERI_API_ECDOC_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
             }
             // ViewState["Kaveri_TransactionNo"] = transactionNo;
 
             var content2 = new StringContent(Json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage httpResponse = client1.PostAsync(requestUri, content2).Result; //Request for Deed download
+            HttpResponseMessage httpResponse =await client1.PostAsync(requestUri, content2); //Request for Deed download
+            TransactionDetails trc = new()
+            {
+                httpResponseMessage = httpResponse,
+                transactionId = transactionNo,
 
-            return httpResponse;
+            };
+            return trc;
         }
         [HttpGet("GetKaveriDocData")]
-        public IActionResult GetKaveriDocData( string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
+        public async Task<IActionResult> GetKaveriDocData( string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
-            try
+             try
             {
 
                 //RegistrationNumber = "NMG-1-00224-2023-24";
 
-                HttpResponseMessage httpResponse = KaveriAPIRequest("KaveriDocDetailsAPI", RegistrationNoNumber, BOOKS_APP_NO, PropertyCode, LoginId);
-                var respornseContent = httpResponse.Content.ReadAsStringAsync().Result;
+                TransactionDetails httpResponse = await KaveriAPIRequest("KaveriDocDetailsAPI", RegistrationNoNumber, BOOKS_APP_NO, PropertyCode, LoginId);
+                var respornseContent = httpResponse.httpResponseMessage.Content.ReadAsStringAsync().Result;
                 APIResponse = respornseContent;
-                string respStat = httpResponse.StatusCode.ToString();
+                string respStat = httpResponse.httpResponseMessage.StatusCode.ToString();
 
                 if (respStat == "OK")
                 {
                     APIResponseStatus = "SUCCESS";
 
-                    string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_DOCUMENT_RESPONSE(Convert.ToInt64(1), APIResponseStatus, APIResponse);
+                //    string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_DOCUMENT_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse);
                     isResponseStored = true;
                     var response = JsonConvert.DeserializeObject<List<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>>(respornseContent);
                     var documentDetailsList = new List<KaveriData.DocumentDetails>();
@@ -134,7 +139,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GetKaveriECData")]
-        public IActionResult GetKaveriECData( string ECNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
+        public  async Task<IActionResult> GetKaveriECData(string ECNumber,string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
@@ -143,26 +148,48 @@ namespace BBMPCITZAPI.Controllers
 
                 //RegistrationNumber = "NMG-1-00224-2023-24";
 
-                HttpResponseMessage httpResponse = KaveriAPIRequest("KaveriECDocAPI", ECNumber, BOOKS_APP_NO, PropertyCode, LoginId);
-                var respornseContent = httpResponse.Content.ReadAsStringAsync().Result;
+                TransactionDetails httpResponse =await KaveriAPIRequest("KaveriECDocAPI", ECNumber, BOOKS_APP_NO, PropertyCode, LoginId);
+                var respornseContent = httpResponse.httpResponseMessage.Content.ReadAsStringAsync().Result;
                 APIResponse = respornseContent;
-                string respStat = httpResponse.StatusCode.ToString();
+                string respStat = httpResponse.httpResponseMessage.StatusCode.ToString();
 
                 if (respStat == "OK")
                 {
-                    JObject Obj_Json = JObject.Parse(respornseContent.Replace("[", "").Replace("]", ""));
+                    JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
                     string responseCode = (string)Obj_Json.SelectToken("responseCode");
                     APIResponseStatus = "SUCCESS";
 
-                    string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_ECDOC_RESPONSE(Convert.ToInt64(1), APIResponseStatus, APIResponse);
+                 //   string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_ECDOC_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse);
                     isResponseStored = true;
                     string responseMessage = (string)Obj_Json.SelectToken("responseMessage");
                     if (responseMessage == "Sucess")
                     {
                         string base64String = (string)Obj_Json.SelectToken("json");
-                        var ECdocumentDetails = JsonConvert.DeserializeObject<KaveriData.EcData>(base64String);
-                        // string d = JsonConvert.DeserializeObject(s);
-                        return Ok(new { success = true, data = ECdocumentDetails });
+                        List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
+                    
+                        var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
+                        bool DoesExist = documentSummaries.Contains(RegistrationNoNumber);
+
+                        if (DoesExist)
+                        {
+                            var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
+                            if (Dosc.DocSummary == RegistrationNoNumber)
+                            {
+                                //save in the database that it is the latest one flag .
+                                await GetKaveriDocData(RegistrationNoNumber, BOOKS_APP_NO, PropertyCode, LoginId);
+                                return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
+                            }
+                            else
+                            {
+                                //save in the database that it is not the latest one flag and also save the latest details of registered number in the db.
+                             await  GetKaveriDocData(Dosc.DocSummary, BOOKS_APP_NO, PropertyCode, LoginId);
+                                return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
+                            }
+                        }
+                        else
+                        {
+                            return Ok(new { success = true ,ECDataExists = DoesExist });
+                        }
                     }
                     else
                     {

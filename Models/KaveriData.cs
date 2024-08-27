@@ -65,9 +65,32 @@
         }
         public class EcData
         {
+            public List<string> Description { get; set; }
+            public string DocumentValuation { get; set; }
+            public string ExecutionDate { get; set; }
+            public List<string> Executants { get; set; }
+            public List<string> Claimants { get; set; }
+            public string Volume { get; set; }
+            public string Book { get; set; }
+            public string DocSummary { get; set; }
+            public string CrossReference { get; set; }
+            public string CorrectionNote { get; set; }
+            public string LiabilityNote { get; set; }
+        }
+
+        public class EcDocumentDetail
+        {
             public string Description { get; set; }
-            public string DISTRICT { get; set; }
-           
+            public string DocumentValuation { get; set; }
+            public DateTime ExecutionDate { get; set; }
+            public List<string> Executants { get; set; }
+            public List<string> Claimants { get; set; }
+            public string Volume { get; set; }
+            public string Book { get; set; }
+            public string DocumentSummary { get; set; }
+            public string CrossReference { get; set; }
+            public string CorrectionNote { get; set; }
+            public string LiabilityNote { get; set; }
         }
 
 
