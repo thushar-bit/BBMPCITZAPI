@@ -57,6 +57,7 @@ namespace BBMPCITZAPI.Controllers
 
         private async Task<TransactionDetails> KaveriAPIRequest(string urlKeyWord, string RegistrationNoECNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
+            _logger.LogInformation("GET request received at KaveriAPIRequest");
             Int64 transactionNo = 0;
             //   ViewState["Kaveri_TransactionNo"] = transactionNo;
             string Json = "";
@@ -69,6 +70,7 @@ namespace BBMPCITZAPI.Controllers
 
             if (urlKeyWord == "KaveriDocDetailsAPI")
             {
+                _logger.LogInformation("GET request received at  KaveriAPIRequest KaveriDocDetailsAPI");
                 requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
                 //Json = "{\r\n  \"username\": \"" + username + "\",\r\n  \"password\": \"" + password + "\",\r\n  \"finalRegNumber\": \"" + RegistrationNo + "\"\r\n}";
                Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"finalRegNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
@@ -76,6 +78,7 @@ namespace BBMPCITZAPI.Controllers
             }
             else if (urlKeyWord == "KaveriECDocAPI")
             {
+                _logger.LogInformation("GET request received at  KaveriAPIRequest KaveriECDocAPI");
                 requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
                 Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
              //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
@@ -99,7 +102,8 @@ namespace BBMPCITZAPI.Controllers
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
-             try
+            _logger.LogInformation("GET request received at GetKaveriDocData");
+            try
             {
 
                 //RegistrationNumber = "NMG-1-00224-2023-24";
@@ -156,6 +160,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GetKaveriDocData");
                 throw;
             }
         }
@@ -164,6 +169,7 @@ namespace BBMPCITZAPI.Controllers
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
+
             try
             {
 
@@ -179,19 +185,22 @@ namespace BBMPCITZAPI.Controllers
                     string responseCode = (string)Obj_Json.SelectToken("responseCode");
                     APIResponseStatus = "SUCCESS";
                     string KAVERIDOC_RESPONSE_ROWID = "";
-                     DataSet KAVERIDOC_RESPONSE = obj.INS_KAVERI_API_ECDOC_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse,2,3);
-                    DataTable dataTableByName = KAVERIDOC_RESPONSE.Tables["Table"];
-                    if (dataTableByName.Rows.Count > 0)
-                    {
-                        // Access the first row and the first column value
-                        DataRow row = dataTableByName.Rows[0];
-                         KAVERIDOC_RESPONSE_ROWID = row[0].ToString();
-                    }
+                    
                         isResponseStored = true;
                     string responseMessage = (string)Obj_Json.SelectToken("responseMessage");
                     if (responseMessage == "Sucess")
                     {
                         string base64String = (string)Obj_Json.SelectToken("json");
+                        byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
+                        DataSet KAVERIDOC_RESPONSE = obj.INS_KAVERI_API_ECDOC_RESPONSE(Convert.ToInt64(httpResponse.transactionId), APIResponseStatus,
+                            APIResponse, 2, 3, base64String1, Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode));
+                        DataTable dataTableByName = KAVERIDOC_RESPONSE.Tables["Table"];
+                        if (dataTableByName.Rows.Count > 0)
+                        {
+                            // Access the first row and the first column value
+                            DataRow row = dataTableByName.Rows[0];
+                            KAVERIDOC_RESPONSE_ROWID = row[0].ToString();
+                        }
                         List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
                     
                         var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
@@ -265,6 +274,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GetKaveriECData");
                 throw;
             }
         }
