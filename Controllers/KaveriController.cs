@@ -4,9 +4,11 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using static BBMPCITZAPI.Models.KaveriData;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -123,6 +125,25 @@ namespace BBMPCITZAPI.Controllers
                             {
                                 var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(responsevar.json);
                                 documentDetailsList.Add(documentDetails);
+                                obj.INS_NCL_PROPERTY_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
+                                    documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime, KAVERIDOC_RESPONSE_ROWID, LoginId);
+
+                                if (documentDetails.propertyinfo != null)
+                                {
+                                    foreach (var propertyinfo in documentDetails.propertyinfo)
+                                    {
+                                        obj.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
+                                        RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, KAVERIDOC_RESPONSE_ROWID, LoginId);
+                                    }
+                                }
+                                if (documentDetails.partyinfo != null)
+                                {
+                                    foreach (var party in documentDetails.partyinfo)
+                                    {
+                                        obj.INS_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber, party.partyname, party.address, party.idprooftypedesc, party.idproofnumber, party.partytypename,
+                                            party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId));
+                                    }
+                                }
                             }
                         } else
                         {
@@ -152,15 +173,21 @@ namespace BBMPCITZAPI.Controllers
                 var respornseContent = httpResponse.httpResponseMessage.Content.ReadAsStringAsync().Result;
                 APIResponse = respornseContent;
                 string respStat = httpResponse.httpResponseMessage.StatusCode.ToString();
-
                 if (respStat == "OK")
                 {
                     JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
                     string responseCode = (string)Obj_Json.SelectToken("responseCode");
                     APIResponseStatus = "SUCCESS";
-
-                    string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_ECDOC_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse);
-                    isResponseStored = true;
+                    string KAVERIDOC_RESPONSE_ROWID = "";
+                     DataSet KAVERIDOC_RESPONSE = obj.INS_KAVERI_API_ECDOC_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse,2,3);
+                    DataTable dataTableByName = KAVERIDOC_RESPONSE.Tables["Table"];
+                    if (dataTableByName.Rows.Count > 0)
+                    {
+                        // Access the first row and the first column value
+                        DataRow row = dataTableByName.Rows[0];
+                         KAVERIDOC_RESPONSE_ROWID = row[0].ToString();
+                    }
+                        isResponseStored = true;
                     string responseMessage = (string)Obj_Json.SelectToken("responseMessage");
                     if (responseMessage == "Sucess")
                     {
@@ -173,16 +200,54 @@ namespace BBMPCITZAPI.Controllers
                         if (DoesExist)
                         {
                             var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
+                            var parsedData = ParseDescription(Dosc.Description);
+                            
+
+
                             if (Dosc.DocSummary == RegistrationNoNumber)
                             {
-                                ////save in the database that it is the latest one flag .
-                                //await GetKaveriDocData(RegistrationNoNumber, BOOKS_APP_NO, PropertyCode, LoginId);
+                                obj.INS_NCL_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
+                                ECNumber, RegistrationNoNumber, "Y", Dosc.DocSummary, parsedData.District, parsedData.Taluka, parsedData.Village, parsedData.HobliOrTown, "article", Dosc.ExecutionDate, Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), LoginId);
+                                if (Dosc.Executants.Count() > 0)
+                                {
+                                    foreach (var i in Dosc.Executants)
+                                    {
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                 RegistrationNoNumber, "Y", Dosc.DocSummary, i, "E", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 1, "thushar", 100, LoginId);
+                                    }
+                                }
+                                if (Dosc.Claimants.Count() > 0)
+                                {
+                                    foreach (var i in Dosc.Claimants)
+                                    {
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 1, "thushar", 100, LoginId);
+                                    }
+                                }
                                 return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
                             }
                             else
                             {
-                                //save in the database that it is not the latest one flag and also save the latest details of registered number in the db.
-                       //      await  GetKaveriDocData(Dosc.DocSummary, BOOKS_APP_NO, PropertyCode, LoginId);
+                                obj.INS_NCL_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
+                                ECNumber, RegistrationNoNumber, "N", Dosc.DocSummary, parsedData.District, parsedData.Taluka, parsedData.Village, parsedData.HobliOrTown, "article", Dosc.ExecutionDate, Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), LoginId);
+                                
+                                if(Dosc.Executants.Count() > 0)
+                                {
+                                    foreach (var i in Dosc.Executants)
+                                    {
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                 RegistrationNoNumber, "N", Dosc.DocSummary, i, "E", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 1, "thushar", 100, LoginId);
+                                    }
+                                }
+                                if(Dosc.Claimants.Count()>0)
+                                {
+                                    foreach (var i in Dosc.Claimants)
+                                    {
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                RegistrationNoNumber, "N", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 1, "thushar", 100, LoginId);
+                                    }
+                                }
+                                await GetKaveriDocData(Dosc.DocSummary, BOOKS_APP_NO, PropertyCode, LoginId);
                                 return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
                             }
                         }
@@ -203,5 +268,47 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        private ECDataDescription ParseDescription(List<string> descriptions)
+        {
+            var parsedDescription = new ECDataDescription();
+
+            foreach (var description in descriptions)
+            {
+                var lines = description.Split('\n');
+
+                foreach (var line in lines)
+                {
+                    var parts = line.Split(':');
+
+                    if (parts.Length == 2)
+                    {
+                        var key = parts[0].Trim();
+                        var value = parts[1].Trim();
+
+                        switch (key)
+                        {
+                            case "DISTRICT":
+                                parsedDescription.District = value;
+                                break;
+                            case "TALUKA":
+                                parsedDescription.Taluka = value;
+                                break;
+                            case "HOBLI/TOWN":
+                                parsedDescription.HobliOrTown = value;
+                                break;
+                            case "INDEX II: VILLAGE":
+                                parsedDescription.Village = value;
+                                break;
+                            case "Survey No":
+                                parsedDescription.SurveyNo = value;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return parsedDescription;
+        }
+
     }
 }

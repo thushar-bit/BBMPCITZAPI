@@ -63,6 +63,15 @@
             public string pageCount { get; set; }
             public string documentReference { get; set; }
         }
+        public class ECDataDescription
+        {
+            public string District { get; set; }
+            public string Taluka { get; set; }
+            public string HobliOrTown { get; set; }
+            public string Village { get; set; }
+            public string SurveyNo { get; set; }
+        }
+
         public class EcData
         {
             public List<string> Description { get; set; }
