@@ -130,7 +130,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-    
+      
         //[HttpGet("GetBBDRedisData")]
         //public async Task<IActionResult> GetBBDRedisDeta(int propertyid)
         //{
@@ -148,7 +148,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //}
 
-       
+
         [HttpGet("GetMasterTablesData")]
         public ActionResult<DataSet> GetMasterTablesData(string UlbCode)
         {
