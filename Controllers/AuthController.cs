@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Net;
 using NUPMS_BA;
 using NUPMS_DA;
 using Oracle.ManagedDataAccess.Client;
@@ -227,6 +228,25 @@ namespace BBMPCITZAPI.Controllers
                 _logger.LogError(ex, "Error occurred while creating salt");
                 throw;
             }
+        }
+        [HttpGet("GetServerIpAddress")]
+        public IActionResult GetServerIp()
+        {
+            var host = Dns.GetHostName();
+            var ip = Dns.GetHostEntry(host)
+                        .AddressList
+                        .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        ?.ToString();
+
+            if (ip != null)
+            {
+                // Example: Expose the first three octets, mask the last octet
+                var ipParts = ip.Split('.');
+                var maskedIp = $"{ipParts[0]}.XXX.XXX.XXX";
+                return Ok(new { ip = maskedIp });
+            }
+
+             return Ok(new { ip = "Not Found" });
         }
 
     }

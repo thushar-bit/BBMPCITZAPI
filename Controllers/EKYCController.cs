@@ -21,7 +21,7 @@ namespace BBMPCITZAPI.Controllers
 {
 
     [ApiController]
-    [Authorize]
+    
     [Route("v1/E-KYCAPI")]
     public class EKYCController : ControllerBase
     {
@@ -36,6 +36,7 @@ namespace BBMPCITZAPI.Controllers
             _ekycSettings = ekycSettings.Value;
             _BBMPSMSSETTINGS = BBMPSMSSETTINGS.Value;
         }
+        [Authorize]
         [HttpPost("RequestEKYC")]
         public string GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
         {
@@ -49,7 +50,7 @@ namespace BBMPCITZAPI.Controllers
                 string EKYCServiceCode = _ekycSettings.EKYCServiceCode!;
                 string EKYCResponseRedirectURL = _ekycSettings.EKYCResponseRedirectURL!;
                 string EKYCRequestURL = _ekycSettings.EKYCRequestURL!;
-              
+                
                 string transacDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 long transactionNo = 0;
 
@@ -80,6 +81,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [Authorize]
         [HttpGet("EditOwnerDetailsFromEKYCData")]
         public ActionResult<DataSet> GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(int transactionNumber)
         {
@@ -197,7 +199,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-      
+        [Authorize]
         [HttpGet("UPDATE_EKYC_OWNER_VAULT_RESPONSE")]
         public int UPDATE_EKYC_OWNER_VAULT_RESPONSE(int txnNo,string success,string vaultrefno,string loginid)
         {
