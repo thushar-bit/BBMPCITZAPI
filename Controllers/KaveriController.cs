@@ -279,7 +279,7 @@ namespace BBMPCITZAPI.Controllers
                         {
 
                               var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
-                           // var Dosc = ECdocumentDetails.First(x => x.DocSummary == "NMG-1-00071-2023-24");
+                            //var Dosc = ECdocumentDetails.First(x => x.DocSummary == "NMG-1-00071-2023-24");
                             var parsedData = ParseDescription(Dosc.Description);
                             
 
@@ -292,7 +292,7 @@ namespace BBMPCITZAPI.Controllers
                                 {
                                     foreach (var i in Dosc.Executants)
                                     {
-                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
                                  RegistrationNoNumber, "Y", Dosc.DocSummary, i, "E", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, LoginId);
                                     }
                                 }
@@ -323,7 +323,7 @@ namespace BBMPCITZAPI.Controllers
                                                 Dosc.NameMatchScore = objNameMatchingResult.NameMatchScore > 60 ? "Matching" : "Not Matching";
 
 
-                                                obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                                obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
                               RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, LoginId);
                                                 break;
                                             }
@@ -370,7 +370,7 @@ namespace BBMPCITZAPI.Controllers
                                             {
                                                 Dosc.EkycOwnerName = objNameMatchingResult.EKYCOwnerName;
                                                 Dosc.NameMatchScore = objNameMatchingResult.NameMatchScore > 60 ? "Matching" : "Not Matching";
-                                                obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                                obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO),Convert.ToInt64(PropertyCode),
                               RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, LoginId);
                                                 break;
                                             }
