@@ -10,6 +10,7 @@ using static BBMPCITZAPI.Controllers.AuthController;
 using Microsoft.OpenApi.Models;
 //using StackExchange.Redis;
 using System.Configuration;
+using NUPMS_BA;
 //using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +75,7 @@ builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddSingleton<TokenService>();
 //builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
+builder.Services.AddScoped<INameMatchingService, NameMatchingService>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // Read configuration from appsettings.json
     .Enrich.FromLogContext()

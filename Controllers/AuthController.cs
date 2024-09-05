@@ -14,6 +14,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using static BBMPCITZAPI.Controllers.AuthController;
+using BBMPCITZAPI.Models;
+using Microsoft.Extensions.Options;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -26,14 +28,17 @@ namespace BBMPCITZAPI.Controllers
         private readonly DatabaseService _databaseService;
         private readonly TokenService _tokenService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
+        private readonly KaveriSettings _kaveriSettings;
 
-        public AuthController(ILogger<AuthController> logger, TokenService tokenService, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE)
+        public AuthController(ILogger<AuthController> logger, TokenService tokenService, IConfiguration configuration,
+             IOptions<KaveriSettings> kaveriSettings,DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE)
         {
             _logger = logger;
             _tokenService = tokenService;
             _configuration = configuration;
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
+            _kaveriSettings = kaveriSettings.Value;
         }
         NUPMS_BA.CitizenBA Citz = new NUPMS_BA.CitizenBA();
         public class TokenService
@@ -41,12 +46,14 @@ namespace BBMPCITZAPI.Controllers
             private readonly string _key;
             private readonly string _issuer;
             private readonly string _audience;
+            private readonly string _ServerIP;
 
             public TokenService(IConfiguration configuration)
             {
                 _key = configuration["Jwt:Key"];
                 _issuer = configuration["Jwt:Issuer"];
                 _audience = configuration["Jwt:Audience"];
+                _ServerIP = configuration["Jwt:ServerIP"];
             }
 
             public string GenerateToken(string username)
@@ -232,24 +239,9 @@ namespace BBMPCITZAPI.Controllers
         [HttpGet("GetServerIpAddress")]
         public IActionResult GetServerIp()
         {
-            var host = Dns.GetHostName();
-            var ip = Dns.GetHostEntry(host)
-                        .AddressList
-                        .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        ?.ToString();
-
-            if (ip != null)
-            {
-                // Example: Expose the first three octets, mask the last octet
-                var ipParts = ip.Split('.');
-                var maskedIp = $"{ipParts[0]}.XXX.XXX.XXX";
-                return Ok(new { ip = maskedIp });
+            string ipParts = _kaveriSettings.ServerIP;
+            var maskedIp = $"{ipParts}.XXX.XXX.XXX";
+            return Ok(new { ip = maskedIp });
             }
-
-             return Ok(new { ip = "Not Found" });
-        }
-
     }
-   
-
 }

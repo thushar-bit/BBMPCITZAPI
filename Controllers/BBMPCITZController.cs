@@ -22,17 +22,20 @@ namespace BBMPCITZAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
+ 
         private readonly PropertyDetails _PropertyDetails;
      //   private readonly ICacheService _cacheService;
 
-        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails)
-           // ICacheService cacheService)
+        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails
+            
+         )
         {
             _logger = logger;
             _configuration = configuration;
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _PropertyDetails = PropertyDetails.Value;
+          
           //  _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
@@ -810,71 +813,7 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region eSignCode
         #endregion
-        [HttpGet("NameMatchScore2323")]
-        public ActionResult<bool> GET_NameMatches(string ownerName1,string ownerName2)
-        {
-            _logger.LogInformation("GET request received at NameMatchScore2323");
-           
-                int nameMatchScore = 0;
-                string APIResponseStatus = "", APIResponse = "", jsonPayload = "";
-                try
-                {
-                    string apiUrl = _PropertyDetails.NameMatchURL;
-                    //var parameters = new Dictionary<string, string> { { "name1", "" + name1 + "" }, { "name2", "" + name2 + "" } };
-                    ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
-
-                    using (HttpClient client = new HttpClient())
-                    {
-                        jsonPayload = "{\"name1\": \"" + ownerName1 + "\", \"name2\": \"" + ownerName2 + "\"}";
-                        StringContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                        HttpResponseMessage response = client.PostAsync(apiUrl, content).Result;
-
-                        // Check if the response is successful (status code 200-299)
-                        if (response.IsSuccessStatusCode)
-                        {
-                            // Read the content as string
-                            string responseBody = response.Content.ReadAsStringAsync().Result;
-                            APIResponse = responseBody;
-
-                            JObject Obj_Json = JObject.Parse(responseBody);
-                            string requestStatus = (string)Obj_Json.SelectToken("Status");
-                            if (requestStatus == "Success")
-                            {
-                                APIResponseStatus = "SUCCESS" + response.StatusCode;
-                                nameMatchScore = (int)Obj_Json.SelectToken("Message");
-                            }
-                            else
-                            {
-                                string errormessage = (string)Obj_Json.SelectToken("Message");
-                                APIResponseStatus = "FAIL" + errormessage;
-                            }
-                        }
-                        else
-                        {
-                            APIResponse = Convert.ToString(response);
-                            APIResponseStatus = "FAIL" + response.StatusCode;
-                        }
-                    }
-                    if (nameMatchScore > 80)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                }
-                catch (Exception ex)
-                {
-
-                    _logger.LogError(ex, "CallNameMatchAPI");
-                    throw;
-
-                
-            }
-        }
+      
         [HttpGet("GET_PROPERTY_AREA_DIMENSION_DATA")]
         public ActionResult<DataSet> GET_PROPERTY_AREA_DIMENSION_DATA(int BOOKS_PROP_APPNO, int Propertycode)
         {

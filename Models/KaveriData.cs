@@ -79,6 +79,8 @@
             public string ExecutionDate { get; set; }
             public List<string> Executants { get; set; }
             public List<string> Claimants { get; set; }
+            public string EkycOwnerName { get;set; }
+            public string NameMatchScore { get; set; }    
             public string Volume { get; set; }
             public string Book { get; set; }
             public string DocSummary { get; set; }
@@ -128,6 +130,8 @@
             public string applicationType { get; set; }
             public string applicationTypeId { get; set; }
             public string presentdate { get; set; }
+          
+             
         }
 
         public class PropertyInfo
@@ -222,6 +226,8 @@
             public string poaname { get; set; }
             public string minorguardianname { get; set; }
             public string sex { get; set; }
+            public string NameMatchScore { get; set; }
+            public string EkycOwnerName { get; set; }
         }
 
         public class WitnessInfo

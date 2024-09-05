@@ -81,24 +81,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [Authorize]
-        [HttpGet("EditOwnerDetailsFromEKYCData")]
-        public ActionResult<DataSet> GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(int transactionNumber)
-        {
-            try
-            {
-                NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-                var dataSet = obj.GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(transactionNumber);
-                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
-
-                return Ok(json);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.");
-                throw;
-            }
-        }
+      
         private string GenerateRandomNumber()
         {
             string numbers = "1234567890";
