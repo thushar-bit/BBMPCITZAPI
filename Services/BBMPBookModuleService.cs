@@ -99,6 +99,112 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public DataSet GetMasterTablesData_React(string ULBCODE, string Page)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.GET_MST_DATA_ULB_REACT";
+                OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_ULBCODE",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("Page_Render", OracleDbType.Varchar2, ParameterDirection.Input),
+                  new OracleParameter("C_PROPCategory", OracleDbType.RefCursor, ParameterDirection.Output),
+              new OracleParameter("C_WARDMST",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_STREETMST",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_IDENTIFIERTYPE",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_FLOORNUM",OracleDbType.RefCursor,ParameterDirection.Output),
+              new OracleParameter("C_FEATUREHEAD",OracleDbType.RefCursor,ParameterDirection.Output),
+                 new OracleParameter("C_BUILDINGUSAGE",OracleDbType.RefCursor,ParameterDirection.Output),
+                    new OracleParameter("C_PROPERTYCLASS",OracleDbType.RefCursor,ParameterDirection.Output),
+                  new OracleParameter("C_PROPERTYSUBCLASS",OracleDbType.RefCursor,ParameterDirection.Output),
+
+                    };
+
+                prm[0].Value = ULBCODE;
+                prm[1].Value = Page;
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT stored procedure.");
+                throw;
+            }
+        }
+        public DataSet GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(string ULBCODE,long Propertycode, string Page)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT";
+                OracleParameter[] prm = new OracleParameter[]
+                {
+                new OracleParameter("P_ULBCODE", OracleDbType.Int32, ParameterDirection.Input),
+                new OracleParameter("P_PROPERTYCODE", OracleDbType.Int32, ParameterDirection.Input),
+                 new OracleParameter("Page_Render", OracleDbType.Varchar2, ParameterDirection.Input),
+                new OracleParameter("C_COUNT", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_MAIN", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_SITE", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_DIMENSION", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_COORDINATES", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_OWNERRECORD", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_BUILDINGTYPE", OracleDbType.RefCursor, ParameterDirection.Output),
+                new OracleParameter("C_APARTDET", OracleDbType.RefCursor, ParameterDirection.Output)
+                };
+                prm[0].Value = ULBCODE;
+                prm[1].Value = Propertycode;
+                prm[2].Value = Page;
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT stored procedure.");
+                throw;
+            }
+        }
+        public DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(int ULBCODE, long BOOKS_PROP_APPNO, long propertyCode,string Page)
+        {
+            string commandText = "OBJECTIONMODULE_REACT.GET_PROPERTY_PENDING_CITZ_NCLTEMP";
+            OracleParameter[] array = new OracleParameter[23]
+            {
+            new OracleParameter("P_ULBCODE", OracleDbType.Int32, ParameterDirection.Input),
+            new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64, ParameterDirection.Input),
+            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64, ParameterDirection.Input),
+             new OracleParameter("Page_Render", OracleDbType.Varchar2, ParameterDirection.Input),
+            new OracleParameter("C_COUNT", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_MAIN", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_SITE", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_DIMENSION", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_COORDINATES", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_OWNERRECORD", OracleDbType.RefCursor, ParameterDirection.Output),
+           
+            new OracleParameter("C_APARTDET", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_BUILDINGTYPE", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_DOCUPL", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_CLASSDOCS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_PROPADDRESS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_TAXDATA", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_BBDOWNERRECORD", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_KAVERI_DOC_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_KAVERI_PROP_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_KAVERI_PARTIES_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_KAVERIEC_PROP_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_KAVERIEC_PARTIES_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_PROP_BESCOM_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output)
+         
+            };
+            array[0].Value = ULBCODE;
+            array[1].Value = propertyCode;
+            array[2].Value = BOOKS_PROP_APPNO;
+            array[3].Value = Page;
+            try
+            {
+                return _databaseService.ExecuteDataset(commandText, array);
+            }
+            catch (OracleException ex)
+            {
+                throw ex;
+            }
+        }
 
         public DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int Propertycode)
         {
@@ -216,8 +322,12 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_SIDE9",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_SIDE10",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_OddSiteSides",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                    new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
+           
+                   
+                       new OracleParameter("P_SITEAREAREGMT",OracleDbType.Decimal,ParameterDirection.Input),
+                          new OracleParameter("P_SITEAREAREGFT",OracleDbType.Decimal,ParameterDirection.Input),
+                             new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.propertyCode;
@@ -240,8 +350,11 @@ namespace BBMPCITZAPI.Services
                 prm[17].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.SIDE9;
                 prm[18].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.SIDE10;
                 prm[19].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.OddSiteSides;
-                prm[20].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
-                prm[21].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.P_BOOKS_PROP_APPNO;
+               
+                prm[20].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.P_BOOKS_PROP_APPNO;
+                prm[21].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.ActualSqMt;
+                prm[22].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.ActualSqft;
+                prm[23].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }

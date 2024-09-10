@@ -39,6 +39,8 @@
         public decimal? SIDE9 { get;set; }
             public decimal? SIDE10 { get;set; }
             public decimal? OddSiteSides { get; set; }  
+        public decimal? ActualSqft { get; set; }
+        public decimal? ActualSqMt { get; set; }
         public string? loginId { get; set; }
         public int? P_BOOKS_PROP_APPNO { get; set; }  
     }

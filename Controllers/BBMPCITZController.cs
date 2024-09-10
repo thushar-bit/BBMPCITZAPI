@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
 using Microsoft.Reporting.Map.WebForms.BingMaps;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -170,7 +171,59 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("GetMasterTablesData_React")]
+        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(string UlbCode, string Page)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
+            try
+            {
+                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterTablesData_React(UlbCode, Page);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
+                throw;
+            }
+        }
+        [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React")]
+        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(string UlbCode,long propertyCode, string Page)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
+            try
+            {
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(UlbCode, propertyCode,Page);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
+                throw;
+            }
+        }
+        [HttpGet("GET_PROPERTY_PENDING_CITZ_NCLTEMP_React")]
+        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(int ULBCODE, long P_BOOKS_PROP_APPNO, long propertyCode, string Page)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
+            try
+            {
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(ULBCODE, P_BOOKS_PROP_APPNO,  propertyCode,  Page);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
+                throw;
+            }
+        }
     
+
         [HttpGet("GET_PROPERTY_PENDING_CITZ_NCLTEMP")]
         public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int P_BOOKS_PROP_APPNO, int Propertycode)
         {

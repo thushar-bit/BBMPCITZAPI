@@ -8,8 +8,14 @@ namespace BBMPCITZAPI.Services.Interfaces
     {
         #region InitialRegion
         DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int Propertycode);
+      
         DataSet GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int ULBCODE, int Propertycode);
         DataSet GetMasterTablesData(string ULBCODE);
+        public DataSet GetMasterTablesData_React(string ULBCODE, string Page);
+        public DataSet GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(string ULBCODE, long Propertycode, string Page);
+        public DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(int ULBCODE, long BOOKS_PROP_APPNO, long propertyCode, string Page);
+     
+       
         int Insert_PROPERTY_ADDRESS_TEMP(Insert_PROPERTY_ADDRESS_TEMP insertCITZProperty);
         #endregion
         #region AreaDimension
