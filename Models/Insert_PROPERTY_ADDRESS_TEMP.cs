@@ -6,6 +6,7 @@
         public int? STREETID { get; set; }
         public string? DOORNO { get; set; }
         public string? BUILDINGNAME { get; set; }
+        public string? STREETNAME { get; set; }
         public string? AREAORLOCALITY { get; set; }
         public string? LANDMARK { get; set; }
         public string? PINCODE { get; set; }

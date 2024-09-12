@@ -29,6 +29,12 @@
         public string PROPERTYID { get; set; }
         public string NameMatchURL { get; set; }    
     }
+    public class BescomSettings
+    {
+        public string BESCOMAPIURL { get; set; }
+        public string BESCOMAPIUsername { get; set; }
+        public string BESCOMAPIPassword { get; set; }
+    }
     public class KaveriSettings
     {
         public string KaveriUsername { get; set; }

@@ -257,6 +257,7 @@ namespace BBMPCITZAPI.Services
     new OracleParameter("P_DOORNO", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_BUILDINGNAME", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_AREAORLOCALITY", OracleDbType.Varchar2, ParameterDirection.Input),
+     new OracleParameter("P_STREETNAME", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_LANDMARK", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_PINCODE", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_PROPERTYPHOTO", OracleDbType.Blob, ParameterDirection.Input),
@@ -274,15 +275,16 @@ namespace BBMPCITZAPI.Services
                 prm[2].Value = insertCITZProperty.DOORNO;
                 prm[3].Value = insertCITZProperty.BUILDINGNAME;
                 prm[4].Value = insertCITZProperty.AREAORLOCALITY;
-                prm[5].Value = insertCITZProperty.LANDMARK;
-                prm[6].Value = insertCITZProperty.PINCODE;
-                prm[7].Value = insertCITZProperty.PROPERTYPHOTO;
-                prm[8].Value = insertCITZProperty.categoryId;  // Ensure this matches the type expected
-                prm[9].Value = insertCITZProperty.PUIDNo;
-                prm[10].Value = insertCITZProperty.loginId;
-                prm[11].Value = insertCITZProperty.P_BOOKS_PROP_APPNO;
-                prm[12].Value = insertCITZProperty.Latitude;
-                prm[13].Value = insertCITZProperty.Longitude;
+                prm[5].Value = insertCITZProperty.STREETNAME;
+                prm[6].Value = insertCITZProperty.LANDMARK;
+                prm[7].Value = insertCITZProperty.PINCODE;
+                prm[8].Value = insertCITZProperty.PROPERTYPHOTO;
+                prm[9].Value = insertCITZProperty.categoryId;  // Ensure this matches the type expected
+                prm[10].Value = insertCITZProperty.PUIDNo;
+                prm[11].Value = insertCITZProperty.loginId;
+                prm[12].Value = insertCITZProperty.P_BOOKS_PROP_APPNO;
+                prm[13].Value = insertCITZProperty.Latitude;
+                prm[14].Value = insertCITZProperty.Longitude;
 
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
