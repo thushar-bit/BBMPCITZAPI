@@ -116,7 +116,7 @@ namespace BBMPCITZAPI.Services
                  new OracleParameter("C_BUILDINGUSAGE",OracleDbType.RefCursor,ParameterDirection.Output),
                     new OracleParameter("C_PROPERTYCLASS",OracleDbType.RefCursor,ParameterDirection.Output),
                   new OracleParameter("C_PROPERTYSUBCLASS",OracleDbType.RefCursor,ParameterDirection.Output),
-
+                   new OracleParameter("C_MSTYEAR",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = ULBCODE;

@@ -134,7 +134,25 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-      
+        [HttpGet("GET_PROPERTY_BBD_Draft_Generated_Wards")]
+        public IActionResult GET_PROPERTY_BBD_Draft_Generated_Wards()
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_BBD_Draft_Generated_Wards");
+            try
+            {
+                //  string cacheKey = "BBD_DRAFT_KEY" + propertyid;
+                var dataSet = BBDBA.GetDraftGeneratedWard();
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                //  await _cacheService.SetCacheDataAsync(cacheKey, json);
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure GET_PROPERTY_BBD_Draft_Generated_Wards.");
+                throw;
+            }
+        }
+
         //[HttpGet("GetBBDRedisData")]
         //public async Task<IActionResult> GetBBDRedisDeta(int propertyid)
         //{
