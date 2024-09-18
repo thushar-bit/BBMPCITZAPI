@@ -40,7 +40,7 @@ namespace BBMPCITZAPI.Controllers
 
 
         [HttpPost("GetBescomData")]
-        public async Task<IActionResult> GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(long BOOKS_PROP_APPNO, long propertycode,long BescomAccountNumber,string LoginId,int propertytype
+        public async Task<IActionResult> GetBescomData(long BOOKS_PROP_APPNO, long propertycode,long BescomAccountNumber,string LoginId,int propertytype
             ,string FloorNumber)
         {
             string jsonPayload = "";
