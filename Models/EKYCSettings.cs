@@ -9,6 +9,7 @@
         public string? EKYCServiceCode { get; set; }
         public string? EKYCResponseRedirectURL { get; set; }
         public string? EKYCRequestURL { get; set; }
+        public string? EKYCApplnCode { get; set; }
     }
     public class BBMPSMSSETTINGS
     {
