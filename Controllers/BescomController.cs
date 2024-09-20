@@ -13,6 +13,7 @@ using System.Text;
 
 namespace BBMPCITZAPI.Controllers
 {
+    [Authorize]
     [Route("v1/Bescom")]
     [ApiController]
     public class BescomController : ControllerBase

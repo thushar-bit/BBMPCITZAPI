@@ -724,37 +724,37 @@ namespace BBMPCITZAPI.Controllers
         }
         #endregion
         #region Classification Document Upload Events
-        [HttpPost("INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP")]
-        public ActionResult<DataSet> INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(NCLClassPropIdentification nCLClassPropIdentification)
+        [HttpPost("INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP")]
+        public ActionResult<DataSet> INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP(NCLClassPropIdentification nCLClassPropIdentification)
         {
             _logger.LogInformation("GET request received at INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(nCLClassPropIdentification);
+                DataSet dataSet = _IBBMPBOOKMODULE.INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP(nCLClassPropIdentification);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
                 throw;
             }
         }
-        [HttpGet("DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP")]
-        public ActionResult<DataSet> DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID, int P_BOOKS_PROP_APPNOAPPNO)
+        [HttpGet("DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP")]
+        public ActionResult<DataSet> DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP(int PROPERTYCODE, int P_DOC_SCAN_ID, int P_BOOKS_PROP_APPNOAPPNO)
         {
-            _logger.LogInformation("GET request received at DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
+            _logger.LogInformation("GET request received at DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE,  DOCUMENTROWID, P_BOOKS_PROP_APPNOAPPNO);
+                DataSet dataSet = _IBBMPBOOKMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE, P_DOC_SCAN_ID, P_BOOKS_PROP_APPNOAPPNO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
                 throw;
             }
         }

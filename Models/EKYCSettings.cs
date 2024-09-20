@@ -37,6 +37,7 @@
     }
     public class KaveriSettings
     {
+        public string KaveriAPIKey { get; set; }
         public string KaveriUsername { get; set; }
         public string KaveriPassword { get; set; }
         public string KaveriPublicKey { get; set; }

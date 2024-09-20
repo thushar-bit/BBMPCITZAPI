@@ -1237,63 +1237,64 @@ namespace BBMPCITZAPI.Services
         }
         #endregion
         #region Classification Document Upload Events
-        public DataSet INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(NCLClassPropIdentification nCLClassPropIdentification)
+        public DataSet INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP(NCLClassPropIdentification nCLClassPropIdentification)
         {
             try
             {
-                string sp_name = "OBJECTIONMODULE.INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP";
+                string sp_name = "OBJECTIONMODULE.INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP";
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
+
               new OracleParameter("P_DOCUMENTTYPEID",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_CLASSIFICATIONID",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_SUBCLASSIFICATIONID",OracleDbType.Int32,ParameterDirection.Input),
+            
               new OracleParameter("P_DOCUMENTDETAILS",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTNUMBER",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTDATE",OracleDbType.Date,ParameterDirection.Input),
               new OracleParameter("P_DOCUMENTEXTENSION",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_SCANNEDDOCUMENT",OracleDbType.Blob,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output),
                
                     };
 
                 prm[0].Value = nCLClassPropIdentification.PROPERTYCODE;
-                prm[1].Value = nCLClassPropIdentification.DOCUMENTTYPEID;
-                prm[2].Value = nCLClassPropIdentification.CLASSIFICATIONID;
-                prm[3].Value = nCLClassPropIdentification.SUBCLASSIFICATIONID;
-                prm[4].Value = nCLClassPropIdentification.DOCUMENTDETAILS;
-                prm[5].Value = nCLClassPropIdentification.DOCUMENTNUMBER;
-                prm[6].Value = nCLClassPropIdentification.DOCUMENTDATE;
-                prm[7].Value = nCLClassPropIdentification.DOCUMENTEXTENSION;
-                prm[8].Value = nCLClassPropIdentification.SCANNEDDOCUMENT;
-                prm[9].Value = nCLClassPropIdentification.CREATEDBY;
-                prm[10].Value = nCLClassPropIdentification.P_BOOKS_PROP_APPNO;
+                prm[1].Value = nCLClassPropIdentification.P_BOOKS_PROP_APPNO;
+                prm[2].Value = nCLClassPropIdentification.DOCUMENTTYPEID;
+                prm[3].Value = nCLClassPropIdentification.DOCUMENTDETAILS;
+                prm[4].Value = nCLClassPropIdentification.DOCUMENTNUMBER;
+                prm[5].Value = nCLClassPropIdentification.DOCUMENTDATE;
+                prm[6].Value = nCLClassPropIdentification.DOCUMENTEXTENSION;
+                prm[7].Value = nCLClassPropIdentification.SCANNEDDOCUMENT;
+                prm[8].Value = nCLClassPropIdentification.CREATEDBY;
+               
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP stored procedure.");
                 throw;
             }
         }
-        public DataSet DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int DOCUMENTROWID,int P_BOOKS_PROP_APPNO)
+        public DataSet DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(int PROPERTYCODE, int P_DOC_SCAN_ID, int P_BOOKS_PROP_APPNO)
         {
             try
             {
-                string sp_name = "OBJECTIONMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP";
+                string sp_name = "OBJECTIONMODULE.DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP";
                 OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_DOCUMENTROWID",OracleDbType.Int32,ParameterDirection.Input),
-               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_DOC_SCAN_ID",OracleDbType.Int32,ParameterDirection.Input),
+               
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = PROPERTYCODE;
-                prm[1].Value = DOCUMENTROWID;
-                prm[2].Value = P_BOOKS_PROP_APPNO;
+                prm[1].Value = P_BOOKS_PROP_APPNO;
+                prm[2].Value = P_DOC_SCAN_ID;
+               
 
 
 
@@ -1301,7 +1302,7 @@ namespace BBMPCITZAPI.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP stored procedure.");
                 throw;
             }
         }
@@ -1324,7 +1325,7 @@ namespace BBMPCITZAPI.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.SEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP stored procedure.");
                 throw;
             }
         }
@@ -1350,7 +1351,7 @@ namespace BBMPCITZAPI.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS stored procedure.");
                 throw;
             }
         }
@@ -1375,7 +1376,7 @@ namespace BBMPCITZAPI.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.GetPropertySubClassByULBAndCategory stored procedure.");
                 throw;
             }
         }

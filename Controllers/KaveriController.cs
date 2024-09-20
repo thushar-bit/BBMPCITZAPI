@@ -73,7 +73,7 @@ namespace BBMPCITZAPI.Controllers
                 //   ViewState["Kaveri_TransactionNo"] = transactionNo;
                 string Json = "";
                 string rsaKeyDetails = "<RSAKeyValue><Modulus>" + Convert.ToString(_kaveriSettings.KaveriPublicKey) + " </Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
-                Uri requestUri = new Uri(_kaveriSettings.KaveriECAPI);
+                Uri requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
 
                 HttpClient client1 = new HttpClient();
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
@@ -84,14 +84,14 @@ namespace BBMPCITZAPI.Controllers
                     _logger.LogInformation("GET request received at  KaveriAPIRequest KaveriDocDetailsAPI");
                     requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
                     //Json = "{\r\n  \"username\": \"" + username + "\",\r\n  \"password\": \"" + password + "\",\r\n  \"finalRegNumber\": \"" + RegistrationNo + "\"\r\n}";
-                    Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"finalRegNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
+                    Json = "{\r\n \"apikey\":\""+ Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"finalRegNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
                     transactionNo = obj.INS_KAVERI_API_DOCUMENT_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
                 }
                 else if (urlKeyWord == "KaveriECDocAPI")
                 {
                     _logger.LogInformation("GET request received at  KaveriAPIRequest KaveriECDocAPI");
                     requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
-                    Json = "{\r\n \"apikey\":\"1\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
+                    Json = "{\r\n \"apikey\":\""+ Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
                     //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
                     transactionNo = obj.INS_KAVERI_API_ECDOC_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
                 }
@@ -142,19 +142,19 @@ namespace BBMPCITZAPI.Controllers
 
                     string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_DOCUMENT_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse);
                     isResponseStored = true;
-                    var response = JsonConvert.DeserializeObject<List<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>>(respornseContent);
+                    var response = JsonConvert.DeserializeObject<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>(respornseContent);
                     var documentDetailsList = new List<KaveriData.DocumentDetails>();
                     int NameMatchScore = 0;
                     int EKYC_OWNERNO = 0;
                     string EKYC_OWNERNAME = "";
                         
-                    foreach (var responsevar in response)
-                    {
-                        if (responsevar.responseCode == "1000")
+                    //foreach (var responsevar in response)
+                 //   {
+                        if (response.responseCode == "1000")
                         {
-                            if (!string.IsNullOrEmpty(responsevar.json))
+                            if (!string.IsNullOrEmpty(response.json))
                             {
-                                var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(responsevar.json);
+                                var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
                                 documentDetailsList.Add(documentDetails);
                                 obj.INS_NCL_PROPERTY_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
                                     documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime, KAVERIDOC_RESPONSE_ROWID, LoginId);
@@ -210,9 +210,9 @@ namespace BBMPCITZAPI.Controllers
                             }
                         } else
                         {
-                            return Ok(new { success = false, message = $"Kaveri Doc Details API returned bad response: {responsevar.responseCode}, {responsevar.responseMessage}" });
+                            return Ok(new { success = false, message = $"Kaveri Doc Details API returned bad response: {response.responseCode}, {response.responseMessage}" });
                         }
-                    }
+                    //}
                     return Ok(new { success = true, data = documentDetailsList });
                 }
                 return Ok(new { success = false, message = $"Kaveri Doc Details API returned bad response: {respStat}" });
@@ -223,7 +223,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [Authorize]
+       [Authorize]
         [HttpPost("GetKaveriECData")]
         public  async Task<IActionResult> GetKaveriECData(string ECNumber,string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId, List<ekycdata> ekycdatas)
         {
@@ -341,7 +341,7 @@ namespace BBMPCITZAPI.Controllers
                                 {
                                     foreach (var i in Dosc.Executants)
                                     {
-                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
                                  RegistrationNoNumber, "N", Dosc.DocSummary, i, "E", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, LoginId);
                                     }
                                 }
@@ -375,7 +375,7 @@ namespace BBMPCITZAPI.Controllers
                                         //                  break;
                                         //              }
                                         //          }
-                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(PropertyCode), Convert.ToInt64(BOOKS_APP_NO),
+                                        obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
                                           RegistrationNoNumber, "N", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, LoginId);
                                     }
                                 }

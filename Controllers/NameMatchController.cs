@@ -10,7 +10,7 @@ using System.Data;
 
 namespace BBMPCITZAPI.Controllers
 {
-    [Route("Name_Match")]
+    [Route("v1/Name_Match")]
     [ApiController]
     public class NameMatchController : ControllerBase
     {

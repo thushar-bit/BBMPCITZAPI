@@ -253,8 +253,8 @@
         public int? DOCUMENTID { get; set; }// NUMBER;
         public DateTime? DOCUMENTDATE { get; set; }// DATE;
         public int? DOCUMENTTYPEID { get; set; }// NUMBER;
-        public int? CLASSIFICATIONID { get; set; }
-        public int? SUBCLASSIFICATIONID { get; set; }
+       // public int? CLASSIFICATIONID { get; set; }
+       // public int? SUBCLASSIFICATIONID { get; set; }
 
         public string? CREATEDIP { get; set; }
         public int? P_BOOKS_PROP_APPNO { get; set; }
