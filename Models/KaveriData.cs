@@ -8,6 +8,11 @@
             public string responseMessage { get; set; }
             public List<string> eCdata { get; set; }
         }
+        public class ekycdata
+        {
+            public int OwnerNumber { get; set; }
+            public string OwnerName { get; set; }
+        }
 
         public class ECdataItem
         {

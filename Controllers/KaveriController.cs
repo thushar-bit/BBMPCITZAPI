@@ -114,11 +114,7 @@ namespace BBMPCITZAPI.Controllers
                 throw ex;
             }
         }
-        public class ekycdata
-        {
-            public int OwnerNumber { get; set; }
-            public string OwnerName { get; set; }
-        }
+      
         [Authorize]
         [HttpPost("GetKaveriDocData")]
         public async Task<IActionResult> GetKaveriDocData( string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId,List<ekycdata> ekycdatas )

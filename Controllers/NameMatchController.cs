@@ -4,8 +4,10 @@ using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using NUPMS_BA;
 using System.Data;
 
 namespace BBMPCITZAPI.Controllers
@@ -68,5 +70,68 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("SASNameMatch")]
+        public ActionResult<int> Get_SAS_Name_match(long propertyCode, long BOOK_APP_NO, string LoginId, List<KaveriData.ekycdata> ekycdatas)
+        {
+            try
+            {
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(555, BOOK_APP_NO, propertyCode, "ADDRESS_DETAILS");
+
+                Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();  
+                foreach (var ekyc in ekycdatas)
+                {
+                    dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
+                }
+                int ownerNumber = 1;
+                Dictionary<int, string> dicSASOwners = new Dictionary<int, string>();
+
+                string sasOwnerName = dataSet.Tables[0].Rows[0]["OWNERNAME"].ToString();
+                string SasApplicationNumber = dataSet.Tables[0].Rows[0]["APPLICATIONNUMBER"].ToString(); 
+                dicSASOwners.Add(ownerNumber, sasOwnerName);
+                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicSASOwners, dicEkycOwners);
+                foreach (var i in objFinalListNameMatchingResult)
+                {
+                    obj.INS_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(SasApplicationNumber, BOOK_APP_NO, propertyCode, sasOwnerName, i.OwnerNo, i.OwnerName, i.NameMatchScore, LoginId);
+                }
+                return 09;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        [HttpPost("KaveriNameMatch")]
+        public ActionResult<int> Get_Kaveri_Name_match(long propertyCode, long BOOK_APP_NO, string LoginId, List<KaveriData.ekycdata> ekycdatas)
+        {
+            try
+            {
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(555, BOOK_APP_NO, propertyCode, "KAVERI_DETAILS");
+
+                Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();
+                foreach (var ekyc in ekycdatas)
+                {
+                    dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
+                }
+                int ownerNumber = 1;
+                Dictionary<int, string> dicSASOwners = new Dictionary<int, string>();
+
+                string sasOwnerName = dataSet.Tables[0].Rows[0]["OWNERNAME"].ToString();
+                string SasApplicationNumber = dataSet.Tables[0].Rows[0]["APPLICATIONNUMBER"].ToString();
+                dicSASOwners.Add(ownerNumber, sasOwnerName);
+                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicSASOwners, dicEkycOwners);
+                foreach (var i in objFinalListNameMatchingResult)
+                {
+                    obj.INS_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(SasApplicationNumber, BOOK_APP_NO, propertyCode, sasOwnerName, i.OwnerNo, i.OwnerName, i.NameMatchScore, LoginId);
+                }
+                return 09;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }
