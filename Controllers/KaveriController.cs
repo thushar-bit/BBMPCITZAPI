@@ -117,7 +117,7 @@ namespace BBMPCITZAPI.Controllers
       
         [Authorize]
         [HttpPost("GetKaveriDocData")]
-        public async Task<IActionResult> GetKaveriDocData( string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId,List<ekycdata> ekycdatas )
+        public async Task<IActionResult> GetKaveriDocData( string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
@@ -168,41 +168,23 @@ namespace BBMPCITZAPI.Controllers
                                 if (documentDetails.partyinfo != null)
                                 {
                                     int ownerNumber = 1;
-                                    Dictionary<int, string> dicKaveriOwners = new Dictionary<int, string>();
-                                    foreach (var party in documentDetails.partyinfo)
-                                    {
-                                        if (party.partytypename == "Claimant")
-                                        {
-                                            dicKaveriOwners.Add(ownerNumber, party.partyname);
-                                            ownerNumber++;
-                                        }
-                                    }
-                                    Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();  //saving is done
-                                    foreach (var ekyc in ekycdatas)
-                                    {
-                                        dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
-                                    }
-                                    List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                                  
                                             foreach (var party in documentDetails.partyinfo)
                                     {
-                                        objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicKaveriOwners, dicEkycOwners);
-
-                                        foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
-                                        {
-                                            if (party.partytypename == "Claimant" && party.partyname == objNameMatchingResult.OwnerName)
-                                            {
-                                                EKYC_OWNERNAME = objNameMatchingResult.EKYCOwnerName;
-                                                EKYC_OWNERNO = objNameMatchingResult.EKYCOwnerNo;
-                                                NameMatchScore = objNameMatchingResult.NameMatchScore;
-                                                party.EkycOwnerName = objNameMatchingResult.EKYCOwnerName;
-                                                party.NameMatchScore = objNameMatchingResult.NameMatchScore > 60 ? "Matched" : "Not Matching";
-                                                break;
-                                            }
-                                        }
+                                      
                                         obj.INS_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber, party.partyname, party.address, party.idprooftypedesc, party.idproofnumber, party.partytypename,
-                                            party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId), EKYC_OWNERNO, EKYC_OWNERNAME, NameMatchScore);
+                                            party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId), ownerNumber, "", 0);
                                     }
                                 }
+                                if(documentDetails.propertyschedules != null)
+                            {
+                                long totalKavArea = 0;
+                                    foreach(var i in documentDetails.propertyschedules)
+                                    {  
+                                        totalKavArea += Convert.ToInt64(i.totalarea);
+                                    }
+                                    //update total area sp here 
+                            }
                             }
                         } else
                         {
@@ -221,7 +203,7 @@ namespace BBMPCITZAPI.Controllers
         }
        [Authorize]
         [HttpPost("GetKaveriECData")]
-        public  async Task<IActionResult> GetKaveriECData(string ECNumber,string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId, List<ekycdata> ekycdatas)
+        public  async Task<IActionResult> GetKaveriECData(string ECNumber,string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
@@ -295,35 +277,13 @@ namespace BBMPCITZAPI.Controllers
                                 if (Dosc.Claimants.Count() > 0)
                                 {
                                     int ownerNumber = 1;
-                                    Dictionary<int, string> dicClaimant = new Dictionary<int, string>();
-                                    foreach (var Claimant in Dosc.Claimants)
-                                    {
-                                        dicClaimant.Add(ownerNumber, Claimant);
-                                            ownerNumber++;
-                                    }
-                                    Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();  //saving is done
-                                    foreach (var ekyc in ekycdatas)
-                                    {
-                                        dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
-                                    }
-                                    List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-                                    objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicClaimant, dicEkycOwners);
+                                   
                                     foreach (var i in Dosc.Claimants)
                                     {
-                                        foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
-                                        {
-                                            if (i == objNameMatchingResult.OwnerName)
-                                            {
-
-                                                Dosc.EkycOwnerName = objNameMatchingResult.EKYCOwnerName;
-                                                Dosc.NameMatchScore = objNameMatchingResult.NameMatchScore > 60 ? "Matching" : "Not Matching";
-
 
                                                 obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
-                              RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, LoginId);
-                                                break;
-                                            }
-                                        }
+                              RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 1, "", 0, LoginId);
+                                          
                                     }
                                 }
                                 return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
@@ -343,39 +303,13 @@ namespace BBMPCITZAPI.Controllers
                                 }
                                 if(Dosc.Claimants.Count()>0)
                                 {
-
-                                    //int ownerNumber = 1;
-                                    //Dictionary<int, string> dicClaimant = new Dictionary<int, string>();
-                                    //foreach (var Claimant in Dosc.Claimants)
-                                    //{
-                                    //    dicClaimant.Add(ownerNumber, Claimant);
-                                    //    ownerNumber++;
-                                    //}
-                                    //Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();  
-                                    //foreach (var ekyc in ekycdatas)
-                                    //{
-                                    //    dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
-                                    //}
-                                    //List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-                                    //objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicClaimant, dicEkycOwners);
                                     foreach (var i in Dosc.Claimants)
                                     {
-                                        //          foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
-                                        //          {
-                                        //              if (i == objNameMatchingResult.OwnerName)
-                                        //              {
-                                        //                  Dosc.EkycOwnerName = objNameMatchingResult.EKYCOwnerName;
-                                        //                  Dosc.NameMatchScore = objNameMatchingResult.NameMatchScore > 60 ? "Matching" : "Not Matching";
-                                        //                  obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO),Convert.ToInt64(PropertyCode),
-                                        //RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, LoginId);
-                                        //                  break;
-                                        //              }
-                                        //          }
                                         obj.INS_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
                                           RegistrationNoNumber, "N", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, LoginId);
                                     }
                                 }
-                                await GetKaveriDocData(Dosc.DocSummary, BOOKS_APP_NO, PropertyCode, LoginId, ekycdatas);
+                                await GetKaveriDocData(Dosc.DocSummary, BOOKS_APP_NO, PropertyCode, LoginId);
                                 return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
                             }
                         }

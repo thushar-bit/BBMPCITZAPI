@@ -276,13 +276,30 @@ namespace BBMPCITZAPI.Controllers
         //        throw;
         //    }
         //}
-        [HttpPost("GET_PROPERTY_CTZ_PROPERTY")]
-        public ActionResult<int> Insert_PROPERTY_ADDRESS_TEMP(Insert_PROPERTY_ADDRESS_TEMP insertCITZProperty)
+        [HttpPost("INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP")]
+        public ActionResult<int> INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP(INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP insertCITZProperty)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_CTZ_PROPERTY");
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.Insert_PROPERTY_ADDRESS_TEMP(insertCITZProperty); //change parameter
+                int dataSet = _IBBMPBOOKMODULE.INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP(insertCITZProperty); //change parameter
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP");
+                throw;
+            }
+        }
+        [HttpPost("INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2")]
+        public ActionResult<int> INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2(INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2 insertCITZProperty)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_CTZ_PROPERTY");
+            try
+            {
+                int dataSet = _IBBMPBOOKMODULE.INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2(insertCITZProperty); //change parameter
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

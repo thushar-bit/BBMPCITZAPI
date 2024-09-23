@@ -246,13 +246,47 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public  int Insert_PROPERTY_ADDRESS_TEMP(Insert_PROPERTY_ADDRESS_TEMP insertCITZProperty) 
+        public  int INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP(INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP insertCITZProperty) 
         {
             try
             {
-                string sp_name = "OBJECTIONMODULE.INS_UPD_NCL_PROPERTY_ADDRESS_TEMP";
+                string sp_name = "OBJECTIONMODULE.INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP";
                 OracleParameter[] prm = new OracleParameter[] {
     new OracleParameter("P_PROPERTYCODE", OracleDbType.Int32, ParameterDirection.Input),
+   new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
+    new OracleParameter("P_PROPERTYCATEGORYID", OracleDbType.Int32, ParameterDirection.Input),
+    new OracleParameter("P_PUID", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2, ParameterDirection.Input),
+    
+  
+};
+
+                // Assign values to parameters
+                prm[0].Value = insertCITZProperty.propertyCode;
+                prm[1].Value = insertCITZProperty.P_BOOKS_PROP_APPNO;
+                prm[2].Value = insertCITZProperty.categoryId;  // Ensure this matches the type expected
+                prm[3].Value = insertCITZProperty.PUIDNo;
+                prm[4].Value = insertCITZProperty.loginId;
+             
+            
+
+
+                return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                throw;
+            }
+        }
+        public int INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2(INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2 insertCITZProperty)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE.INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2";
+                OracleParameter[] prm = new OracleParameter[] {
+    new OracleParameter("P_PROPERTYCODE", OracleDbType.Int32, ParameterDirection.Input),
+      new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
     new OracleParameter("P_STREETID", OracleDbType.Int32, ParameterDirection.Input),
     new OracleParameter("P_DOORNO", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_BUILDINGNAME", OracleDbType.Varchar2, ParameterDirection.Input),
@@ -261,31 +295,27 @@ namespace BBMPCITZAPI.Services
     new OracleParameter("P_LANDMARK", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_PINCODE", OracleDbType.Varchar2, ParameterDirection.Input),
     new OracleParameter("P_PROPERTYPHOTO", OracleDbType.Blob, ParameterDirection.Input),
-    new OracleParameter("P_PROPERTYCATEGORYID", OracleDbType.Int32, ParameterDirection.Input),
-    new OracleParameter("P_PUID", OracleDbType.Varchar2, ParameterDirection.Input),
-    new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2, ParameterDirection.Input),
-     new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
     new OracleParameter("P_LATITUDE", OracleDbType.Varchar2, ParameterDirection.Input),
-    new OracleParameter("P_LONGITUDE", OracleDbType.Varchar2, ParameterDirection.Input)
+    new OracleParameter("P_LONGITUDE", OracleDbType.Varchar2, ParameterDirection.Input),
+    new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2, ParameterDirection.Input),
+   
+  
 };
 
                 // Assign values to parameters
                 prm[0].Value = insertCITZProperty.propertyCode;
-                prm[1].Value = insertCITZProperty.STREETID;
-                prm[2].Value = insertCITZProperty.DOORNO;
-                prm[3].Value = insertCITZProperty.BUILDINGNAME;
-                prm[4].Value = insertCITZProperty.AREAORLOCALITY;
-                prm[5].Value = insertCITZProperty.STREETNAME;
-                prm[6].Value = insertCITZProperty.LANDMARK;
-                prm[7].Value = insertCITZProperty.PINCODE;
-                prm[8].Value = insertCITZProperty.PROPERTYPHOTO;
-                prm[9].Value = insertCITZProperty.categoryId;  // Ensure this matches the type expected
-                prm[10].Value = insertCITZProperty.PUIDNo;
-                prm[11].Value = insertCITZProperty.loginId;
-                prm[12].Value = insertCITZProperty.P_BOOKS_PROP_APPNO;
-                prm[13].Value = insertCITZProperty.Latitude;
-                prm[14].Value = insertCITZProperty.Longitude;
-
+                prm[1].Value = insertCITZProperty.P_BOOKS_PROP_APPNO;
+                prm[2].Value = insertCITZProperty.STREETID;
+                prm[3].Value = insertCITZProperty.DOORNO;
+                prm[4].Value = insertCITZProperty.BUILDINGNAME;
+                prm[5].Value = insertCITZProperty.AREAORLOCALITY;
+                prm[6].Value = insertCITZProperty.STREETNAME;
+                prm[7].Value = insertCITZProperty.LANDMARK;
+                prm[8].Value = insertCITZProperty.PINCODE;
+                prm[9].Value = insertCITZProperty.PROPERTYPHOTO;
+                prm[10].Value = insertCITZProperty.Latitude;
+                prm[11].Value = insertCITZProperty.Longitude;
+                prm[12].Value = insertCITZProperty.loginId;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }

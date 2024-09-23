@@ -75,7 +75,7 @@ namespace BBMPCITZAPI.Controllers
         {
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(555, BOOK_APP_NO, propertyCode, "ADDRESS_DETAILS");
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(555, BOOK_APP_NO, propertyCode, "ADDRESS");
 
                 Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();  
                 foreach (var ekyc in ekycdatas)

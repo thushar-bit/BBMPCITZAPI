@@ -1,8 +1,18 @@
 ﻿namespace BBMPCITZAPI.Models
 {
-    public class Insert_PROPERTY_ADDRESS_TEMP
+    public class INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP
     {
         public  int? propertyCode { get; set; }
+      
+        public int? categoryId { get; set; }
+        public string? PUIDNo { get; set; }
+        public string? loginId { get; set; }
+        public int? P_BOOKS_PROP_APPNO { get; set; }
+
+    }
+    public class INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2
+    {
+        public int? propertyCode { get; set; }
         public int? STREETID { get; set; }
         public string? DOORNO { get; set; }
         public string? BUILDINGNAME { get; set; }
@@ -11,12 +21,12 @@
         public string? LANDMARK { get; set; }
         public string? PINCODE { get; set; }
         public byte[]? PROPERTYPHOTO { get; set; }
-        public int? categoryId { get; set; }
-        public string? PUIDNo { get; set; }
+    
+    
         public string? loginId { get; set; }
         public int? P_BOOKS_PROP_APPNO { get; set; }
-        public string? Latitude { get; set; }   
-            public string? Longitude { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
     }
     public class UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP 
     {

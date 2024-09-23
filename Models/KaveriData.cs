@@ -84,8 +84,8 @@
             public string ExecutionDate { get; set; }
             public List<string> Executants { get; set; }
             public List<string> Claimants { get; set; }
-            public string EkycOwnerName { get;set; }
-            public string NameMatchScore { get; set; }    
+            public string EkycOwnerName { get; set; }
+            public string NameMatchScore { get; set; }
             public string Volume { get; set; }
             public string Book { get; set; }
             public string DocSummary { get; set; }
@@ -131,12 +131,27 @@
             public string book { get; set; }
             public List<PropertyInfo> propertyinfo { get; set; }
             public List<PartyInfo> partyinfo { get; set; }
+            public List<propertyschedules> propertyschedules { get; set; }
             public List<WitnessInfo> witnessinfo { get; set; }
             public string applicationType { get; set; }
             public string applicationTypeId { get; set; }
             public string presentdate { get; set; }
-          
-             
+
+
+        }
+        public class propertyschedules
+        {
+            public string propertyschedulespropertyid { get; set; }
+            public string scheduletype { get; set; }
+            public string totalarea { get; set; }
+            public string scheduledescription { get; set; }
+            public string scheduleparties { get; set; }
+            public string bhoomisellerparty { get; set; }
+            public string name { get; set; }
+            public string eastboundary { get; set; }
+            public string westboundary { get; set; }
+            public string northboundary { get; set; }
+            public string southboundary { get; set; }
         }
 
         public class PropertyInfo
