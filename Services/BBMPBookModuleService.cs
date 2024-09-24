@@ -354,12 +354,10 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_SIDE9",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_SIDE10",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_OddSiteSides",OracleDbType.Int32,ParameterDirection.Input),
-               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),
-           
-                   
-                       new OracleParameter("P_SITEAREAREGMT",OracleDbType.Decimal,ParameterDirection.Input),
-                          new OracleParameter("P_SITEAREAREGFT",OracleDbType.Decimal,ParameterDirection.Input),
-                             new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+               new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input),  
+                    new OracleParameter("P_SITEAREA_KAVERI_MT",OracleDbType.Decimal,ParameterDirection.Input),
+                    new OracleParameter("P_SITEAREA_KAVERI_FT",OracleDbType.Decimal,ParameterDirection.Input),
+                    new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.propertyCode;
@@ -384,8 +382,8 @@ namespace BBMPCITZAPI.Services
                 prm[19].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.OddSiteSides;
                
                 prm[20].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.P_BOOKS_PROP_APPNO;
-                prm[21].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.ActualSqMt;
-                prm[22].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.ActualSqft;
+                prm[21].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.SITEAREA_KAVERI_MT;
+                prm[22].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.SITEAREA_KAVERI_FT;
                 prm[23].Value = UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP.loginId;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -418,6 +416,43 @@ namespace BBMPCITZAPI.Services
                 prm[4].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.CHECKBANDI_WEST;
                 prm[5].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.loginId;
                 prm[6].Value = UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI.P_BOOKS_PROP_APPNO;
+
+                return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                throw;
+            }
+        }
+        public int UPD_AREA_CHECKBANDI_KAVERI_DATA(UPD_AREA_CHECKBANDI_KAVERI_DATA UPD_AREA_CHECKBANDI_KAVERI_DATA)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE.UPD_AREA_CHECKBANDI_KAVERI_DATA";
+                OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("P_SITEAREA_KAVERI_MT",OracleDbType.Double,ParameterDirection.Input),
+              new OracleParameter("P_SITEAREA_KAVERI_FT",OracleDbType.Double,ParameterDirection.Input),
+              new OracleParameter("P_CHECKBANDI_NORTH_EN",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_CHECKBANDI_SOUTH_EN",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_CHECKBANDI_EAST_EN",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_CHECKBANDI_WEST_EN",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+                   
+                    };
+
+                prm[0].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.propertyCode;
+                prm[1].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.P_BOOKS_PROP_APPNO;
+                prm[2].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.SITEAREA_KAVERI_MT;
+                prm[3].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.SITEAREA_KAVERI_FT;
+                prm[4].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.CHECKBANDI_NORTH;
+                prm[5].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.CHECKBANDI_SOUTH;
+                prm[6].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.CHECKBANDI_EAST;
+                prm[7].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.CHECKBANDI_WEST;
+                prm[8].Value = UPD_AREA_CHECKBANDI_KAVERI_DATA.loginId;
+              
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }

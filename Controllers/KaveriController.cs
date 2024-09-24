@@ -28,13 +28,15 @@ namespace BBMPCITZAPI.Controllers
         private readonly ILogger<EKYCController> _logger;
         private readonly KaveriSettings _kaveriSettings;
         private readonly INameMatchingService _nameMatchingService;
+        private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
 
         public KaveriController(ILogger<EKYCController> logger, IOptions<KaveriSettings> kaveriSettings,
-            INameMatchingService NameMatching)
+            INameMatchingService NameMatching, IBBMPBookModuleService IBBMPBOOKMODULE)
         {
             _logger = logger;
             _kaveriSettings = kaveriSettings.Value;
             _nameMatchingService = NameMatching;
+            _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
 
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
@@ -164,7 +166,32 @@ namespace BBMPCITZAPI.Controllers
                                         obj.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
                                         RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, KAVERIDOC_RESPONSE_ROWID, LoginId);
                                     }
+                                if (documentDetails.propertyinfo[0].propertyschedules != null)
+                                {
+                                    double totalKavAreaMT = 0;
+                                    double totalKavAreaFT = 0;
+                                   
+                                         
+                                        totalKavAreaMT += Convert.ToDouble(documentDetails.propertyinfo[0].propertyschedules[0].totalarea); 
+                                   
+                                    totalKavAreaFT += Convert.ToInt64(totalKavAreaMT * 10.7639);
+
+                                    //update total area sp here 
+                                    UPD_AREA_CHECKBANDI_KAVERI_DATA s = new UPD_AREA_CHECKBANDI_KAVERI_DATA()
+                                    {
+                                        SITEAREA_KAVERI_FT = totalKavAreaFT,
+                                        SITEAREA_KAVERI_MT = totalKavAreaMT,
+                                        CHECKBANDI_EAST = documentDetails?.propertyinfo[0].eastboundary,
+                                        CHECKBANDI_NORTH = documentDetails?.propertyinfo[0].northboundary,
+                                        CHECKBANDI_SOUTH = documentDetails?.propertyinfo[0].southboundary,
+                                        CHECKBANDI_WEST = documentDetails?.propertyinfo[0].westboundary,
+                                        propertyCode = Convert.ToInt64(PropertyCode),
+                                        P_BOOKS_PROP_APPNO = Convert.ToInt64(BOOKS_APP_NO),
+                                        loginId = LoginId,
+                                    };
+                                    _IBBMPBOOKMODULE.UPD_AREA_CHECKBANDI_KAVERI_DATA(s);
                                 }
+                            }
                                 if (documentDetails.partyinfo != null)
                                 {
                                     int ownerNumber = 1;
@@ -176,15 +203,7 @@ namespace BBMPCITZAPI.Controllers
                                             party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId), ownerNumber, "", 0);
                                     }
                                 }
-                                if(documentDetails.propertyschedules != null)
-                            {
-                                long totalKavArea = 0;
-                                    foreach(var i in documentDetails.propertyschedules)
-                                    {  
-                                        totalKavArea += Convert.ToInt64(i.totalarea);
-                                    }
-                                    //update total area sp here 
-                            }
+                                
                             }
                         } else
                         {

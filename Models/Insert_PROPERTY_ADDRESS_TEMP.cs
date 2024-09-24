@@ -50,8 +50,8 @@
         public decimal? SIDE9 { get;set; }
             public decimal? SIDE10 { get;set; }
             public decimal? OddSiteSides { get; set; }  
-        public decimal? ActualSqft { get; set; }
-        public decimal? ActualSqMt { get; set; }
+        public decimal? SITEAREA_KAVERI_MT { get; set; }
+        public decimal? SITEAREA_KAVERI_FT { get; set; }
         public string? loginId { get; set; }
         public int? P_BOOKS_PROP_APPNO { get; set; }  
     }
@@ -64,6 +64,18 @@
         public string? CHECKBANDI_WEST { get; set; }
         public string? loginId { get; set; }
         public int? P_BOOKS_PROP_APPNO { get; set; }
+    }
+    public class UPD_AREA_CHECKBANDI_KAVERI_DATA
+    {
+        public long? propertyCode { get; set; }
+        public double? SITEAREA_KAVERI_MT { get; set; }
+        public double? SITEAREA_KAVERI_FT { get; set; }
+        public string? CHECKBANDI_NORTH { get; set; }
+        public string? CHECKBANDI_SOUTH { get; set; }
+        public string? CHECKBANDI_EAST { get; set; }
+        public string? CHECKBANDI_WEST { get; set; }
+        public string? loginId { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA 
     {
