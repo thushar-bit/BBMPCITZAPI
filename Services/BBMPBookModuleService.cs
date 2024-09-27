@@ -1394,21 +1394,21 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS(int CLASSIFICATIONID, int SUBCLASSIFICATIONID1, int SUBCLASSIFICATIONID2)
+        public DataSet GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS(int PROPERTYCATEGORYID, int CLASSIFICATIONID, int SUBCLASSIFICATIONID)
         {
             try
             {
-                string sp_name = "OBJECTIONMODULE.GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS";
+                string sp_name = "OBJECTIONMODULE.GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS";
                 OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_PROPERTYCATEGORYID",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_PROPERTYCLASSIFICATIONID",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_PROPERTYSUBCLASSIFICATIONID1",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_PROPERTYSUBCLASSIFICATIONID2",OracleDbType.Int32,ParameterDirection.Input),
+              new OracleParameter("P_PROPERTYSUBCLASSIFICATIONID",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("CUR_DOCUMENTS",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
-                prm[0].Value = CLASSIFICATIONID;
-                prm[1].Value = SUBCLASSIFICATIONID1;
-                prm[2].Value = SUBCLASSIFICATIONID2;
+                prm[0].Value = PROPERTYCATEGORYID;
+                prm[1].Value = CLASSIFICATIONID;
+                prm[2].Value = SUBCLASSIFICATIONID;
 
 
 

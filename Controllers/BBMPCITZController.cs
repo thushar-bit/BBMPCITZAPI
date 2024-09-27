@@ -792,13 +792,13 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpGet("GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS")]
-        public ActionResult<DataSet> GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS(int CLASSIFICATIONID, int SUBCLASSIFICATIONID1, int SUBCLASSIFICATIONID2)
+        [HttpGet("GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS")]
+        public ActionResult<DataSet> GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS(int PROPERTYCATEGORYID, int CLASSIFICATIONID, int SUBCLASSIFICATIONID)
         {
             _logger.LogInformation("GET request received at GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS( CLASSIFICATIONID,  SUBCLASSIFICATIONID1,  SUBCLASSIFICATIONID2);
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS( PROPERTYCATEGORYID,  CLASSIFICATIONID,  SUBCLASSIFICATIONID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
