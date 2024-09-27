@@ -41,26 +41,24 @@ namespace BBMPCITZAPI.Controllers
     
 
         [HttpGet("GET_BBD_NCL_OWNER_BYEKYCTRANSACTION")]
-        public ActionResult<int> GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(long transactionNumber,string OwnerType)
+        public ActionResult<DataSet> GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(long transactionNumber,string OwnerType)
         {
             try
             {
-                int NameMatchScore = 123;
-                if (OwnerType != "NEWOWNER")
-                {
-                    DataSet dsOwnerDetails = obj.GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(transactionNumber);
-                    if (dsOwnerDetails != null && dsOwnerDetails.Tables.Count > 0 && dsOwnerDetails.Tables[0].Rows.Count > 0)
+              
+                DataSet dsOwnerData = obj.GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(transactionNumber);
+                if (dsOwnerData != null && dsOwnerData.Tables.Count > 0 && dsOwnerData.Tables[0].Rows.Count > 0)
                     {
 
-                        NameMatchScore = _nameMatchingService.CallNameMatchAPI(Convert.ToString(dsOwnerDetails.Tables[0].Rows[0]["BBDOWNERNAME"]), Convert.ToString(dsOwnerDetails.Tables[0].Rows[0]["OWNERNAME_EN"]));
-                        obj.GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(transactionNumber, NameMatchScore);
-                        string json1 = JsonConvert.SerializeObject(NameMatchScore, Newtonsoft.Json.Formatting.Indented);
+                      
+                        
+                        string json1 = JsonConvert.SerializeObject(dsOwnerData, Newtonsoft.Json.Formatting.Indented);
 
                         return Ok(json1);
                     }
-                }
-                obj.GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(transactionNumber, NameMatchScore);
-                string json = JsonConvert.SerializeObject(NameMatchScore, Newtonsoft.Json.Formatting.Indented);
+               
+           
+                string json = JsonConvert.SerializeObject(dsOwnerData, Newtonsoft.Json.Formatting.Indented);
 
                 return Ok(json);
             }

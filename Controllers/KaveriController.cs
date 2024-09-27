@@ -155,21 +155,17 @@ namespace BBMPCITZAPI.Controllers
                                 var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
                                 documentDetailsList.Add(documentDetails);
                                 obj.INS_NCL_PROPERTY_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
-                                    documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime, KAVERIDOC_RESPONSE_ROWID, LoginId);
+                                    documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime,KAVERIDOC_RESPONSE_ROWID, LoginId);
 
                                 if (documentDetails.propertyinfo != null)
                                 {
 
+                                double totalKavAreaMT = 0;
+                                double totalKavAreaFT = 0;
 
-                                    foreach (var propertyinfo in documentDetails.propertyinfo)
-                                    {
-                                        obj.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
-                                        RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, KAVERIDOC_RESPONSE_ROWID, LoginId);
-                                    }
                                 if (documentDetails.propertyinfo[0].propertyschedules != null)
                                 {
-                                    double totalKavAreaMT = 0;
-                                    double totalKavAreaFT = 0;
+
                                    
                                          
                                         totalKavAreaMT += Convert.ToDouble(documentDetails.propertyinfo[0].propertyschedules[0].totalarea); 
@@ -190,6 +186,11 @@ namespace BBMPCITZAPI.Controllers
                                         loginId = LoginId,
                                     };
                                     _IBBMPBOOKMODULE.UPD_AREA_CHECKBANDI_KAVERI_DATA(s);
+                                }
+                                foreach (var propertyinfo in documentDetails.propertyinfo)
+                                {
+                                    obj.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
+                                    RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, totalKavAreaMT, KAVERIDOC_RESPONSE_ROWID, LoginId);
                                 }
                             }
                                 if (documentDetails.partyinfo != null)
@@ -251,7 +252,7 @@ namespace BBMPCITZAPI.Controllers
                         byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
                         
                         List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
-                       
+                      //  return Ok(new { success = true, ECDataExists = ECdocumentDetails });
                         var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
                         bool DoesExist = documentSummaries.Contains(RegistrationNoNumber);
                         var registrationNumberPosition = 0;
@@ -339,7 +340,8 @@ namespace BBMPCITZAPI.Controllers
                     }
                     else
                     {
-                        return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {responseMessage}" });
+                          return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {responseMessage}" });
+                      //  return Ok(new { success = true, ECDataExists = DoesExist });
                     }
                 }
                 return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {respStat}" });
