@@ -11,6 +11,7 @@ using System.Net;
 using System.Text;
 using Microsoft.Reporting.Map.WebForms.BingMaps;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using NUPMS_BO;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -23,12 +24,12 @@ namespace BBMPCITZAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
- 
+
         private readonly PropertyDetails _PropertyDetails;
-     //   private readonly ICacheService _cacheService;
+        //   private readonly ICacheService _cacheService;
 
         public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails
-            
+
          )
         {
             _logger = logger;
@@ -36,8 +37,8 @@ namespace BBMPCITZAPI.Controllers
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _PropertyDetails = PropertyDetails.Value;
-          
-          //  _cacheService = cacheService;
+
+            //  _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
@@ -97,7 +98,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-       
+
         [HttpGet("LOAD_BBD_RECORDS")]
         public ActionResult<DataSet> LOAD_BBD_RECORDS(int ZoneId, int WardId, int SerachType, string Search)
         {
@@ -105,7 +106,7 @@ namespace BBMPCITZAPI.Controllers
             try
             {
 
-                var dataSet = objModule.GET_EKHATA_BBD_RECORDS( ZoneId,  WardId,  SerachType,  Search);
+                var dataSet = objModule.GET_EKHATA_BBD_RECORDS(ZoneId, WardId, SerachType, Search);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -117,15 +118,15 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT")]
-        public  IActionResult GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode,int propertyid)
+        public IActionResult GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int UlbCode, int propertyid)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_BBD_DRAFT");
             try
             {
-              //  string cacheKey = "BBD_DRAFT_KEY" + propertyid;
+                //  string cacheKey = "BBD_DRAFT_KEY" + propertyid;
                 var dataSet = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(UlbCode, propertyid);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-               //  await _cacheService.SetCacheDataAsync(cacheKey, json);
+                //  await _cacheService.SetCacheDataAsync(cacheKey, json);
                 return Ok(json);
             }
             catch (Exception ex)
@@ -178,7 +179,7 @@ namespace BBMPCITZAPI.Controllers
             try
             {
                 var dataSet = objModule.GetMasterTablesData(UlbCode);
-                
+
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -207,12 +208,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React")]
-        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(string UlbCode,long propertyCode, string Page)
+        public ActionResult<DataSet> GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(string UlbCode, long propertyCode, string Page)
         {
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(UlbCode, propertyCode,Page);
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React(UlbCode, propertyCode, Page);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -229,9 +230,9 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(ULBCODE, P_BOOKS_PROP_APPNO,  propertyCode,  Page);
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(ULBCODE, P_BOOKS_PROP_APPNO, propertyCode, Page);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-                
+
                 return Ok(json);
             }
             catch (Exception ex)
@@ -240,7 +241,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-    
+
 
         [HttpGet("GET_PROPERTY_PENDING_CITZ_NCLTEMP")]
         public async Task<IActionResult> GET_PROPERTY_PENDING_CITZ_NCLTEMP(int ULBCODE, int P_BOOKS_PROP_APPNO, int Propertycode)
@@ -248,10 +249,10 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMP");
             try
             {
-              //  string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
-                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP( ULBCODE, P_BOOKS_PROP_APPNO,  Propertycode);
+                //  string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
+                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP(ULBCODE, P_BOOKS_PROP_APPNO, Propertycode);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-            //    await _cacheService.SetCacheDataAsync(cacheKey, json);
+                //    await _cacheService.SetCacheDataAsync(cacheKey, json);
                 return Ok(json);
             }
             catch (Exception ex)
@@ -312,13 +313,13 @@ namespace BBMPCITZAPI.Controllers
         }
 
         [HttpGet("Get_Ctz_ObjectionModPendingAppl")]
-        public ActionResult<string> Get_Ctz_ObjectionModPendingAppl(string LoginId,string propertycode, string propertyid)
+        public ActionResult<string> Get_Ctz_ObjectionModPendingAppl(string LoginId, string propertycode, string propertyid)
         {
             _logger.LogInformation("GET request received at Get_Ctz_ObjectionModPendingAppl");
             try
             {
-              //  string propertycode = _PropertyDetails.PROPERTYCODE;
-               // string propertyid = _PropertyDetails.PROPERTYID;
+                //  string propertycode = _PropertyDetails.PROPERTYCODE;
+                // string propertyid = _PropertyDetails.PROPERTYID;
                 _logger.LogInformation(" Get_Ctz_ObjectionModPendingAppl" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
                 DataSet dsProperties = objModule.Get_Ctz_ObjectionModPendingAppl("EID", LoginId, propertyid, "", 0, "");
 
@@ -339,7 +340,7 @@ namespace BBMPCITZAPI.Controllers
                 {
                     return "There is a issue while copying the data from Book Module.No Data Found";
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -353,8 +354,8 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at COPY_DATA_FROM_BBDDRAFT_NCLTEMP");
             try
             {
-          //      string propertycode = _PropertyDetails.PROPERTYCODE;
-            //    string propertyid = _PropertyDetails.PROPERTYID;
+                //      string propertycode = _PropertyDetails.PROPERTYCODE;
+                //    string propertyid = _PropertyDetails.PROPERTYID;
                 _logger.LogInformation(" COPY_DATA_FROM_BBDDRAFT_NCLTEMP" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
                 DataSet rowsEffected = objModule.COPY_DATA_FROM_BBDDRAFT_NCLTEMP(Convert.ToInt64(propertycode), Convert.ToString(LoginId));
                 string json = JsonConvert.SerializeObject(rowsEffected, Formatting.Indented);
@@ -419,7 +420,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-      
+
         #endregion
         #region Site Details Events
         [HttpPost("UPD_NCL_PROPERTY_SITE_TEMP_USAGE")]
@@ -459,7 +460,7 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region Building Details Events
         [HttpPost("DEL_SEL_NCL_PROP_BUILDING_TEMP")]
-        public ActionResult<DataSet> DEL_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG)
+        public ActionResult<DataSet> DEL_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, Models.NCLBuilding NCLBLDG)
         {
             _logger.LogInformation("post request received at DEL_SEL_NCL_PROP_BUILDING_TEMP");
             try
@@ -476,7 +477,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("GET_NCL_FLOOR_AREA")]
-        public ActionResult<DataSet> GET_NCL_FLOOR_AREA(NCLBuilding NCLBLDG)
+        public ActionResult<DataSet> GET_NCL_FLOOR_AREA(Models.NCLBuilding NCLBLDG)
         {
             _logger.LogInformation("post request received at GET_NCL_FLOOR_AREA");
             try
@@ -493,7 +494,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("GET_NCL_TEMP_FLOOR_PRE")]
-        public ActionResult<DataSet> GET_NCL_TEMP_FLOOR_PRE(NCLBuilding NCLBLDG)
+        public ActionResult<DataSet> GET_NCL_TEMP_FLOOR_PRE(Models.NCLBuilding NCLBLDG)
         {
             _logger.LogInformation("post request received at GET_NCL_TEMP_FLOOR_PRE");
             try
@@ -510,7 +511,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("DEL_INS_SEL_NCL_PROP_BUILDING_TEMP")]
-        public ActionResult<int> DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, NCLBuilding NCLBLDG)
+        public ActionResult<int> DEL_INS_SEL_NCL_PROP_BUILDING_TEMP(int ULBCODE, Models.NCLBuilding NCLBLDG)
         {
             _logger.LogInformation("post request received at DEL_INS_SEL_NCL_PROP_BUILDING_TEMP");
             try
@@ -546,7 +547,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("INS_UPD_NCL_PROPERTY_APARTMENT_TEMP1")]
-        public ActionResult<int> INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, NCLAPARTMENT NCLAPT)
+        public ActionResult<int> INS_UPD_NCL_PROPERTY_APARTMENT_TEMP(int ULBCODE, Models.NCLAPARTMENT NCLAPT)
         {
             _logger.LogInformation("post request received at INS_UPD_NCL_PROPERTY_APARTMENT_TEMP1");
             try
@@ -570,7 +571,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at COPY_OWNER_FROM_BBDDRAFT_NCLTEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.COPY_OWNER_FROM_BBDDRAFT_NCLTEMP( P_BOOKS_PROP_APPNOAPPNO, propertyCode, ownerNumber);
+                DataSet dataSet = _IBBMPBOOKMODULE.COPY_OWNER_FROM_BBDDRAFT_NCLTEMP(P_BOOKS_PROP_APPNOAPPNO, propertyCode, ownerNumber);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -587,7 +588,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_NCL_TEMP_FLOOR_PRE DEL_SEL_NCL_PROP_OWNER_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DEL_SEL_NCL_PROP_OWNER_TEMP( P_BOOKS_PROP_APPNO, propertyCode,  ownerNumber);
+                DataSet dataSet = _IBBMPBOOKMODULE.DEL_SEL_NCL_PROP_OWNER_TEMP(P_BOOKS_PROP_APPNO, propertyCode, ownerNumber);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -604,7 +605,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
             try
             {
-                DataSet dataSet  = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(P_BOOKS_PROP_APPNO, propertyCode,  ownerNumber,  IDENTIFIERTYPE,  IDENTIFIERNAME_EN,  MOBILENUMBER,  MOBILEVERIFY,  loginId);
+                DataSet dataSet = objModule.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY(P_BOOKS_PROP_APPNO, propertyCode, ownerNumber, IDENTIFIERTYPE, IDENTIFIERNAME_EN, MOBILENUMBER, MOBILEVERIFY, loginId);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -615,16 +616,33 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA")]
+        public ActionResult<int> INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string MOBILENUMBER, string MOBILEVERIFY, string loginId, EKYCDetailsBO objEKYCDetailsBO)
+        {
+            _logger.LogInformation("GET request received at INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
+            try
+            {
+                int dataSet = objModule.INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA(IDENTIFIERTYPE, MOBILENUMBER, MOBILEVERIFY, loginId, objEKYCDetailsBO);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
+                throw;
+            }
+        }
 
         #endregion
         #region Property Rights
         [HttpPost("NCL_PROPERTY_RIGHTS_TEMP_INS")]
-        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_INS(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
+        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_INS(int ID_BASIC_PROPERTY, Models.NCLPropRights NCLPropRight)
         {
             _logger.LogInformation("GET request received at NCL_PROPERTY_RIGHTS_TEMP_INS");
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_INS( ID_BASIC_PROPERTY, NCLPropRight);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_INS(ID_BASIC_PROPERTY, NCLPropRight);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -636,12 +654,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("NCL_PROPERTY_RIGHTS_TEMP_UPD")]
-        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_UPD(int ID_BASIC_PROPERTY, NCLPropRights NCLPropRight)
+        public ActionResult<int> NCL_PROPERTY_RIGHTS_TEMP_UPD(int ID_BASIC_PROPERTY, Models.NCLPropRights NCLPropRight)
         {
             _logger.LogInformation("GET request received at NCL_PROPERTY_RIGHTS_TEMP_UPD");
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_UPD( ID_BASIC_PROPERTY, NCLPropRight);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_UPD(ID_BASIC_PROPERTY, NCLPropRight);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -658,7 +676,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at NCL_PROPERTY_RIGHTS_TEMP_DEL");
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_DEL(P_BOOKS_PROP_APPNO, RIGHTSID,  ID_BASIC_PROPERTY,  ULBCODE,  PROPERTYCODE);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_RIGHTS_TEMP_DEL(P_BOOKS_PROP_APPNO, RIGHTSID, ID_BASIC_PROPERTY, ULBCODE, PROPERTYCODE);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -672,12 +690,12 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region Document Upload Events
         [HttpPost("NCL_PROPERTY_ID_TEMP_INS")]
-        public ActionResult<int> NCL_PROPERTY_ID_TEMP_INS(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
+        public ActionResult<int> NCL_PROPERTY_ID_TEMP_INS(int ID_BASIC_PROPERTY, Models.NCLPropIdentification NCLPropID)
         {
             _logger.LogInformation("GET request received at NCL_PROPERTY_ID_TEMP_INS");
             try
             {
-                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_INS( ID_BASIC_PROPERTY, NCLPropID);
+                int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_INS(ID_BASIC_PROPERTY, NCLPropID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -694,7 +712,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GetNCLDocView");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetNCLDocView( DOCUMENTID,  PROPERTYCODE);
+                DataSet dataSet = _IBBMPBOOKMODULE.GetNCLDocView(DOCUMENTID, PROPERTYCODE);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -706,12 +724,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("NCL_PROPERTY_ID_TEMP_DEL")]
-        public ActionResult<DataSet> NCL_PROPERTY_ID_TEMP_DEL(int ID_BASIC_PROPERTY, NCLPropIdentification NCLPropID)
+        public ActionResult<DataSet> NCL_PROPERTY_ID_TEMP_DEL(int ID_BASIC_PROPERTY, Models.NCLPropIdentification NCLPropID)
         {
             _logger.LogInformation("GET request received at NCL_PROPERTY_ID_TEMP_DEL");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_DEL( ID_BASIC_PROPERTY, NCLPropID);
+                DataSet dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_DEL(ID_BASIC_PROPERTY, NCLPropID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -728,7 +746,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GetMasterDocByCategoryOrClaimType");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterDocByCategoryOrClaimType( ULBCODE,  CATEGORYID,  ClaimTypP_BOOKS_PROP_APPNO);
+                DataSet dataSet = _IBBMPBOOKMODULE.GetMasterDocByCategoryOrClaimType(ULBCODE, CATEGORYID, ClaimTypP_BOOKS_PROP_APPNO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -764,7 +782,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE, P_DOC_SCAN_ID, P_BOOKS_PROP_APPNOAPPNO);
+                DataSet dataSet = _IBBMPBOOKMODULE.DEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(PROPERTYCODE, P_DOC_SCAN_ID, P_BOOKS_PROP_APPNOAPPNO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -781,7 +799,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at SEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.SEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP( PROPERTYCODE,  DOCUMENTROWID);
+                DataSet dataSet = _IBBMPBOOKMODULE.SEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP(PROPERTYCODE, DOCUMENTROWID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -798,7 +816,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS( PROPERTYCATEGORYID,  CLASSIFICATIONID,  SUBCLASSIFICATIONID);
+                DataSet dataSet = _IBBMPBOOKMODULE.GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS(PROPERTYCATEGORYID, CLASSIFICATIONID, SUBCLASSIFICATIONID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -815,7 +833,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GetPropertySubClassByULBAndCategory");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetPropertySubClassByULBAndCategory( PropCatID,  ulbcode);
+                DataSet dataSet = _IBBMPBOOKMODULE.GetPropertySubClassByULBAndCategory(PropCatID, ulbcode);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -829,12 +847,12 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region  Tax Events
         [HttpGet("GetTaxDetails")]
-        public ActionResult<DataSet> GetTaxDetails(string applicationNo,long propertycode, long P_BOOKS_PROP_APPNO,string loginId)
+        public ActionResult<DataSet> GetTaxDetails(string applicationNo, long propertycode, long P_BOOKS_PROP_APPNO, string loginId)
         {
             _logger.LogInformation("GET request received at GetTaxDetails");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.GetTaxDetails(applicationNo,  propertycode,  P_BOOKS_PROP_APPNO, loginId);
+                DataSet dataSet = _IBBMPBOOKMODULE.GetTaxDetails(applicationNo, propertycode, P_BOOKS_PROP_APPNO, loginId);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -851,7 +869,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at InsertBBMPPropertyTaxResponse");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.InsertBBMPPropertyTaxResponse( UlbCode,  Json,  Response,  IpAddress,  Createdby,  oParamater);
+                DataSet dataSet = _IBBMPBOOKMODULE.InsertBBMPPropertyTaxResponse(UlbCode, Json, Response, IpAddress, Createdby, oParamater);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -887,7 +905,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at InsertBBMPPropertyTaxResponseObjectionEvents");
             try
             {
-                DataSet dataSet = _IBBMPBOOKMODULE.InsertBBMPPropertyTaxResponse( PROPERTYCODE,  OBJECTIONDETAILS,  SCANNEDDOCUMENT,  DOCUMENTDETAILS,  CREATEDBY);
+                DataSet dataSet = _IBBMPBOOKMODULE.InsertBBMPPropertyTaxResponse(PROPERTYCODE, OBJECTIONDETAILS, SCANNEDDOCUMENT, DOCUMENTDETAILS, CREATEDBY);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -901,7 +919,7 @@ namespace BBMPCITZAPI.Controllers
         #endregion
         #region eSignCode
         #endregion
-      
+
         [HttpGet("GET_PROPERTY_AREA_DIMENSION_DATA")]
         public ActionResult<DataSet> GET_PROPERTY_AREA_DIMENSION_DATA(int BOOKS_PROP_APPNO, int Propertycode)
         {
@@ -976,7 +994,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY");
             try
             {
-                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY( Propertycode);
+                DataSet dataSet = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY(Propertycode);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
@@ -987,5 +1005,42 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        #region Matrix
+        [HttpPost("UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP")]
+        public ActionResult<DataSet> UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Int64 BOOKS_PROP_APPNO, Int64 propertyCode, string COLUMN_NAME, string COLUMN_VALUE, string loginID)
+        {
+            _logger.LogInformation("GET request received at UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
+            try
+             {
+                DataSet dataSet = objModule.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(BOOKS_PROP_APPNO, propertyCode, COLUMN_NAME, COLUMN_VALUE, loginID);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
+                throw;
+            }
+        }
+        [HttpPost("UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP")]
+        public ActionResult<DataSet> UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Int64 BOOKS_PROP_APPNO, Int64 propertyCode, string loginID, NCL_PROPERTY_COMPARE_MATRIX_TEMP_BO objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO)
+        {
+            _logger.LogInformation("GET request received at UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
+            try
+            {
+                DataSet dataSet = objModule.UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP(BOOKS_PROP_APPNO, propertyCode, loginID, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
+                throw;
+            }
+        }
+        #endregion
     }
 }

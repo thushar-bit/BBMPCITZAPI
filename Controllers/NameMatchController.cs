@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUPMS_BA;
 using System.Data;
+using static BBMPCITZAPI.Models.KaveriData;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -47,24 +49,25 @@ namespace BBMPCITZAPI.Controllers
             {
               
                 DataSet dsOwnerData = obj.GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(transactionNumber);
-                if (dsOwnerData != null && dsOwnerData.Tables.Count > 0 && dsOwnerData.Tables[0].Rows.Count > 0)
+                if (dsOwnerData != null && dsOwnerData.Tables.Count > 0 && dsOwnerData.Tables[1].Rows.Count > 0)
                     {
+                        string json1 = JsonConvert.SerializeObject(dsOwnerData.Tables[1], Newtonsoft.Json.Formatting.Indented);
+                    List<EKYCResponse> ekycResponse = JsonConvert.DeserializeObject<List<EKYCResponse>>(json1);
 
-                      
-                        
-                        string json1 = JsonConvert.SerializeObject(dsOwnerData, Newtonsoft.Json.Formatting.Indented);
-
-                        return Ok(json1);
+                   
+                    string apiDataInput = ekycResponse[0].APIDATAINPUT;
+                    var s = obj.ParseEKYCResponse(apiDataInput);
+                        return Ok(s);
                     }
                
            
                 string json = JsonConvert.SerializeObject(dsOwnerData, Newtonsoft.Json.Formatting.Indented);
-
+               
                 return Ok(json);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.");
+                _logger.LogError(ex, "Error occurred while executing stored procedure. GET_BBD_NCL_OWNER_BYEKYCTRANSACTION");
                 throw;
             }
         }

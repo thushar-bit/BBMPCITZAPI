@@ -108,6 +108,15 @@
             public string CorrectionNote { get; set; }
             public string LiabilityNote { get; set; }
         }
+        public class EKYCResponse
+        {
+            public double BOOKS_PROP_APPNO { get; set; }
+            public double PROPERTYCODE { get; set; }
+            public double OWNERNUMBER { get; set; }
+            public string APIDATAINPUT { get; set; }
+            public string APIRETURNRESPONSE { get; set; }
+        }
+
 
 
 

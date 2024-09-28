@@ -30,6 +30,13 @@
         public string PROPERTYID { get; set; }
         public string NameMatchURL { get; set; }    
     }
+    public class ESignSettings
+    {
+        public string TempFiles_ctz { get; set; }
+        public string ReturnURL_ctzEID { get; set; }
+        public string ESignServicesURL_ctz { get; set; }
+        public string TempURl_ctz { get; set; }
+    }
     public class BescomSettings
     {
         public string BESCOMAPIURL { get; set; }

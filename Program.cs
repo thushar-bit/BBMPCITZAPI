@@ -35,9 +35,11 @@ builder.Services.AddAuthentication(options =>
 // Add services to the container.
 //var redisConnectionString = builder.Configuration.GetValue<string>("Redis");
 //builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "BBMP CITIZEN", Version = "v1" });
@@ -70,6 +72,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<EKYCSettings>(builder.Configuration.GetSection("EKYCSettings"));
 builder.Services.Configure<BBMPSMSSETTINGS>(builder.Configuration.GetSection("BBMPSMSSETTINGS"));
 builder.Services.Configure<PropertyDetails>(builder.Configuration.GetSection("PropertyDetails"));
+builder.Services.Configure<ESignSettings>(builder.Configuration.GetSection("E-sign"));
 builder.Services.Configure<KaveriSettings>(builder.Configuration.GetSection("KaveriSettings"));
 builder.Services.Configure<BescomSettings>(builder.Configuration.GetSection("BescomSettings"));
 builder.Services.AddScoped<DatabaseService>();

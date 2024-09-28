@@ -164,7 +164,7 @@ namespace BBMPCITZAPI.Services
         public DataSet GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(int ULBCODE, long BOOKS_PROP_APPNO, long propertyCode,string Page)
         {
             string commandText = "OBJECTIONMODULE_REACT.GET_PROPERTY_PENDING_CITZ_NCLTEMP";
-            OracleParameter[] array = new OracleParameter[23]
+            OracleParameter[] array = new OracleParameter[24]
             {
             new OracleParameter("P_ULBCODE", OracleDbType.Int32, ParameterDirection.Input),
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64, ParameterDirection.Input),
@@ -176,7 +176,6 @@ namespace BBMPCITZAPI.Services
             new OracleParameter("C_DIMENSION", OracleDbType.RefCursor, ParameterDirection.Output),
             new OracleParameter("C_COORDINATES", OracleDbType.RefCursor, ParameterDirection.Output),
             new OracleParameter("C_OWNERRECORD", OracleDbType.RefCursor, ParameterDirection.Output),
-           
             new OracleParameter("C_APARTDET", OracleDbType.RefCursor, ParameterDirection.Output),
             new OracleParameter("C_BUILDINGTYPE", OracleDbType.RefCursor, ParameterDirection.Output),
             new OracleParameter("C_DOCUPL", OracleDbType.RefCursor, ParameterDirection.Output),
@@ -189,8 +188,8 @@ namespace BBMPCITZAPI.Services
             new OracleParameter("C_KAVERI_PARTIES_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
             new OracleParameter("C_KAVERIEC_PROP_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
             new OracleParameter("C_KAVERIEC_PARTIES_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
-            new OracleParameter("C_PROP_BESCOM_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output)
-         
+            new OracleParameter("C_PROP_BESCOM_DETAILS", OracleDbType.RefCursor, ParameterDirection.Output),
+            new OracleParameter("C_MATRIX",OracleDbType.RefCursor,ParameterDirection.Output)
             };
             array[0].Value = ULBCODE;
             array[1].Value = propertyCode;
