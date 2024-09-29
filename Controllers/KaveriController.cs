@@ -186,6 +186,7 @@ namespace BBMPCITZAPI.Controllers
                                         loginId = LoginId,
                                     };
                                     _IBBMPBOOKMODULE.UPD_AREA_CHECKBANDI_KAVERI_DATA(s);
+                                    obj.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "KAVERIDOC_RESPONSE_ROWID", KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId));
                                 }
                                 foreach (var propertyinfo in documentDetails.propertyinfo)
                                 {
@@ -306,6 +307,7 @@ namespace BBMPCITZAPI.Controllers
                                           
                                     }
                                 }
+                                obj.UPD_ECDATA_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "Y", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), Convert.ToString(LoginId));
                                 return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
                             }
                             else
@@ -329,6 +331,7 @@ namespace BBMPCITZAPI.Controllers
                                           RegistrationNoNumber, "N", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, LoginId);
                                     }
                                 }
+                                obj.UPD_ECDATA_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "N", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), Convert.ToString(LoginId));
                                 await GetKaveriDocData(Dosc.DocSummary, BOOKS_APP_NO, PropertyCode, LoginId);
                                 return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist });
                             }
