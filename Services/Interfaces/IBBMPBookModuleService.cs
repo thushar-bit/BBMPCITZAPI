@@ -1,4 +1,6 @@
 ﻿using BBMPCITZAPI.Models;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using NUPMS_BA;
 using System.Data;
 using static BBMPCITZAPI.Services.BBMPBookModuleService;
 
@@ -68,10 +70,13 @@ namespace BBMPCITZAPI.Services.Interfaces
         #endregion
         #region Objection Events
          DataSet InsertBBMPPropertyTaxResponse(int PROPERTYCODE, string OBJECTIONDETAILS, byte[] SCANNEDDOCUMENT, string DOCUMENTDETAILS, string CREATEDBY);
+
         #endregion
         #region eSignCode
         #endregion
        
         DataSet GetUserCitizen(string userId);
+       public int Insert_React_UserFlow(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int currentStep, int DraftWardId, int DraftZoneId, string LoginID);
+        public DataSet Get_React_UserFlow( Int64 propertyCode,Int64 BOOKAPP_NO, string LoginID);
     }
 }

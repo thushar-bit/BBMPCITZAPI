@@ -101,8 +101,7 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -110,6 +109,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors("AllowReactApp");
+app.UseAuthentication();
+app.UseAuthorization();
 //app.UseHttpsRedirection();
 
 

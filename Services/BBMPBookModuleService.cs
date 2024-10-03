@@ -1581,5 +1581,70 @@ namespace BBMPCITZAPI.Services
             array[1].Direction = ParameterDirection.Output;
             return _databaseService.ExecuteDataset(commandText, array);
         }
+        public int Insert_React_UserFlow(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int currentStep, int DraftWardId, int DraftZoneId, string LoginID)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.INS_USER_REACT_FLOW";
+
+                OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("P_LoginID",OracleDbType.NVarchar2),
+                      new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64),
+                  new OracleParameter("P_BOOK_APP_NO",OracleDbType.Int64),
+                       new OracleParameter("P_CURRENT_STEP",OracleDbType.Int32),
+                   new OracleParameter("P_DraftWardId",OracleDbType.Int64),
+                     new OracleParameter("P_DraftZoneId",OracleDbType.Int64),
+
+            };
+                prm[0].Value = LoginID;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = propertyCode;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = P_BOOKS_PROP_APPNOAPPNO;
+                prm[2].Direction = ParameterDirection.Input;
+                prm[3].Value = currentStep;
+                prm[3].Direction = ParameterDirection.Input;
+                prm[4].Value = DraftWardId;
+                prm[4].Direction = ParameterDirection.Input;
+                prm[5].Value = DraftZoneId;
+                prm[5].Direction = ParameterDirection.Input;
+               
+                return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Insert_PROPERTY_ADDRESS_TEMP stored procedure.");
+                throw;
+            }
+        }
+        public DataSet Get_React_UserFlow(Int64 propertyCode, Int64 BOOKAPP_NO, string LoginID)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.GET_USER_REACT_FLOW";
+
+                OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("P_LoginID",OracleDbType.NVarchar2),
+                      new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64),
+                      new OracleParameter("P_BOOK_APP_NO",OracleDbType.Int64),
+                       new OracleParameter("P_CURRENT_USER",OracleDbType.RefCursor),
+            };
+                prm[0].Value = LoginID;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = propertyCode;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = BOOKAPP_NO;
+                prm[2].Direction = ParameterDirection.Input;
+                prm[3].Value = null;
+                prm[3].Direction = ParameterDirection.Output;
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_React_UserFlow stored procedure.");
+                throw;
+            }
+        }
     }
 }

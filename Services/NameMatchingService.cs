@@ -20,18 +20,19 @@ namespace NUPMS_BA
            
         }
 
-        public List<NameMatchingResult> CompareDictionaries(Dictionary<int, string> srcDic, Dictionary<int, string> ekycDic)
+        public List<NameMatchingResult> CompareDictionaries(Dictionary<Int64, string> srcDic, Dictionary<Int64, string> ekycDic)
         {
             List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-            List<int> alreadyUsedOwnersList = new List<int>();
 
-            foreach (KeyValuePair<int, string> kvpSrcDic in srcDic)
+            List<Int64> alreadyUsedOwnersList = new List<Int64>();
+
+            foreach (KeyValuePair<Int64, string> kvpEkycDic in ekycDic)
             {
                 List<NameMatchingResult> objListNameMatchingResult = new List<NameMatchingResult>();
 
-                foreach (KeyValuePair<int, string> kvpEkycDic in ekycDic)
+                foreach (KeyValuePair<Int64, string> kvpSrcDic in srcDic)
                 {
-                    if (!alreadyUsedOwnersList.Contains(kvpEkycDic.Key))//Escaping already macthed owner
+                    if (!alreadyUsedOwnersList.Contains(kvpSrcDic.Key))//Escaping already macthed owner
                     {
                         NameMatchingResult objNameMatchingResult = new NameMatchingResult();
                         objNameMatchingResult.OwnerNo = kvpSrcDic.Key;
@@ -49,11 +50,18 @@ namespace NUPMS_BA
                     List<NameMatchingResult> sortedListNameMatchingResult = objListNameMatchingResult.OrderByDescending(p => p.NameMatchScore).ToList();
 
                     objFinalListNameMatchingResult.Add(sortedListNameMatchingResult[0]); //Adding best matched owner to final list
-                    alreadyUsedOwnersList.Add(sortedListNameMatchingResult[0].EKYCOwnerNo);
+                    alreadyUsedOwnersList.Add(sortedListNameMatchingResult[0].OwnerNo);
 
                     objListNameMatchingResult.Clear();
                     sortedListNameMatchingResult.Clear();
                 }
+                //else
+                //{
+                //    NameMatchingResult objNameMatchingResult = new NameMatchingResult();
+                //    objNameMatchingResult.OwnerNo = kvpSrcDic.Key;
+                //    objNameMatchingResult.OwnerName = kvpSrcDic.Value;
+                //    objFinalListNameMatchingResult.Add(objNameMatchingResult);
+                //}
             }
 
             return objFinalListNameMatchingResult;
@@ -115,15 +123,16 @@ namespace NUPMS_BA
 
     public class NameMatchingResult
     {
-        public int OwnerNo { get; set; }
+        public Int64 OwnerNo { get; set; }
 
         public string OwnerName { get; set; }
 
-        public int EKYCOwnerNo { get; set; }
+        public Int64 EKYCOwnerNo { get; set; }
 
         public string EKYCOwnerName { get; set; }
 
         public int NameMatchScore { get; set; }
     }
+
 
 }

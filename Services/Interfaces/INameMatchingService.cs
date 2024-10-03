@@ -6,6 +6,6 @@ namespace BBMPCITZAPI.Services.Interfaces
     {
 
         public int CallNameMatchAPI(string name1, string name2);
-        public List<NameMatchingResult> CompareDictionaries(Dictionary<int, string> srcDic, Dictionary<int, string> ekycDic);
+        public List<NameMatchingResult> CompareDictionaries(Dictionary<long, string> srcDic, Dictionary<long, string> ekycDic);
     }
 }

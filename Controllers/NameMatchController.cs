@@ -41,29 +41,29 @@ namespace BBMPCITZAPI.Controllers
             //  _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-    
+
 
         [HttpGet("GET_BBD_NCL_OWNER_BYEKYCTRANSACTION")]
-        public ActionResult<DataSet> GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(long transactionNumber,string OwnerType)
+        public ActionResult<DataSet> GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(long transactionNumber, string OwnerType)
         {
             try
             {
-              
+
                 DataSet dsOwnerData = obj.GET_NCL_PROP_OWNER_TEMP_BYEKYCTRANSACTION(transactionNumber);
                 if (dsOwnerData != null && dsOwnerData.Tables.Count > 0 && dsOwnerData.Tables[1].Rows.Count > 0)
-                    {
-                        string json1 = JsonConvert.SerializeObject(dsOwnerData.Tables[1], Newtonsoft.Json.Formatting.Indented);
+                {
+                    string json1 = JsonConvert.SerializeObject(dsOwnerData.Tables[1], Newtonsoft.Json.Formatting.Indented);
                     List<EKYCResponse> ekycResponse = JsonConvert.DeserializeObject<List<EKYCResponse>>(json1);
 
-                   
+
                     string apiDataInput = ekycResponse[0].APIDATAINPUT;
                     var s = obj.ParseEKYCResponse(apiDataInput);
-                        return Ok(s);
-                    }
-               
-           
+                    return Ok(s);
+                }
+
+
                 string json = JsonConvert.SerializeObject(dsOwnerData, Newtonsoft.Json.Formatting.Indented);
-               
+
                 return Ok(json);
             }
             catch (Exception ex)
@@ -72,68 +72,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("SASNameMatch")]
-        public ActionResult<int> Get_SAS_Name_match(long propertyCode, long BOOK_APP_NO, string LoginId, List<KaveriData.ekycdata> ekycdatas)
-        {
-            try
-            {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(555, BOOK_APP_NO, propertyCode, "ADDRESS");
-
-                Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();  
-                foreach (var ekyc in ekycdatas)
-                {
-                    dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
-                }
-                int ownerNumber = 1;
-                Dictionary<int, string> dicSASOwners = new Dictionary<int, string>();
-
-                string sasOwnerName = dataSet.Tables[0].Rows[0]["OWNERNAME"].ToString();
-                string SasApplicationNumber = dataSet.Tables[0].Rows[0]["APPLICATIONNUMBER"].ToString(); 
-                dicSASOwners.Add(ownerNumber, sasOwnerName);
-                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-                objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicSASOwners, dicEkycOwners);
-                foreach (var i in objFinalListNameMatchingResult)
-                {
-                    obj.INS_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(SasApplicationNumber, BOOK_APP_NO, propertyCode, sasOwnerName, i.OwnerNo, i.OwnerName, i.NameMatchScore, LoginId);
-                }
-                return 09;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        [HttpPost("KaveriNameMatch")]
-        public ActionResult<int> Get_Kaveri_Name_match(long propertyCode, long BOOK_APP_NO, string LoginId, List<KaveriData.ekycdata> ekycdatas)
-        {
-            try
-            {
-                DataSet dataSet = _IBBMPBOOKMODULE.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React(555, BOOK_APP_NO, propertyCode, "KAVERI_DETAILS");
-
-                Dictionary<int, string> dicEkycOwners = new Dictionary<int, string>();
-                foreach (var ekyc in ekycdatas)
-                {
-                    dicEkycOwners.Add(ekyc.OwnerNumber, ekyc.OwnerName);
-                }
-                int ownerNumber = 1;
-                Dictionary<int, string> dicSASOwners = new Dictionary<int, string>();
-
-                string sasOwnerName = dataSet.Tables[0].Rows[0]["OWNERNAME"].ToString();
-                string SasApplicationNumber = dataSet.Tables[0].Rows[0]["APPLICATIONNUMBER"].ToString();
-                dicSASOwners.Add(ownerNumber, sasOwnerName);
-                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-                objFinalListNameMatchingResult = _nameMatchingService.CompareDictionaries(dicSASOwners, dicEkycOwners);
-                foreach (var i in objFinalListNameMatchingResult)
-                {
-                    obj.INS_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(SasApplicationNumber, BOOK_APP_NO, propertyCode, sasOwnerName, i.OwnerNo, i.OwnerName, i.NameMatchScore, LoginId);
-                }
-                return 09;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+       
         [HttpGet("DEL_SEL_NCL_PROP_OWNER_TEMP")]
         public ActionResult<DataSet> DEL_SEL_NCL_PROP_OWNER_TEMP(int P_BOOKS_PROP_APPNO, int propertyCode, int ownerNumber)
         {
@@ -253,5 +192,69 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("Insert_React_UserFlow")]
+        public ActionResult<int> INS_USER_REACT_FLOW(int P_BOOKS_PROP_APPNO, int propertyCode, int currentStep, int DraftWardId, int DraftZoneId, string LoginID)
+        {
+            _logger.LogInformation("GET request received at Insert_React_UserFlow");
+            try
+            {
+                int dataSet = _IBBMPBOOKMODULE.Insert_React_UserFlow(P_BOOKS_PROP_APPNO, propertyCode, currentStep, DraftWardId, DraftZoneId, LoginID);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.Insert_React_UserFlow");
+                throw;
+            }
+        }
+        [HttpGet("Get_React_UserFlow")]
+        public ActionResult<ReactUserFlow> Get_React_UserFlow( Int64 propertyCode, Int64 BOOKAPP_NO, string LoginID)
+        {
+            _logger.LogInformation("GET request received at Get_React_UserFlow");
+            try
+            {
+                ReactUserFlow react = new ReactUserFlow();
+
+                DataSet dataSet = _IBBMPBOOKMODULE.Get_React_UserFlow( propertyCode, BOOKAPP_NO, LoginID);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                {
+                    react.AllowFlow = 0;
+                }
+                else 
+
+                {
+                    react.LoginId = Convert.ToString(dataSet.Tables[0].Rows[0]["LoginId"]);
+                    react.PropertyCode = Convert.ToInt64(dataSet.Tables[0].Rows[0]["PropertyCode"]);
+                    react.BOOK_APP_NO = Convert.ToInt64(dataSet.Tables[0].Rows[0]["BOOK_APP_NO"]);
+                    react.DraftWardId = Convert.ToInt32(dataSet.Tables[0].Rows[0]["DraftWardId"]);
+                    react.DraftZoneId = Convert.ToInt32(dataSet.Tables[0].Rows[0]["DraftZoneId"]);
+                    react.AllowFlow =  Convert.ToInt32(dataSet.Tables[0].Rows[0]["CurrentStep"]);
+                   
     }
-}
+
+
+                string json = JsonConvert.SerializeObject(react, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing stored procedure.Get_React_UserFlow");
+                throw;
+            }
+        }
+        public class ReactUserFlow
+        {
+            public string? LoginId { get; set; }
+            public long? PropertyCode { get; set; }
+            public long? BOOK_APP_NO { get; set; }
+            public int? DraftWardId { get; set; }
+            public int? DraftZoneId { get; set; }
+           
+            public int? AllowFlow { get; set; }
+
+        }
+    }
+    }
