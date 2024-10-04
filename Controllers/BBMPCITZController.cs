@@ -617,12 +617,12 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA")]
-        public ActionResult<int> INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string MOBILENUMBER, string MOBILEVERIFY, string loginId, EKYCDetailsBO objEKYCDetailsBO)
+        public ActionResult<DataSet> INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string IdentifierName, string MOBILENUMBER, string MOBILEVERIFY, int NAMEMATCHSCORE, string loginId, EKYCDetailsBO objEKYCDetailsBO)
         {
             _logger.LogInformation("GET request received at INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
             try
             {
-                int dataSet = objModule.INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA(IDENTIFIERTYPE, MOBILENUMBER, MOBILEVERIFY, loginId, objEKYCDetailsBO);
+                DataSet dataSet = objModule.INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA(IDENTIFIERTYPE, IdentifierName, MOBILENUMBER, MOBILEVERIFY, NAMEMATCHSCORE, loginId, objEKYCDetailsBO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

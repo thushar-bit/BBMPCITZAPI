@@ -1,4 +1,5 @@
 ﻿using BBMPCITZAPI.Models;
+using BBMPCITZAPI.Services.Interfaces;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,6 @@ using Microsoft.Reporting.NETCore;
 using NUPMS_BA;
 using NUPMS_BO;
 using System.Data;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -23,9 +23,9 @@ namespace BBMPCITZAPI.Controllers
     {
         private readonly ILogger<ReportsController> _logger;
         private readonly ESignSettings _Esign;
-        private readonly NameMatchingService _NameMatchService;
+        private readonly INameMatchingService _NameMatchService;
 
-        public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, NameMatchingService NameMatchService)
+        public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService)
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
@@ -123,6 +123,37 @@ namespace BBMPCITZAPI.Controllers
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in FinalSubmitValidations function reportcontroller");
+                throw ex;
+            }
+        }
+
+        private int OWNER_COUNT_NOTIN_BOOKS(DataTable dsNCLTable,DataTable dsBBDTable)
+        {
+            try
+            {
+                int i = 0;
+
+                foreach (DataRow objGridViewRow2 in dsNCLTable.Rows)
+                {
+                    bool isExitingOwner = false;
+                    foreach (DataRow objGridViewRow1 in dsBBDTable.Rows)
+                    {
+                        if ((Convert.ToInt64(objGridViewRow1["OWNERNUMBER"]) == (Convert.ToInt64(objGridViewRow2["OWNERNUMBER"]))))
+                        {
+                            isExitingOwner = true;
+                        }
+                    }
+                    if (!isExitingOwner)//new owner
+                    {
+                        i = i + 1;
+                    }
+                }
+
+                return i;
+            }catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error in OWNER_COUNT_NOTIN_BOOKS function reportcontroller");
                 throw ex;
             }
         }
@@ -150,11 +181,11 @@ namespace BBMPCITZAPI.Controllers
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.CATEGORYCHANGE = (dsBBDTablesDatas.Tables[1].Rows[0]["PROPERTYCATEGORYID"] == dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]) ? "N" : "Y";
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_BOOKS = dsBBDTablesDatas.Tables[1].Rows.Count;
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_EKYC = dsNCLTablesData.Tables[5].Rows.Count;
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS = dsNCLTablesData.Tables[5].Rows.Count - dsBBDTablesDatas.Tables[1].Rows.Count;
+                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS = OWNER_COUNT_NOTIN_BOOKS(dsNCLTablesData.Tables[5], dsBBDTablesDatas.Tables[5]);
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIDOC = KAVERIDOCOwnerCount(dsNCLTablesData.Tables[16]);
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIEC = KAVERIECOwnerCount(dsNCLTablesData.Tables[18]);
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_SASDATA = dsNCLTablesData.Tables[12].Rows.Count;
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_BOOKS = (objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS > 0) ? "N" : OWNERMATCHEDWITH_BOOKS(dsNCLTablesData);
+                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_BOOKS = (objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS > 0) ? "N" : OWNERMATCHEDWITH_BOOKS(dsNCLTablesData, dsBBDTablesDatas);
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_KAVERIDOC = GetOWNERMATCHEDWITH_KAVERIDOC(dsNCLTablesData, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIDOC,LoginId);
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_KAVERIEC = GetOWNERMATCHEDWITH_KAVERIEC(dsNCLTablesData, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIEC,LoginId);
                         objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_SASDATA = GetOWNERMATCHEDWITH_SASDATA(dsNCLTablesData.Tables[12], dsNCLTablesData,LoginId);
@@ -174,139 +205,190 @@ namespace BBMPCITZAPI.Controllers
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in FinalSubmitValidation api  reportcontroller");
                 throw ex;
             }
         }
-        private string OWNERMATCHEDWITH_BOOKS(DataSet dsNCLTablesData)
+        private string OWNERMATCHEDWITH_BOOKS(DataSet dsNCLTablesData,DataSet dsBBTablesData)
         {
-            string matched = "Y";
-
-           
-            if (dsNCLTablesData.Tables.Count > 5 && dsNCLTablesData.Tables[5].Rows.Count > 0)
+            try
             {
-                foreach (DataRow row in dsNCLTablesData.Tables[5].Rows)
-                {
-                   
-                    if (Convert.ToInt32(row["NAMEMATCHSCORE"]) < 75)
-                    {
-                        matched = "N";
-                        break; 
-                    }
-                }
-            }
+                string matched = "N";
+                bool isNameMatchFailed = false;
 
-            return matched;
+                Dictionary<Int64, string> dicBookOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsBBTablesData.Tables[5].Rows)
+                {
+
+                    dicBookOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
+
+                }
+
+                Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
+                {
+
+                    dicEkycOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
+
+                }
+
+
+                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicBookOwners, dicEkycOwners);
+
+                foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
+                {
+                    if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
+                    {
+                        isNameMatchFailed = true;
+                    }
+                    // objModule.UPD_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(objNameMatchingResult.OwnerNo, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
+                }
+
+
+
+                if (isNameMatchFailed == true)
+                {
+                    matched = "N";
+                }
+                else
+                {
+                    matched = "Y";
+                }
+                return matched;
+            }catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error in OWNERMATCHEDWITH_BOOKS function  reportcontroller");
+                throw ex;
+            }
         }
 
         private string GetOWNERMATCHEDWITH_KAVERIDOC(DataSet dsNCLTablesData, int OWNER_COUNT_KAVERIDOC,string LoginId)
         {
-            string matched = "N";
-            bool isNameMatchFailed = false;
-
-            Dictionary<Int64, string> dicKaveriOwners = new Dictionary<Int64, string>();
-            foreach (DataRow dr in dsNCLTablesData.Tables[16].Rows)
+            try
             {
-                if (Convert.ToString(dr["PARTYTYPE"]) == "Claimant")
+                string matched = "N";
+                bool isNameMatchFailed = false;
+
+                Dictionary<Int64, string> dicKaveriOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsNCLTablesData.Tables[16].Rows)
                 {
-                    dicKaveriOwners.Add(Convert.ToInt64(dr["ROW_ID"]), Convert.ToString(dr["PARTYNAME"]));
+                    if (Convert.ToString(dr["PARTYTYPE"]) == "Claimant")
+                    {
+                        dicKaveriOwners.Add(Convert.ToInt64(dr["ROW_ID"]), Convert.ToString(dr["PARTYNAME"]));
+                    }
                 }
-            }
 
-            Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
-            foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
-            {
-               
+                Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
+                {
+
                     dicEkycOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
-              
-            }
 
-         
-            List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-            objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicKaveriOwners, dicEkycOwners);
-
-            foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
-            {
-                if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
-                {
-                    isNameMatchFailed = true;
                 }
-                objModule.UPD_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(objNameMatchingResult.OwnerNo, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
-            }
 
-            if (Convert.ToString(dsNCLTablesData.Tables[5].Rows[20]["KAVERIDOC_AVAILABLE"]) != "1")
+
+                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicKaveriOwners, dicEkycOwners);
+
+                foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
+                {
+                    if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
+                    {
+                        isNameMatchFailed = true;
+                    }
+                    objModule.UPD_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(objNameMatchingResult.OwnerNo, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
+                }
+
+                if (Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]) != "1")
+                {
+                    matched = "N";
+                }
+                else if (OWNER_COUNT_KAVERIDOC != dsNCLTablesData.Tables[5].Rows.Count)
+                {
+                    matched = "N";
+                }
+                else if (isNameMatchFailed == true)
+                {
+                    matched = "N";
+                }
+                else
+                {
+                    matched = "Y";
+                }
+                return matched;
+            }catch(Exception ex)
             {
-                matched = "N";
+                _logger.LogError(ex, "Error in GetOWNERMATCHEDWITH_KAVERIDOC function  reportcontroller");
+                throw ex;
             }
-            else if (OWNER_COUNT_KAVERIDOC != dsNCLTablesData.Tables[5].Rows.Count)
-            {
-                matched = "N";
-            }
-            else if (isNameMatchFailed == true)
-            {
-                matched = "N";
-            }
-            else
-            {
-                matched = "Y";
-            }
-            return matched;
         }
 
         private string GetOWNERMATCHEDWITH_KAVERIEC(DataSet dsNCLTablesData, int OWNER_COUNT_KAVERIEC,string LoginId)
         {
-            string matched = "N";
-            bool isNameMatchFailed = false;
-
-            Dictionary<Int64, string> dicKaveriECOwners = new Dictionary<Int64, string>();
-            foreach (DataRow dr in dsNCLTablesData.Tables[18].Rows)
+            try
             {
-                if (Convert.ToString(dr["PARTYTYPE"]) == "Claimant")
+                string matched = "N";
+                bool isNameMatchFailed = false;
+
+                Dictionary<Int64, string> dicKaveriECOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsNCLTablesData.Tables[18].Rows)
                 {
-                    dicKaveriECOwners.Add(Convert.ToInt32(dr["ROW_ID"]), Convert.ToString(dr["OWNERNAME"]));
+                    if (Convert.ToString(dr["ISCLAIMANTOREXECUTANT"]) == "C")
+                    {
+                        dicKaveriECOwners.Add(Convert.ToInt32(dr["ROW_ID"]), Convert.ToString(dr["OWNERNAME"]));
+                    }
                 }
-            }
-            Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
-            foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
-            {
-
-                dicEkycOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
-
-            }
-
-            List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-            objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicKaveriECOwners, dicEkycOwners);
-
-            foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
-            {
-                if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
+                Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
                 {
-                    isNameMatchFailed = true;
-                }
-                objModule.UPD_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(objNameMatchingResult.OwnerNo, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
-            }
 
-            if (Convert.ToString(dsNCLTablesData.Tables[5].Rows[20]["KAVERIDOC_AVAILABLE"]) != "1")
-            {
-                matched = "N";
+                    dicEkycOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
+
+                }
+
+                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicKaveriECOwners, dicEkycOwners);
+
+                foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
+                {
+                    if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
+                    {
+                        isNameMatchFailed = true;
+                    }
+                    objModule.UPD_NCL_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(objNameMatchingResult.OwnerNo, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
+                }
+
+                if (Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]) != "1")
+                {
+                    matched = "N";
+                }
+                else if (OWNER_COUNT_KAVERIEC != dsNCLTablesData.Tables[5].Rows.Count)
+                {
+                    matched = "N";
+                }
+                else if (isNameMatchFailed == true)
+                {
+                    matched = "N";
+                }
+                else
+                {
+                    matched = "Y";
+                }
+                return matched;
             }
-            else if (OWNER_COUNT_KAVERIEC != dsNCLTablesData.Tables[5].Rows.Count)
+            catch(Exception ex)
             {
-                matched = "N";
+                _logger.LogError(ex, "Error in GetOWNERMATCHEDWITH_KAVERIEC function  reportcontroller");
+                throw ex;
             }
-            else if (isNameMatchFailed == true)
-            {
-                matched = "N";
-            }
-            else
-            {
-                matched = "Y";
-            }
-            return matched;
         }
 
         private string GetOWNERMATCHEDWITH_SASDATA(DataTable dtSASData,DataSet dsNCLTablesData, string LoginId)
         {
-            string matched = "N";
+            try
+            {
+                string matched = "N";
             bool isNameMatchFailed = false;
 
             Dictionary<Int64, string> dicTaxDataOwners = new Dictionary<Int64, string>();
@@ -333,10 +415,11 @@ namespace BBMPCITZAPI.Controllers
                 {
                     isNameMatchFailed = true;
                 }
-                objModule.UPD_NCL_PROPERTY_SAS_APP_DATA_TEMP(objNameMatchingResult.OwnerNo, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
+                string SASOwnerName = "thushar";
+                objModule.INS_UPD_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["BOOKS_PROP_APPNO"]), Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["PROPERTYCODE"]), objNameMatchingResult.OwnerNo, SASOwnerName, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
             }
 
-            if (Convert.ToString(dsNCLTablesData.Tables[5].Rows[20]["KAVERIDOC_AVAILABLE"]) != "1")
+            if (Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]) != "1")
             {
                 matched = "N";
             }
@@ -353,10 +436,18 @@ namespace BBMPCITZAPI.Controllers
                 matched = "Y";
             }
             return matched;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error GetOWNERMATCHEDWITH_SASDATA the report.");
+                throw;
+            }
         }
         private int KAVERIDOCOwnerCount(DataTable dt)
         {
-            int i = 0;
+                try
+                {
+                    int i = 0;
 
 
             foreach (DataRow dr in dt.Rows)
@@ -368,11 +459,19 @@ namespace BBMPCITZAPI.Controllers
             }
 
             return i;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error KAVERIDOCOwnerCount private function the report.");
+                throw;
+            }
         }
 
         private int KAVERIECOwnerCount(DataTable dt)
         {
-            int i = 0;
+                    try
+                    {
+                        int i = 0;
 
 
             foreach (DataRow dr in dt.Rows)
@@ -384,11 +483,14 @@ namespace BBMPCITZAPI.Controllers
             }
 
             return i;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error KAVERIECOwnerCount private function the report.");
+                throw;
+            }
         }
-        private string ValidateAndDisplayPanels(DataSet dsNCLTablesData)
-        {
-            return "SUCCESS";
-        }
+       
         [HttpGet("GetFinalBBMPReport")]
         public IActionResult GetFinalReport(int propertycode, int BOOKS_PROP_APPNO, string LoginId)
         {
@@ -422,8 +524,9 @@ namespace BBMPCITZAPI.Controllers
                 param[7] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]));
                 param[8] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SUB_DIVISION_NAME"]));
                 param[9] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"]));
-                param[10] = new ReportParameter("P_DOORSITENO", Convert.ToString(dsReportData.Tables[0].Rows[0]["DOORSITENO"]));
-                param[11] = new ReportParameter("P_BUIDINGNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["BUIDINGNAME"]));
+                param[10] = new ReportParameter("P_DOORSITENO", Convert.ToString(dsReportData.Tables[0].Rows[0]["DOORNO"]));
+                param[11] = new ReportParameter("P_BUIDINGNAME1",string.IsNullOrEmpty(Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"])) ? "NA" : Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"]));
+
                 param[12] = new ReportParameter("P_STREETNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["STREETNAME"]));
                 param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]));
                 param[14] = new ReportParameter("P_BOOKS_PROP_APPNO", Convert.ToString(BOOKS_PROP_APPNO));
@@ -549,7 +652,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error generating the report.");
+                _logger.LogError(ex, "Error GetFinalBBMPReport function the report.");
                 throw;
             }
         }
@@ -576,14 +679,14 @@ namespace BBMPCITZAPI.Controllers
                 DataSet dsReportData = objModule.SEL_CitzRegistration_Endorsement_BBMP(Convert.ToInt32(BOOKS_PROP_APPNO), Convert.ToInt32(propertycode), Convert.ToString(LoginId));
                 ReportParameter[] param = new ReportParameter[13];
 
-                param[0] = new ReportParameter("P_Hname", "Bruhat Bangalore Mahanagara Palike");
+                param[0] = new ReportParameter("P_Hname", Convert.ToString(dsReportData.Tables[0].Rows[0]["HName"]));
                 param[1] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]));
                 param[2] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SUB_DIVISION_NAME"]));
                 param[3] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"]));
                 param[4] = new ReportParameter("ARO_ADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["ARO_ADDRESS"]));
                 param[5] = new ReportParameter("P_REASON", Convert.ToString(dsReportData.Tables[0].Rows[0]["REASON"]));
                 param[6] = new ReportParameter("P_TYPEOFPROPERTY", dsReportData.Tables[0].Rows[0]["TYPEOFPROPERTY"].ToString());
-                param[7] = new ReportParameter("P_OWNERNAMEBBMP", Convert.ToString(dsReportData.Tables[0].Rows[0]["OWNERNAME"]));
+                param[7] = new ReportParameter("P_OWNERNAMEBBMP",  string.IsNullOrEmpty(Convert.ToString(dsReportData.Tables[0].Rows[0]["BBMP_REG_OWNERNAMES"])) ? "NA" : Convert.ToString(dsReportData.Tables[0].Rows[0]["BBMP_REG_OWNERNAMES"]));
                 param[8] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]));
                 param[9] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]));
                 param[10] = new ReportParameter("P_PROPERTYID", Convert.ToString(propertycode));
@@ -642,7 +745,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error generating the report.");
+                _logger.LogError(ex, "Error GetEndorsementReport the report.");
                 throw;
             }
         }
@@ -797,7 +900,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error generating the report.");
+                _logger.LogError(ex, "Error GetPDF the report.");
                 throw;
             }
         }
@@ -819,7 +922,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error generating the report.");
+                _logger.LogError(ex, "Error GetMaskedMobileNumber the report.");
                 Alert.Show(ex.Message);
                 return "";
             }
