@@ -2015,7 +2015,7 @@
                           <TextRuns>
                             <TextRun>
                               <Label>LIABILITYTYPE</Label>
-                              <Value>=IIF(Parameters!P_LANGUAGE.Value=1, Fields!LIABILITYTYPE.Value,Fields!LIABILITYTYPE_EN.Value)</Value>
+                              <Value>=Fields!LIABILITYTYPE.Value</Value>
                               <Style>
                                 <FontFamily>Arial Unicode MS</FontFamily>
                               </Style>
@@ -2477,7 +2477,7 @@
                           <TextRuns>
                             <TextRun>
                               <Label>PARKING</Label>
-                              <Value>=IIF(Parameters!P_LANGUAGE.Value=1, iif(Fields!PARKINGAVAILABLE.Value = "Y" , "ಹೌದು" , "ಇಲ್ಲ"),iif(Fields!PARKINGAVAILABLE.Value = "Y" , "Yes" , "No"))</Value>
+                              <Value>=Fields!PARKINGAVAILABLE.Value</Value>
                               <Style>
                                 <FontFamily>Arial Unicode MS</FontFamily>
                               </Style>
@@ -2739,7 +2739,7 @@
                           <TextRuns>
                             <TextRun>
                               <Label>BUILDINGTYPE</Label>
-                              <Value>=IIF(Parameters!P_LANGUAGE.Value=1, Fields!BUILDINGTYPE.Value,Fields!BUILDINGTYPE_EN.Value)</Value>
+                              <Value>=Fields!BUILDINGTYPE.Value</Value>
                               <Style>
                                 <FontFamily>Arial Unicode MS</FontFamily>
                               </Style>
@@ -2806,7 +2806,7 @@
                           <TextRuns>
                             <TextRun>
                               <Label>ROOFTYPE</Label>
-                              <Value>=IIF(Parameters!P_LANGUAGE.Value=1, Fields!ROOFTYPEDESCRIPTION.Value,Fields!ROOFTYPEDESCRIPTION_EN.Value)</Value>
+                              <Value />
                               <Style>
                                 <FontFamily>Arial Unicode MS</FontFamily>
                               </Style>
@@ -2840,7 +2840,7 @@
                           <TextRuns>
                             <TextRun>
                               <Label>WOODTYPE</Label>
-                              <Value>=IIF(Parameters!P_LANGUAGE.Value=1, Fields!WOODTYPEDESCRIPTION.Value,Fields!WOODTYPEDESCRIPTION_EN.Value)</Value>
+                              <Value />
                               <Style>
                                 <FontFamily>Arial Unicode MS</FontFamily>
                               </Style>
@@ -3029,7 +3029,7 @@
                           <TextRuns>
                             <TextRun>
                               <Label>FLOORTYPE</Label>
-                              <Value>=IIF(Parameters!P_LANGUAGE.Value=1, Fields!FLOORTYPEDESCRIPTION.Value,Fields!FLOORTYPEDESCRIPTION_EN.Value)</Value>
+                              <Value />
                               <Style>
                                 <FontFamily>Arial Unicode MS</FontFamily>
                               </Style>
@@ -6027,99 +6027,6 @@
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox86">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Dear Applicant,</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Arial Unicode MS</FontFamily>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <SpaceBefore>3pt</SpaceBefore>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>             Your ONLINE Application for digital e-Khatha of the property has been received. </Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Arial Unicode MS</FontFamily>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <SpaceBefore>3pt</SpaceBefore>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Arial Unicode MS</FontFamily>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <SpaceBefore>3pt</SpaceBefore>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>             The details entered in the application for property khatha creation are as follows.</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Arial Unicode MS</FontFamily>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <SpaceBefore>3pt</SpaceBefore>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox22</rd:DefaultName>
-            <Top>3.98262cm</Top>
-            <Left>0.007in</Left>
-            <Height>2.91519cm</Height>
-            <Width>7.78667in</Width>
-            <ZIndex>2</ZIndex>
-            <Visibility>
-              <Hidden>=IIF(Parameters!P_LANGUAGE.Value = 1, True,False)</Hidden>
-            </Visibility>
-            <Style>
-              <Border>
-                <Color>White</Color>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox111">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -6155,7 +6062,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=First(Fields!PROPERTYCODE.Value, "DataSet1")</Value>
+                    <Value>=Parameters!P_BOOKS_PROP_APPNO.Value</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Arial Unicode MS</FontFamily>
@@ -6182,7 +6089,7 @@
             <Top>3.10068cm</Top>
             <Height>0.93963cm</Height>
             <Width>19.79573cm</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -6196,8 +6103,8 @@
           </Textbox>
         </ReportItems>
         <KeepTogether>true</KeepTogether>
-        <Height>6.89781cm</Height>
-        <Width>19.81357cm</Width>
+        <Height>4.04031cm</Height>
+        <Width>19.83131cm</Width>
         <ZIndex>8</ZIndex>
         <Style>
           <Border>
@@ -9038,7 +8945,48 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Door/Site No _________, Building Name _______,</Value>
+                <Value>Door/Site No  </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=Parameters!P_DOORSITENO.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>. Building Name </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=Parameters!P_BUIDINGNAME1.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontSize>9pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>,</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Arial Unicode MS</FontFamily>
@@ -9055,10 +9003,21 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Street _________</Value>
+                <Value>Street  </Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=Parameters!P_STREETNAME1.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontSize>9pt</FontSize>
                   <FontWeight>Normal</FontWeight>
                   <TextDecoration>None</TextDecoration>
                   <Color>#000000</Color>
@@ -9076,6 +9035,7 @@
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontSize>9pt</FontSize>
                   <FontWeight>Normal</FontWeight>
                   <TextDecoration>None</TextDecoration>
                   <Color>#000000</Color>
@@ -9219,7 +9179,17 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value> Applicant Name:----------</Value>
+                <Value> Applicant Name:</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=Parameters!P_APPLICANTNAME.Value</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Arial Unicode MS</FontFamily>
@@ -9236,7 +9206,17 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value> Applicant Postal Address:-----------</Value>
+                <Value> Applicant Postal Address:</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=Parameters!P_APPLICANTPOSTALADDRESS.Value</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Arial Unicode MS</FontFamily>
@@ -9301,13 +9281,102 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Textbox Name="Textbox145">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Dear Applicant,</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>             Your ONLINE Application for digital e-Khatha of the property has been received. </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <SpaceBefore>3pt</SpaceBefore>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <SpaceBefore>3pt</SpaceBefore>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>             The details entered in the application for property khatha creation are as follows.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <SpaceBefore>3pt</SpaceBefore>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox143</rd:DefaultName>
+        <Top>4.04031cm</Top>
+        <Left>0cm</Left>
+        <Height>2.8575cm</Height>
+        <Width>19.83131cm</Width>
+        <ZIndex>16</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
     <Height>29.89617in</Height>
     <Style>
-      <BackgroundImage>
-        <Source>Embedded</Source>
-        <Value>Draftcopy</Value>
-      </BackgroundImage>
+      <Border>
+        <Style>Solid</Style>
+      </Border>
     </Style>
   </Body>
   <ReportParameters>
@@ -9352,6 +9421,42 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="P_WARD_NAME">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_DOORSITENO">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_BUIDINGNAME1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_STREETNAME1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_APPLICANTNAME">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_APPLICANTPOSTALADDRESS">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_BOOKS_PROP_APPNO">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
@@ -9511,27 +9616,9 @@ Uwjl8Sqafa2aqjQtsQqHViADcBHGhCCDu5d5hMGgqzO+JOlmZElJmvCWQZcCGJ6cQDIvD0TTX8syE0or
 /ZL3cZmhhpXfgFi+ZB+ubMR9cU9+toTVkch81i+r1jzERI4nAzM7TeAzgOLQKTajmujmKnjKVjGGvZcx58JTiQtF77gAhESr6ZOIWiZRGLwX5uRuOOmDRBvE4fEy6LUN0KPNlENIMY3hXORAVglwFAYK4+mq6Ho0edvWa63gFSQeRcUUBQ9lDIfFRWDyykL1KnNeLG3Jj8Me7yJgkJdVyVL8ChjlN0Ovv5FtWcu20Sok3pTu/07Rz0UAryU7NwArfQ52dhLZ0e/BTuxVeYJRRvcTlx95Xs7coYE81FR8cB2TOwYjWuw2WP6e1/PSJ+sm05R8RNF5TKYsJRzYdhJWapDWOABzYgLFJC3CF2Zg/SC08FIYsWXcVvC6ixvFXCj6hQjglSTLXRzGhlxiP+zh75JBZykg6p0+Q+SUgIdJmfrZlGA1oWSZCpRUT2l5KTiz+eJ22A356v6wXBpWYVLV62RHKWwey1WxJC3AH4VefSUCRDVaSKzu5bmDXwT9wgUwS+o3J2UdPfMFMzeFQmIPrLF74UwxfhRpAUV3OaIWoluSoX6xDAZW8TTyFJUpms6kzZvTZEmresbAoxXhi1Jole9j3LkNRqiNx6jhdHWvfIH2L5J+aQTwShJoatJNOSkGRXmlpsmwSiarrLbYwyCbJhLNcKPvVtBV46eMz5dD9zSQuRUUkq58v+anLw+voJtZQguKuDf4JaJfSgG8EUlLZcGri5hEIjLMIc0XlyTBWV61FuKu8Qt1KxdPwP8DYtOUaPSCknsAAAAASUVORK5CYII=</ImageData>
     </EmbeddedImage>
     <EmbeddedImage Name="Draftcopy">
-      <MIMEType>image/jpeg</MIMEType>
-      <ImageData>/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAATU0AKgAAAAgAAQESAAMAAAABAAEAAAAAAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAM0AsoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIh
-MUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
-iigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo
-AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
-iigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo
-AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiikC4oAWiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKYzHHp9aAH0VH5hHcenPapFORQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
-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
-KD0/SpWkrg9VY+QfjL8afEX7XlpbeGfBvhnVYdJknSW5ubhdhlI+6rsAUjQE9SWJIXHcHvPjB8LYfhB+w7qXh+CT7RJZwwGeUZHmym5iZ2A5wM5x7Yr6CCAD6fpQY1PaiSVrIcdHc8U/YLQD9nPTmx964uO3JHmE/jzmvFPinb2/wr/a31DXvH2gXWt+H76Z5bQ+SJIZ8qoTAYqj7B8rKx4wOOmftfAGePc0nlqeqqfw60c15c3yFHRWPg7V9VtfFv7TPgnWNJ8Jt4V0S+1C1Sxh+ypAbpEnUtMUUBf4snBbp1Nei/8ABTBWe08HHaW2yXedoyQP3H86+rAAoppVc9PajpGPbUFo7nG+KvDdz4p+Bd9pduq/bL7RXtog/A3tDgZ9snmvmv8AYy+OVv8ACGSfwZqui65/bGqaoiwqkAbyiyrGRIpYMoXGcgHjJ4HNfY2Fz/OnJHtWq5veb7h9mzAAOtfK/wC198DfEWj/ABVsviH4UtrjUJoZIpbmGCIzSW80W0K+wfMyFQoIAOMEng5H1UBimmME571PLqmB84aN/wAFDtN1XSFgj8KeILnxFsx9it1V4XkGMqJM7v8Axwn0B60/9on4deKvj7+ztouqXGjmz8TWE7XkulxjD+UxYFArHJcIEYg8nDYGSFr6MVAPSgLtHHrRLVBHQ+V/h/8At32vgj4aWOg6h4b1yTxPpNqtmIljAhmaMbFLknzFOANwCHBPHBFbH7DHwR1vwhNrXirxDayWN3rCCK3tpYykoQsXd2XA2hmxhSM/KT0Ir6OEaq3IHrnFJIi4IC85z0ok7pvqwsvh6Hwd+zP8Ub74QfEvxBqkej3msaKu5NS+yqHmtot5KS4yB1Ujkgc9RXQazfX37bP7Rel3mlabfWvh3SxAks80ePKiRzI5Z1yA7FiqoCTwDwM49I/Y7+BPij4VfEXxPf65pq2Nrfx7LdxPFJ5v70kfKjMRx64r6KCKeStVF2UX2CXxS8zxv9tz
-4Z/8LB+CF3cwxtJfeHz9vi2jJKDiUfQRkt7lFrwP9j3Q7740/HvT9S1aU3Vv4VsomUnJGI18qBPrzu99ma+rPj/Y69qfwh1qy8M2pvNXvoPs0SCWOPar4V2y5C8IW7jmuL/Yv+BGofBfwLfNrVuttrGr3PmTRCRJPJjQYRMoSDyWPBPDAdqVPRtv+mKd3FL+rHtSDinUifdpaXmxhRRRVAFFFFABRRRQAUUUUAFFGcUUAFFFFABRRnFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRiiigAxR0oooAKKKKACjFFFABiiiigAooooAMYoxRRQAYoxRRQA0RgU7FFFAAVBPSiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooozmldAFFFFMAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKQ5oAWigcCmsSDQA6im/MD2NOHSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoopNvuaAFooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii
-igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
-KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii
-igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACis/Wrq4sNJuprW1a9uoYWeK2WQIZ2AyEyeBk8ZNYPwe+Klr8XvCH9qWtrcWMkU72tzazEb7aZMblJHXqOfehagddRQTgVwngv4zx+JviR4g8K3mm3Wl6roh81Q7iSO7ty2ElUr0yCpKnpu6nBwbuwHdgYoorjfjL8TJPhH4RbWzpNxq1nazILwQyhJLeE7sygH7+G2jbx9
-7OeKm9twOyoqjoesW/iLRrW/tn8y1vIUnhfGMo4yD+Rq9mqe9hJ3VwooooGJt+XFLXCeC/jLH4m+JOv+Fb3TbrS9U0X96odxJHd25bCSqV6ZBUlT03dTg47pz8tT0TAQr1oVcNXzn4l/az8VWsOpa9pOl+HJPDWm6x/YyWlzNKup3svqmPkXPXBBI5617P8ACv4j2fxV8Hw6vZxzQ+YzRT28y7ZbWZDh43HqD+mKpaq6B6OzOnooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAQfeNedftJahDpfw3e4upvGlrbW9wsksvhlgl5GoDZLFuBF6/hXoo+8a8p/bH8N6p4o+CF9DpUM100FxDc3VrFnfdQI2XQY/Bv+A1nLYqO58vXHxztR8RYfK8ZfFr/AIRLyv3u/Vh/aXmYPT5/Lxux74zXr2s6/oOgfsg3F94Zj8beGbdbwNaSGf7HfalcPwJGkXfujbdk4xny8DGK3ov2wvhXH8OvseJVt1tvKOif2Y3TH+r+75X/AI/iuZ8N/BDXPFf7GN1p4tZba/kv21fSbGQlnhiBBSPnoSN5H++PWq6W6aa/Mlb369vl/X3nUeCP2YfEd34Lhk134kePodauIxIUttVkWG2Yj7hBJLY7kMtZP7NWgf8ACNeN/iF4f8RXl9J4qhiDS66107XE9kyYRlZydhTg556gfwVseDv25fCP/CKR/wDCQzXmj69ZqYruwNnK7tKvB2kDAyR0cgjofWs/4HeHtU+MOu+OPHl1ay6VD4msW0vSYpByYduPMP8A3ynPTO+m73bW1n/wCeiT3uv+CYHwK+GHiL40XWoa1/wn3j7T
-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
-UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA0xg0uwUtFADfLX0p2KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKQ5oAWiiigBrEg0eZTqKAG7zQHyO9OooAM5ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoxRRQAUUUUAN8tf8AJpVTYOKWigAooooAKKKKAG+WvpR5S+lOooAbso2Z9adRQA1Y9tKFwO9LRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVDCJBAolZXk2jcyLtUnuQMnA9sn8amooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooByKKACiiigAooooAKKKKACiiigA
-ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiijOKACigHIoJwKACiiigAoopuP8ADrQA6isjRfC9voV1dTQSak7Xr75BcX9xcKpyT8iyOyxjJPCADGPQVr0AFFIrbqWgAooooAKKM5pGbbQAtFGc0UAFFFFABRuoozigAooooAKKKKACjdRRQAZooozigAooooAAc0UUUAIGBHWloooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApvl89W6Y606igAooooAaU+tGzmnUUANMQNGzmnUUAN8oUeUM06igBpjBNOoooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKM5pFbNAC0U0Nkd/yp1ABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
-FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA
-UUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAH/2Q==</ImageData>
+      <MIMEType>image/png</MIMEType>
+      <ImageData>iVBORw0KGgoAAAANSUhEUgAAAxYAAACkCAYAAAAKVLhEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANMSURBVHhe7dcxAQAADMOg+TfdicgLLrgBAABEYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRi
+AQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAETbA8ES7cFujCdOAAAAAElFTkSuQmCC</ImageData>
     </EmbeddedImage>
   </EmbeddedImages>
   <rd:ReportID>1f16cda8-54cb-4b5a-88b5-03962ed1df21</rd:ReportID>

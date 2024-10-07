@@ -38,6 +38,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddLogging();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -80,6 +84,7 @@ builder.Services.AddSingleton<TokenService>();
 //builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
 builder.Services.AddScoped<INameMatchingService, NameMatchingService>();
+builder.Services.AddScoped<IErrorLogService, ErrorLoggingService>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // Read configuration from appsettings.json
     .Enrich.FromLogContext()
@@ -111,6 +116,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
+
 //app.UseHttpsRedirection();
 
 

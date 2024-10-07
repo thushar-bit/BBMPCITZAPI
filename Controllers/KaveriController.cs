@@ -1,6 +1,7 @@
 ﻿using BBMPCITZAPI.Models;
 using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ using System.Security.Cryptography;
 using System.Text;
 using static BBMPCITZAPI.Models.KaveriData;
 
+
 namespace BBMPCITZAPI.Controllers
 {
     [Route("v1/KaveriAPI")]
@@ -29,18 +31,19 @@ namespace BBMPCITZAPI.Controllers
         private readonly KaveriSettings _kaveriSettings;
         private readonly INameMatchingService _nameMatchingService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
-
+        private readonly IErrorLogService _errorLogService;
         public KaveriController(ILogger<EKYCController> logger, IOptions<KaveriSettings> kaveriSettings,
-            INameMatchingService NameMatching, IBBMPBookModuleService IBBMPBOOKMODULE)
+            INameMatchingService NameMatching, IBBMPBookModuleService IBBMPBOOKMODULE, IErrorLogService errorLogService)
         {
             _logger = logger;
             _kaveriSettings = kaveriSettings.Value;
             _nameMatchingService = NameMatching;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
-
+            _errorLogService = errorLogService;
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-       
+      
+
         private Dictionary<string, string> ExtractJsonParameters(JObject Obj_Json, List<string> lstParameters)
         {
             Dictionary<string, string> dictPayParameters = new Dictionary<string, string>();
@@ -112,6 +115,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "KaveriAPIRequest");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.KaveriAPIRequest");
                 throw ex;
             }
@@ -218,6 +222,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetKaveriDocData");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GetKaveriDocData");
                 throw;
             }
@@ -251,9 +256,18 @@ namespace BBMPCITZAPI.Controllers
                     {
                         string base64String = (string)Obj_Json.SelectToken("json");
                         byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
-                        
+                        string fromDate = (string)Obj_Json.SelectToken("fromDate");
+                        string toDate = (string)Obj_Json.SelectToken("toDate");
+                        DateTime fromDate1 = DateTime.Parse(fromDate);
+                        string format = "MM/dd/yyyy HH:mm:ss";
+                        DateTime toDate1 = DateTime.ParseExact(toDate, format, System.Globalization.CultureInfo.InvariantCulture);
+                        DateTime minimumFromDate = new DateTime(2004, 4, 1);
+                        DateTime currentDate = DateTime.Now;
+                        DateTime sevenDaysAgo = currentDate.AddDays(-8);
+                        if (fromDate1 >= minimumFromDate && toDate1 > sevenDaysAgo && toDate1 < currentDate)
+                        {
                         List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
-                      //  return Ok(new { success = true, ECDataExists = ECdocumentDetails });
+                    
                         var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
                         bool DoesExist = documentSummaries.Contains(RegistrationNoNumber);
                         var registrationNumberPosition = 0;
@@ -341,18 +355,29 @@ namespace BBMPCITZAPI.Controllers
                             return Ok(new { success = true ,ECDataExists = DoesExist });
                         }
                     }
+
                     else
                     {
-                          return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {responseMessage}" });
-                      //  return Ok(new { success = true, ECDataExists = DoesExist });
+                            return Ok(new { success = false, message = "The EC number has expired. Please provide an EC number issued within 7 days prior to the registration date." });
+                          
+                    
                     }
+                    }
+                    else
+                    {
+                        return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {responseMessage}" });
+
+                    }
+
                 }
                 return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {respStat}" });
+                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while executing stored procedure.GetKaveriECData");
-                throw;
+                _errorLogService.LogError(ex, "GetKaveriECData");
+                throw (ex);
+                
             }
         }
         private ECDataDescription ParseDescription(List<string> descriptions)

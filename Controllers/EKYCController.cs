@@ -28,14 +28,16 @@ namespace BBMPCITZAPI.Controllers
         private readonly ILogger<EKYCController> _logger;
         private readonly EKYCSettings _ekycSettings;
         private readonly BBMPSMSSETTINGS _BBMPSMSSETTINGS;
-
-        public EKYCController(ILogger<EKYCController> logger,  IOptions<EKYCSettings> ekycSettings,
+        private readonly IErrorLogService _errorLogService;
+        public EKYCController(ILogger<EKYCController> logger,  IOptions<EKYCSettings> ekycSettings, IErrorLogService errorLogService,
             IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS)
         {
             _logger = logger;
             _ekycSettings = ekycSettings.Value;
             _BBMPSMSSETTINGS = BBMPSMSSETTINGS.Value;
+            _errorLogService = errorLogService;
         }
+       
         [Authorize]
         [HttpPost("RequestEKYC")]
         public string GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
@@ -55,8 +57,10 @@ namespace BBMPCITZAPI.Controllers
 
                 string transacDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 long transactionNo = 0;
-
-                string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",ApplnCode:" + EKYCApplnCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
+                //live site
+               // string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",ApplnCode:" + EKYCApplnCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
+                //test site
+                string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode +  ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
                 EKYCTokenRequest = EKYCTokenRequest.Replace("\"", "'");
                 NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
                 transactionNo = obj.INSERT_EKYC_REQUEST_OWNER(BOOK_APP_NO, PROPERTY_CODE, OwnerNumber, transacDateTime, EKYCTokenRequest, "crc");
@@ -79,6 +83,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "RequestEKYC");
                 _logger.LogError(ex, "Error occurred while executing EKYC Request");
                 throw;
             }
@@ -138,6 +143,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex,"");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.");
                 throw;
             }
@@ -180,6 +186,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "SmsOtpFunc");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.");
                 throw;
             }
@@ -198,6 +205,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPDATE_EKYC_OWNER_VAULT_RESPONSE");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.");
                 throw;
             }
@@ -218,6 +226,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex,"");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.");
                 throw;
             }

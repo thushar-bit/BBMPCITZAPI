@@ -24,16 +24,17 @@ namespace BBMPCITZAPI.Controllers
         private readonly ILogger<ReportsController> _logger;
         private readonly ESignSettings _Esign;
         private readonly INameMatchingService _NameMatchService;
-
-        public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService)
+        private readonly IErrorLogService _errorLogService;
+        public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService)
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
             _NameMatchService = NameMatchService;
+            _errorLogService = errorLogService;
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
-
+      
         private string FinalSubmitValidations(DataSet dsNCLTablesData)
         {
 
@@ -73,6 +74,10 @@ namespace BBMPCITZAPI.Controllers
                         {
                             return "Buidling Details not Saved";
                         }
+                        if (dsNCLTablesData.Tables[19].Rows.Count == 0)
+                        {
+                            return "Bescom Details not Saved";
+                        }
                     }
                     else if (Convert.ToString(dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]) == "3")
                     {
@@ -83,6 +88,10 @@ namespace BBMPCITZAPI.Controllers
                         if (dsNCLTablesData.Tables[7].Rows.Count == 0)
                         {
                             return "Multi Storey Appartment Details not Saved";
+                        }
+                        if (dsNCLTablesData.Tables[19].Rows.Count == 0)
+                        {
+                            return "Bescom Details not Saved";
                         }
                     }
                 }
@@ -104,25 +113,15 @@ namespace BBMPCITZAPI.Controllers
                         return "Document not Uploaded";
                     }
                 }
-
-
                 if (dsNCLTablesData.Tables[5].Rows.Count == 0)
                 {
                     return "Owner Details not Saved";
                 }
-
-                if (dsNCLTablesData.Tables[19].Rows.Count == 0)
-                {
-                    return "Bescom Details not Saved";
-                }
-
-
                 return "SUCCESS";
             }
-
-
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "FinalSubmitValidations");
                 _logger.LogError(ex, "Error in FinalSubmitValidations function reportcontroller");
                 throw ex;
             }
@@ -149,10 +148,10 @@ namespace BBMPCITZAPI.Controllers
                         i = i + 1;
                     }
                 }
-
                 return i;
             }catch(Exception ex)
             {
+                _errorLogService.LogError(ex, "OWNER_COUNT_NOTIN_BOOKS");
                 _logger.LogError(ex, "Error in OWNER_COUNT_NOTIN_BOOKS function reportcontroller");
                 throw ex;
             }
@@ -161,7 +160,6 @@ namespace BBMPCITZAPI.Controllers
         [HttpGet("FinalSubmitValidation")]
         public string FinalSubmitValidation(int propertycode, int BOOKS_PROP_APPNO, string LoginId)
         {
-
             try
             {
                 bool isValidationDone = false;
@@ -170,41 +168,53 @@ namespace BBMPCITZAPI.Controllers
                 DataSet dsNCLTablesData = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMP(555, Convert.ToInt64(BOOKS_PROP_APPNO), Convert.ToInt64(propertycode));
                 DataSet dsBBDTablesDatas = objModule.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(555, Convert.ToInt64(propertycode));//Data from NCL temp tables  
 
-                if (dsNCLTablesData != null && dsNCLTablesData.Tables.Count > 0 && dsNCLTablesData.Tables[0].Rows.Count > 0 && Convert.ToInt32(dsNCLTablesData.Tables[0].Rows[0][0]) > 0)
+                if (dsNCLTablesData != null && dsNCLTablesData.Tables.Count > 1 && dsNCLTablesData.Tables[1].Rows.Count > 0 && Convert.ToInt32(dsNCLTablesData.Tables[0].Rows[0][0]) > 0)
                 {
-                    string result = FinalSubmitValidations(dsNCLTablesData);
-                    if (result == "SUCCESS")
+                    int firstValue = Convert.ToInt32(dsNCLTablesData.Tables[0].Rows[0][0]);
+                    if (firstValue > 0)
                     {
-                        isValidationDone = true;
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.KAVERIDOC_AVAILABLE = Convert.ToInt32(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.IS_LATEST_REGISTRATIONNO = Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["IS_LATEST_REGISTRATIONNO"]);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.CATEGORYCHANGE = (dsBBDTablesDatas.Tables[1].Rows[0]["PROPERTYCATEGORYID"] == dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]) ? "N" : "Y";
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_BOOKS = dsBBDTablesDatas.Tables[1].Rows.Count;
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_EKYC = dsNCLTablesData.Tables[5].Rows.Count;
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS = OWNER_COUNT_NOTIN_BOOKS(dsNCLTablesData.Tables[5], dsBBDTablesDatas.Tables[5]);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIDOC = KAVERIDOCOwnerCount(dsNCLTablesData.Tables[16]);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIEC = KAVERIECOwnerCount(dsNCLTablesData.Tables[18]);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_SASDATA = dsNCLTablesData.Tables[12].Rows.Count;
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_BOOKS = (objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS > 0) ? "N" : OWNERMATCHEDWITH_BOOKS(dsNCLTablesData, dsBBDTablesDatas);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_KAVERIDOC = GetOWNERMATCHEDWITH_KAVERIDOC(dsNCLTablesData, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIDOC,LoginId);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_KAVERIEC = GetOWNERMATCHEDWITH_KAVERIEC(dsNCLTablesData, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIEC,LoginId);
-                        objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_SASDATA = GetOWNERMATCHEDWITH_SASDATA(dsNCLTablesData.Tables[12], dsNCLTablesData,LoginId);
-                          objModule.AssignRefferalCodeForeKhataApplication(objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO);
-                        objModule.UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_PROP_APPNO), Convert.ToInt64(propertycode), Convert.ToString(LoginId), objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO);
-                        return "SUCCESS";
+                        string result = FinalSubmitValidations(dsNCLTablesData);
+                        if (result == "SUCCESS")
+                        {
+                            isValidationDone = true;
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.KAVERIDOC_AVAILABLE = Convert.ToInt32(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.IS_LATEST_REGISTRATIONNO = Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["IS_LATEST_REGISTRATIONNO"]);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.CATEGORYCHANGE = (dsBBDTablesDatas.Tables[1].Rows[0]["PROPERTYCATEGORYID"] == dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]) ? "N" : "Y";
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_BOOKS = dsBBDTablesDatas.Tables[1].Rows.Count;
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_EKYC = dsNCLTablesData.Tables[5].Rows.Count;
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS = OWNER_COUNT_NOTIN_BOOKS(dsNCLTablesData.Tables[5], dsBBDTablesDatas.Tables[5]);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIDOC = KAVERIDOCOwnerCount(dsNCLTablesData.Tables[16]);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIEC = KAVERIECOwnerCount(dsNCLTablesData.Tables[18]);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_SASDATA = dsNCLTablesData.Tables[12].Rows.Count;
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_BOOKS = (objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_NOTINBOOKS > 0) ? "N" : OWNERMATCHEDWITH_BOOKS(dsNCLTablesData, dsBBDTablesDatas);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_KAVERIDOC = GetOWNERMATCHEDWITH_KAVERIDOC(dsNCLTablesData, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIDOC, LoginId);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_KAVERIEC = GetOWNERMATCHEDWITH_KAVERIEC(dsNCLTablesData, objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNER_COUNT_KAVERIEC, LoginId);
+                            objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO.OWNERMATCHEDWITH_SASDATA = GetOWNERMATCHEDWITH_SASDATA(dsNCLTablesData.Tables[12], dsNCLTablesData, LoginId);
+                            objModule.AssignRefferalCodeForeKhataApplication(objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO);
+                            objModule.UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_PROP_APPNO), Convert.ToInt64(propertycode), Convert.ToString(LoginId), objNCL_PROPERTY_COMPARE_MATRIX_TEMP_BO);
+                            return "SUCCESS";
+                        }
+                        else
+                        {
+
+                            return result;
+                        }
                     }
                     else
                     {
-
-                        return result;
+                        return "Please Save All  Values";
                     }
                 }
-                return "Please Save the Values";
+                else
+                {
+                    return "Please Save All Values";
+                }
             }
 
 
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "FinalSubmitValidation");
                 _logger.LogError(ex, "Error in FinalSubmitValidation api  reportcontroller");
                 throw ex;
             }
@@ -258,6 +268,7 @@ namespace BBMPCITZAPI.Controllers
                 return matched;
             }catch(Exception ex)
             {
+                _errorLogService.LogError(ex, "OWNERMATCHEDWITH_BOOKS");
                 _logger.LogError(ex, "Error in OWNERMATCHEDWITH_BOOKS function  reportcontroller");
                 throw ex;
             }
@@ -319,6 +330,7 @@ namespace BBMPCITZAPI.Controllers
                 return matched;
             }catch(Exception ex)
             {
+                _errorLogService.LogError(ex, "GetOWNERMATCHEDWITH_KAVERIDOC");
                 _logger.LogError(ex, "Error in GetOWNERMATCHEDWITH_KAVERIDOC function  reportcontroller");
                 throw ex;
             }
@@ -379,6 +391,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch(Exception ex)
             {
+                _errorLogService.LogError(ex, "GetOWNERMATCHEDWITH_KAVERIEC");
                 _logger.LogError(ex, "Error in GetOWNERMATCHEDWITH_KAVERIEC function  reportcontroller");
                 throw ex;
             }
@@ -416,7 +429,7 @@ namespace BBMPCITZAPI.Controllers
                     isNameMatchFailed = true;
                 }
                 string SASOwnerName = "thushar";
-                objModule.INS_UPD_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["BOOKS_PROP_APPNO"]), Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["PROPERTYCODE"]), objNameMatchingResult.OwnerNo, SASOwnerName, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
+                objModule.UPD_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["BOOKS_PROP_APPNO"]), Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["PROPERTYCODE"]), objNameMatchingResult.OwnerNo, SASOwnerName, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
             }
 
             if (Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]) != "1")
@@ -439,6 +452,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetOWNERMATCHEDWITH_SASDATA");
                 _logger.LogError(ex, "Error GetOWNERMATCHEDWITH_SASDATA the report.");
                 throw;
             }
@@ -462,6 +476,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "KAVERIDOCOwnerCount");
                 _logger.LogError(ex, "Error KAVERIDOCOwnerCount private function the report.");
                 throw;
             }
@@ -486,6 +501,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "KAVERIECOwnerCount");
                 _logger.LogError(ex, "Error KAVERIECOwnerCount private function the report.");
                 throw;
             }
@@ -503,7 +519,7 @@ namespace BBMPCITZAPI.Controllers
                 LocalReport report = new LocalReport
                 {
                     EnableExternalImages = true,
-                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzeKhataAcknowledgement.rdlc")
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP2.rdlc")
                 };
 
 
@@ -514,23 +530,24 @@ namespace BBMPCITZAPI.Controllers
                 DataSet dsReportData = objModule.SEL_CitzeKhataAcknowledgement(Convert.ToInt32(BOOKS_PROP_APPNO), Convert.ToInt32(propertycode), Convert.ToString(LoginId));
                 ReportParameter[] param = new ReportParameter[16];
 
-                param[0] = new ReportParameter("P_OPRNAME", "NA");
-                param[1] = new ReportParameter("P_CENTERNAME", "NA");
-                param[2] = new ReportParameter("P_PROPERTYCATEGORYID", dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"].ToString());
-                param[3] = new ReportParameter("P_USERTYPE", "CITIZEN");
-                param[4] = new ReportParameter("P_LANGUAGE", "0");
-                param[5] = new ReportParameter("P_ISCOMPANY", dsNCLTablesData.Tables[5].Rows.Count > 0 && dsNCLTablesData.Tables[5].Rows[0]["ISCOMPANY"].ToString() == "N" ? "N" : "Y");
-                param[6] = new ReportParameter("P_Hname", "Bruhat Bangalore Mahanagara Palike");
                 param[7] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]));
                 param[8] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SUB_DIVISION_NAME"]));
                 param[9] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"]));
                 param[10] = new ReportParameter("P_DOORSITENO", Convert.ToString(dsReportData.Tables[0].Rows[0]["DOORNO"]));
-                param[11] = new ReportParameter("P_BUIDINGNAME1",string.IsNullOrEmpty(Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"])) ? "NA" : Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"]));
-
+                param[11] = new ReportParameter("P_BUIDINGNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"]));
                 param[12] = new ReportParameter("P_STREETNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["STREETNAME"]));
                 param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]));
-                param[14] = new ReportParameter("P_BOOKS_PROP_APPNO", Convert.ToString(BOOKS_PROP_APPNO));
-                param[15] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]));
+                param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]));
+                param[15] = new ReportParameter("P_BOOKS_PROP_APPNO", "K-" + Convert.ToString(BOOKS_PROP_APPNO));
+
+                param[6] = new ReportParameter("P_Hname", Convert.ToString(dsReportData.Tables[0].Rows[0]["ULB_DISPLAYNAME"]));
+                param[3] = new ReportParameter("P_USERTYPE", "CITIZEN");
+                param[3] = new ReportParameter("P_USERTYPE", "NA");
+                param[0] = new ReportParameter("P_OPRNAME", "NA");
+                param[1] = new ReportParameter("P_CENTERNAME", "NA");
+                param[2] = new ReportParameter("P_PROPERTYCATEGORYID", Convert.ToString(dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]));
+                param[4] = new ReportParameter("P_LANGUAGE", "0"); //English
+             //   param[4] = new ReportParameter("P_LANGUAGE", "1"); //Kannada
                 foreach (DataRow row in dsNCLTablesData.Tables[5].Rows)
                 {
                     if (row["OWNERIDENTITYSLNO"] != DBNull.Value)
@@ -652,6 +669,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetFinalBBMPReport");
                 _logger.LogError(ex, "Error GetFinalBBMPReport function the report.");
                 throw;
             }
@@ -745,6 +763,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetEndorsementReport");
                 _logger.LogError(ex, "Error GetEndorsementReport the report.");
                 throw;
             }
@@ -762,7 +781,7 @@ namespace BBMPCITZAPI.Controllers
                 LocalReport report = new LocalReport
                 {
                     EnableExternalImages = true,
-                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP.rdlc")
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP2.rdlc")
                 };
 
 
@@ -900,6 +919,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetPDF");
                 _logger.LogError(ex, "Error GetPDF the report.");
                 throw;
             }
@@ -922,6 +942,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMaskedMobileNumber");
                 _logger.LogError(ex, "Error GetMaskedMobileNumber the report.");
                 Alert.Show(ex.Message);
                 return "";
@@ -960,7 +981,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                Alert.Show(ex.Message);
+                _errorLogService.LogError(ex, "GetEsign");
                 throw ex;
             }
         }
@@ -978,7 +999,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                Alert.Show(ex.Message);
+                _errorLogService.LogError(ex, "ConvertReportToPDF"); ;
             }
             return localPath;
         }
@@ -1077,8 +1098,8 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                // objLogHelper.LogError(ex, "GetPDFHash For Property:" + ((Convert.ToString(Session["BookModPropertyID"]) != "") ? Convert.ToString(Session["BookModPropertyID"]) : ((Convert.ToString(Session["BookModPropertyCode"]) != "") ? Convert.ToString(Session["BookModPropertyCode"]) : Convert.ToString(Session["LoginId"]))));
-                Alert.Show(ex.Message);
+                // _errorLogService.LogError(ex, "GetPDFHash For Property:" + ((Convert.ToString(Session["BookModPropertyID"]) != "") ? Convert.ToString(Session["BookModPropertyID"]) : ((Convert.ToString(Session["BookModPropertyCode"]) != "") ? Convert.ToString(Session["BookModPropertyCode"]) : Convert.ToString(Session["LoginId"]))));
+                _errorLogService.LogError(ex, "GetPDFHash");
             }
             return pdfHash;
         }
@@ -1105,7 +1126,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                Alert.Show(ex.Message);
+                _errorLogService.LogError(ex,"");
             }
             return Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes(strXML));
         }
@@ -1188,7 +1209,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //    catch (Exception ex1)
         //    {
-        //        // objLogHelper.LogError(ex1, "AttachSignature1");
+        //        // _errorLogService.LogError(ex1, "AttachSignature1");
         //        Alert.Show("AttachSignature1:" + ((ex1.InnerException != null) ? ex1.InnerException.Message.Replace('\n', ' ') : ex1.Message.Replace('\n', ' ')));
         //    }
 
@@ -1206,7 +1227,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //    catch (Exception ex2)
         //    {
-        //        //  objLogHelper.LogError(ex2, "AttachSignature2");
+        //        //  _errorLogService.LogError(ex2, "AttachSignature2");
         //        Alert.Show("AttachSignature2:" + ((ex2.InnerException != null) ? ex2.InnerException.Message.Replace('\n', ' ') : ex2.Message.Replace('\n', ' ')));
         //    }
         //}
@@ -1225,7 +1246,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //    catch (Exception ex)
         //    {
-        //        // objLogHelper.LogError(ex, "Final Submit For Application:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
+        //        // _errorLogService.LogError(ex, "Final Submit For Application:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
         //        Alert.Show("Application not submitted, Please try again:" + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
         //    }
         //}
@@ -1264,7 +1285,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //    catch (Exception ex)
         //    {
-        //      //  objLogHelper.LogError(ex, "SMS for Final Submit:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]) + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
+        //      //  _errorLogService.LogError(ex, "SMS for Final Submit:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]) + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
         //        Alert.Show("Application Submitted Successfully but SMS is failed. Reference No: " + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
         //        return "";
         //    }

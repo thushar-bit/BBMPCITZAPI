@@ -27,9 +27,9 @@ namespace BBMPCITZAPI.Controllers
         private readonly INameMatchingService _nameMatchingService;
         private readonly PropertyDetails _PropertyDetails;
         //   private readonly ICacheService _cacheService;
-
+        private readonly IErrorLogService _errorLogService;
         public NameMatchController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails,
-             INameMatchingService NameMatching)
+             INameMatchingService NameMatching, IErrorLogService errorLogService)
         // ICacheService cacheService)
         {
             _logger = logger;
@@ -38,10 +38,11 @@ namespace BBMPCITZAPI.Controllers
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _PropertyDetails = PropertyDetails.Value;
             _nameMatchingService = NameMatching;
+            _errorLogService = errorLogService;
             //  _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-
+   
 
         [HttpGet("GET_BBD_NCL_OWNER_BYEKYCTRANSACTION")]
         public ActionResult<DataSet> GET_BBD_NCL_OWNER_BYEKYCTRANSACTION(long transactionNumber, string OwnerType)
@@ -68,6 +69,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_BBD_NCL_OWNER_BYEKYCTRANSACTION");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GET_BBD_NCL_OWNER_BYEKYCTRANSACTION");
                 throw;
             }
@@ -86,6 +88,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "DEL_SEL_NCL_PROP_OWNER_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.DEL_SEL_NCL_PROP_OWNER_TEMP");
                 throw;
             }
@@ -103,6 +106,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
                 throw;
             }
@@ -120,6 +124,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMasterTablesData_React");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 throw;
             }
@@ -137,6 +142,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 throw;
             }
@@ -154,6 +160,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
                 throw;
             }
@@ -171,6 +178,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 throw;
             }
@@ -188,6 +196,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "COPY_OWNER_FROM_BBDDRAFT_NCLTEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.COPY_OWNER_FROM_BBDDRAFT_NCLTEMP");
                 throw;
             }
@@ -205,6 +214,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "Insert_React_UserFlow");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.Insert_React_UserFlow");
                 throw;
             }
@@ -241,6 +251,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "Get_React_UserFlow");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.Get_React_UserFlow");
                 throw;
             }

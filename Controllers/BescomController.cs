@@ -4,6 +4,7 @@ using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,23 +26,24 @@ namespace BBMPCITZAPI.Controllers
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
         private readonly INameMatchingService _nameMatchingService;
         private readonly BescomSettings _BescomSettings;
+
+        private readonly IErrorLogService _errorLogService;
         //   private readonly ICacheService _cacheService;
 
-        public BescomController(ILogger<BBMPCITZController> logger,DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<BescomSettings> BescomSettings)
+        public BescomController(ILogger<BBMPCITZController> logger,DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<BescomSettings> BescomSettings, IErrorLogService errorLogService)
         {
             _logger = logger;
            
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _BescomSettings = BescomSettings.Value;
-        
-          
+
+            _errorLogService = errorLogService;
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
+        
 
-
-        [HttpPost("GetBescomData")]
-        public async Task<IActionResult> GetBescomData(long BOOKS_PROP_APPNO, long propertycode,long BescomAccountNumber,string LoginId,int propertytype
+        private async Task<IActionResult> GetBescomDataFromAPI(long BOOKS_PROP_APPNO, long propertycode,long BescomAccountNumber,string LoginId,int propertytype
             ,string FloorNumber)
         {
             string jsonPayload = "";
@@ -109,9 +111,40 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetBescomData");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.");
                 throw;
             }
         }
-    }
+
+        [HttpPost("GetBescomData")]
+        public async Task<IActionResult> GetBescomData(long BOOKS_PROP_APPNO, long propertycode, long BescomAccountNumber, string LoginId, int propertytype , string FloorNumber)
+        {
+            try
+            {
+                DataSet BescomDataTable = obj.SEL_OFFLINE_BESCOM_BY_ACCOUNTID( BOOKS_PROP_APPNO, propertycode, propertytype,  Convert.ToString(BescomAccountNumber), LoginId);
+                if (BescomDataTable != null && BescomDataTable.Tables.Count > 0)
+                {
+                    if (BescomDataTable.Tables[0].Rows.Count > 0)
+                    {
+                        string json = JsonConvert.SerializeObject(BescomDataTable, Formatting.Indented);
+                        return Ok(json);
+                    }
+
+                    else
+                    {
+                        return await GetBescomDataFromAPI(BOOKS_PROP_APPNO, propertycode, BescomAccountNumber, LoginId, propertytype, FloorNumber);
+                    }
+                }else
+                {
+                    return await GetBescomDataFromAPI(BOOKS_PROP_APPNO, propertycode, BescomAccountNumber, LoginId, propertytype, FloorNumber);
+                }
+                }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "GetBescomData");
+                throw;
+            }
+        }
+        }
 }

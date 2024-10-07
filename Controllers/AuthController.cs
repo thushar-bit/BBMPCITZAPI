@@ -16,6 +16,7 @@ using System.Text;
 using static BBMPCITZAPI.Controllers.AuthController;
 using BBMPCITZAPI.Models;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Utilities.Encoders;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -29,18 +30,21 @@ namespace BBMPCITZAPI.Controllers
         private readonly TokenService _tokenService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
         private readonly KaveriSettings _kaveriSettings;
+        private readonly IErrorLogService _errorLogService;
 
         public AuthController(ILogger<AuthController> logger, TokenService tokenService, IConfiguration configuration,
-             IOptions<KaveriSettings> kaveriSettings,DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE)
+             IOptions<KaveriSettings> kaveriSettings,DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IErrorLogService errorLogService)
         {
             _logger = logger;
             _tokenService = tokenService;
             _configuration = configuration;
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
+            _errorLogService = errorLogService;
             _kaveriSettings = kaveriSettings.Value;
         }
         NUPMS_BA.CitizenBA Citz = new NUPMS_BA.CitizenBA();
+        
         public class TokenService
         {
             private readonly string _key;
@@ -113,6 +117,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "CitizenLogin");
                 _logger.LogError(ex, "Error occurred while executing the login process.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error.");
             }
@@ -189,7 +194,8 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (OracleException oEx)
             {
-              throw new Exception(oEx.Message);
+                _errorLogService.LogError(oEx, "CitizenLogin");
+                throw new Exception(oEx.Message);
             }
             catch (Exception oEx2)
             {
@@ -232,6 +238,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "CitizenLogin");
                 _logger.LogError(ex, "Error occurred while creating salt");
                 throw;
             }

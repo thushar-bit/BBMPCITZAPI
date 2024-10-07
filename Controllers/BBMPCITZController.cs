@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.Reporting.Map.WebForms.BingMaps;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using NUPMS_BO;
+using NUPMS_BA;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -24,12 +25,12 @@ namespace BBMPCITZAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
-
+        private readonly IErrorLogService _errorLogService;
         private readonly PropertyDetails _PropertyDetails;
         //   private readonly ICacheService _cacheService;
 
-        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails
-
+        public BBMPCITZController(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService IBBMPBOOKMODULE, IOptions<PropertyDetails> PropertyDetails,
+IErrorLogService errorLogService
          )
         {
             _logger = logger;
@@ -37,13 +38,14 @@ namespace BBMPCITZAPI.Controllers
             _databaseService = databaseService;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _PropertyDetails = PropertyDetails.Value;
-
+            _errorLogService = errorLogService;
             //  _cacheService = cacheService;
         }
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
         NUPMS_BA.GetReportData NUMPSdata = new NUPMS_BA.GetReportData();
         NUPMS_BA.BBD_BA BBDBA = new NUPMS_BA.BBD_BA();
+       
         //   NUPMS_BA.CitizenBA ciTz= new NUPMS_BA.CitizenBA();
         #region Initial
 
@@ -60,6 +62,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMasterZone");
                 _logger.LogError(ex, "Error occurred while executing stored procedure GetMasterZone.");
                 throw;
             }
@@ -76,6 +79,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMasterWard");
                 _logger.LogError(ex, "Error occurred while executing stored procedure GetMasterWard.");
                 throw;
             }
@@ -94,6 +98,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetWardCordinates");
                 _logger.LogError(ex, "Error occurred while executing stored procedure GetWardCordinates.");
                 throw;
             }
@@ -113,6 +118,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "LOAD_BBD_RECORDS");
                 _logger.LogError(ex, "Error occurred while executing stored procedure LOAD_BBD_RECORDS.");
                 throw;
             }
@@ -131,6 +137,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_BBD_DRAFT");
                 _logger.LogError(ex, "Error occurred while executing stored procedure GET_PROPERTY_PENDING_CITZ_BBD_DRAFT.");
                 throw;
             }
@@ -149,6 +156,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_BBD_Draft_Generated_Wards");
                 _logger.LogError(ex, "Error occurred while executing stored procedure GET_PROPERTY_BBD_Draft_Generated_Wards.");
                 throw;
             }
@@ -186,6 +194,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMasterTablesData");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GetMasterTablesData");
                 throw;
             }
@@ -203,6 +212,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMasterTablesData_React");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 throw;
             }
@@ -220,6 +230,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 throw;
             }
@@ -237,6 +248,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMP_React");
                 throw;
             }
@@ -257,6 +269,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_NCLTEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GET_PROPERTY_PENDING_CITZ_NCLTEMP");
                 throw;
             }
@@ -290,6 +303,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP");
                 throw;
             }
@@ -307,6 +321,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_CTZ_PROPERTY");
                 throw;
             }
@@ -344,6 +359,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "Get_Ctz_ObjectionModPendingAppl");
                 _logger.LogError(ex, "Error occurred while executing stored procedure Get_Ctz_ObjectionModPendingAppl.");
                 throw;
             }
@@ -363,6 +379,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "COPY_DATA_FROM_BBDDRAFT_NCLTEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure COPY_DATA_FROM_BBDDRAFT_NCLTEMP.");
                 throw;
             }
@@ -382,6 +399,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP");
                 throw;
             }
@@ -399,6 +417,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI");
                 throw;
             }
@@ -416,6 +435,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA");
                 throw;
             }
@@ -436,6 +456,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_NCL_PROPERTY_SITE_TEMP_USAGE");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. UPD_NCL_PROPERTY_SITE_TEMP_USAGE");
                 throw;
             }
@@ -453,6 +474,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetNPMMasterTable");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GetNPMMasterTable");
                 throw;
             }
@@ -472,6 +494,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "DEL_SEL_NCL_PROP_BUILDING_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.DEL_SEL_NCL_PROP_BUILDING_TEMP");
                 throw;
             }
@@ -489,6 +512,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_NCL_FLOOR_AREA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GET_NCL_FLOOR_AREA");
                 throw;
             }
@@ -506,6 +530,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_NCL_TEMP_FLOOR_PRE");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. GET_NCL_TEMP_FLOOR_PRE");
                 throw;
             }
@@ -523,6 +548,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "DEL_INS_SEL_NCL_PROP_BUILDING_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure. DEL_INS_SEL_NCL_PROP_BUILDING_TEMP");
                 throw;
             }
@@ -542,6 +568,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_NCL_MOB_TEMP_FLOOR_AREA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NCL_MOB_TEMP_FLOOR_AREA");
                 throw;
             }
@@ -559,6 +586,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_UPD_NCL_PROPERTY_APARTMENT_TEMP1");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.INS_UPD_NCL_PROPERTY_APARTMENT_TEMP1");
                 throw;
             }
@@ -578,6 +606,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "COPY_OWNER_FROM_BBDDRAFT_NCLTEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.COPY_OWNER_FROM_BBDDRAFT_NCLTEMP");
                 throw;
             }
@@ -595,6 +624,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "DEL_SEL_NCL_PROP_OWNER_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.DEL_SEL_NCL_PROP_OWNER_TEMP");
                 throw;
             }
@@ -612,6 +642,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.UPD_NCL_PROPERTY_OWNER_TEMP_MOBILEVERIFY");
                 throw;
             }
@@ -629,6 +660,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.INS_NCL_PROPERTY_OWNER_TEMP_WITH_EKYCDATA");
                 throw;
             }
@@ -702,6 +734,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "NCL_PROPERTY_ID_TEMP_INS");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.NCL_PROPERTY_ID_TEMP_INS");
                 throw;
             }
@@ -719,6 +752,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetNCLDocView");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GetNCLDocView");
                 throw;
             }
@@ -736,6 +770,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "NCL_PROPERTY_ID_TEMP_DEL");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.NCL_PROPERTY_ID_TEMP_DEL");
                 throw;
             }
@@ -753,6 +788,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetMasterDocByCategoryOrClaimType");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GetMasterDocByCategoryOrClaimType");
                 throw;
             }
@@ -772,6 +808,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
                 throw;
             }
@@ -789,6 +826,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.DEL_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP");
                 throw;
             }
@@ -806,6 +844,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "SEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.SEL_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
                 throw;
             }
@@ -823,6 +862,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_NPM_MST_CLASS_DOCUMENT_BY_CATEGORY_SUBCLASS");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NPM_MST_CLASS_DOCUMENT_CLASSANDSUBCLASS");
                 throw;
             }
@@ -840,6 +880,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetPropertySubClassByULBAndCategory");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GetPropertySubClassByULBAndCategory");
                 throw;
             }
@@ -859,6 +900,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GetTaxDetails");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GetTaxDetails");
                 throw;
             }
@@ -876,6 +918,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "InsertBBMPPropertyTaxResponse");
                 _logger.LogError(ex, "Error occurred while executing stored procedure InsertBBMPPropertyTaxResponse.");
                 throw;
             }
@@ -893,6 +936,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_SUBCLASS");
                 _logger.LogError(ex, "Error occurred while executing stored procedure InsertBBMPPropertyTaxResponse.");
                 throw;
             }
@@ -912,6 +956,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "InsertBBMPPropertyTaxResponseObjectionEvents");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.InsertBBMPPropertyTaxResponseObjectionEvents");
                 throw;
             }
@@ -933,6 +978,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_AREA_DIMENSION_DATA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.InsertBBMPPropertyTaxResponseObjectionEvents");
                 throw;
             }
@@ -950,6 +996,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_MST_FEATURE_BY_FEATUREHEADID");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_MST_FEATURE_BY_FEATUREHEADID");
                 throw;
             }
@@ -967,6 +1014,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_CATEGORYWISE_DATA");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_CATEGORYWISE_DATA");
                 throw;
             }
@@ -984,6 +1032,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "VALIDATE_CATEGORY_DOC_UPLOAD");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.VALIDATE_CATEGORY_DOC_UPLOAD");
                 throw;
             }
@@ -1001,6 +1050,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY");
                 throw;
             }
@@ -1020,6 +1070,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, "UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
                 throw;
             }
@@ -1037,6 +1088,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex,"");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.UPD_NCL_PROPERTY_COMPARE_MATRIX_TEMP");
                 throw;
             }
