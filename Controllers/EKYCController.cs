@@ -53,14 +53,22 @@ namespace BBMPCITZAPI.Controllers
                 string EKYCResponseRedirectURL = _ekycSettings.EKYCResponseRedirectURL!;
                 string EKYCRequestURL = _ekycSettings.EKYCRequestURL!;
                 string EKYCApplnCode = _ekycSettings.EKYCApplnCode!;
-
+                string EKYCTokenRequest = "";
 
                 string transacDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 long transactionNo = 0;
-                //live site
-               // string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",ApplnCode:" + EKYCApplnCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
-                //test site
-                string EKYCTokenRequest = "{deptCode: " + EKYCDeptCode +  ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
+                if (EKYCApplnCode == "81")
+                {
+                    //live site
+                    EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",ApplnCode:" + EKYCApplnCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
+                    //test site
+                }
+                else 
+                {
+                    EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
+                }
+                  
+                
                 EKYCTokenRequest = EKYCTokenRequest.Replace("\"", "'");
                 NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
                 transactionNo = obj.INSERT_EKYC_REQUEST_OWNER(BOOK_APP_NO, PROPERTY_CODE, OwnerNumber, transacDateTime, EKYCTokenRequest, "crc");

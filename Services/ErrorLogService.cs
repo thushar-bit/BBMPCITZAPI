@@ -3,23 +3,26 @@ using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Http.Extensions;
 using NUPMS_DA;
 using Oracle.ManagedDataAccess.Client;
+using System.Configuration;
 using System.Data;
 
 namespace BBMPCITZAPI.Services
 {
     public class ErrorLoggingService : IErrorLogService
     {
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<ErrorLoggingService> _logger;
-        private readonly DatabaseService _databaseService;
 
-        public ErrorLoggingService(IHttpContextAccessor httpContextAccessor, ILogger<ErrorLoggingService> logger, DatabaseService databaseService)
+        private readonly string _connectionString;
+        public ErrorLoggingService(IHttpContextAccessor httpContextAccessor, ILogger<ErrorLoggingService> logger, IConfiguration configuration)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            _databaseService = databaseService;
+            _connectionString = configuration.GetConnectionString("BBMPCITZAPIConnection")!;
+
         }
-       string strConn = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=172.31.20.171)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl))); User Id=scott_copy; Password=EAASTHI";
+     //  string strConn = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=172.31.20.171)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl))); User Id=scott_copy; Password=EAASTHI";
 
         //  string strConn = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=BBMPRAC-SCAN)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=bbmpee))); User Id=EAASTHI_TEMP; Password=bbmp1234";
         public void LogError(Exception oEx, string Id)
@@ -146,7 +149,7 @@ namespace BBMPCITZAPI.Services
                 pars[10].Direction = ParameterDirection.Input;
                 pars[10].ParameterName = "P_USERNAME";
                 pars[10].Value = strUserName;
-                OracleHelper.ExecuteNonQuery(strConn, CommandType.StoredProcedure, strSQL, pars);
+                OracleHelper.ExecuteNonQuery(_connectionString, CommandType.StoredProcedure, strSQL, pars);
 
             }
             catch(Exception exes)
