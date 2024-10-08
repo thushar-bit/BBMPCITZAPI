@@ -229,7 +229,7 @@ namespace BBMPCITZAPI.Controllers
         }
        [Authorize]
         [HttpPost("GetKaveriECData")]
-        public  async Task<IActionResult> GetKaveriECData(string ECNumber,string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
+        public  async Task<IActionResult> GetKaveriECData(string ECNumber,string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId,DateTime RegsiteredDateTime)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
@@ -256,17 +256,30 @@ namespace BBMPCITZAPI.Controllers
                     {
                         string base64String = (string)Obj_Json.SelectToken("json");
                         byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
-                        string fromDate = (string)Obj_Json.SelectToken("fromDate");
-                        string toDate = (string)Obj_Json.SelectToken("toDate");
-                        DateTime fromDate1 = DateTime.Parse(fromDate);
-                        string format = "MM/dd/yyyy HH:mm:ss";
-                        DateTime toDate1 = DateTime.ParseExact(toDate, format, System.Globalization.CultureInfo.InvariantCulture);
-                        DateTime minimumFromDate = new DateTime(2004, 4, 1);
-                        DateTime currentDate = DateTime.Now;
-                        DateTime sevenDaysAgo = currentDate.AddDays(-8);
-                        if (fromDate1 >= minimumFromDate && toDate1 > sevenDaysAgo && toDate1 < currentDate)
+                        //    string fromDate = (string)Obj_Json.SelectToken("fromDate");
+                        //    string toDate = (string)Obj_Json.SelectToken("toDate");
+                        //    DateTime fromDate1 = DateTime.Parse(fromDate);
+                        //    string format = "MM/dd/yyyy HH:mm:ss";
+                        //    DateTime toDate1 = DateTime.ParseExact(toDate, format, System.Globalization.CultureInfo.InvariantCulture);
+
+                        ////   DateTime minimumFromDate = DateTime.ParseExact(RegsiteredDateTime, format, System.Globalization.CultureInfo.InvariantCulture);
+
+                        //    DateTime currentDate = DateTime.Now;
+                        //    DateTime sevenDaysAgo = currentDate.AddDays(-8);
+                        //    if (fromDate1 >= RegsiteredDateTime && toDate1 > sevenDaysAgo && toDate1 < currentDate)
+                        //    {
+                        string responseRawContent = respornseContent.ToString();
+                        if (responseRawContent.IndexOf("fromDate", 0) < 0 || responseRawContent.IndexOf("toDate", 0) < 0)
                         {
-                        List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
+                            
+                            return Ok(new { success = false, message = "EC Data doesn't have valid from date and to date" });
+                        }
+                        string fromDate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
+                        string toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
+
+                        if (fromDate != "" && toDate != "" && DateTime.Parse(fromDate) < DateTime.Parse(Convert.ToString(RegsiteredDateTime)) && DateTime.Parse(toDate) > DateTime.Now.AddDays(-8))
+                        {
+                            List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
                     
                         var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
                         bool DoesExist = documentSummaries.Contains(RegistrationNoNumber);
@@ -358,7 +371,17 @@ namespace BBMPCITZAPI.Controllers
 
                     else
                     {
-                            return Ok(new { success = false, message = "The EC number has expired. Please provide an EC number issued within 7 days prior to the registration date." });
+                            if (fromDate != "" && toDate != "")
+                            {
+                                return Ok(new { success = false, message = "The EC number has expired. Please provide an EC number issued within 7 days prior to the registration date.Submitted EC Dates are "+ fromDate.Substring(0, 10) +","+ toDate.Substring(0, 10) });
+
+                            }
+                            else
+                            {
+                                return Ok(new { success = false, message = "The EC number has expired. Please provide an EC number issued within 7 days prior to the registration date.Submitted EC Dates are.Submitted EC Dates are "+ fromDate +","+ toDate });
+
+                               
+                            }
                           
                     
                     }

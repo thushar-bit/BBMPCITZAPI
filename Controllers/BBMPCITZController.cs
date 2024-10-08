@@ -162,22 +162,7 @@ IErrorLogService errorLogService
             }
         }
 
-        //[HttpGet("GetBBDRedisData")]
-        //public async Task<IActionResult> GetBBDRedisDeta(int propertyid)
-        //{
-        //    _logger.LogInformation("GET request received at GetBBDRedisData");
-        //    try
-        //    {
-        //        string cacheKey = "BBD_DRAFT_KEY" + propertyid;
-        //        var cachedData = await _cacheService.GetCachedDataAsync<string>(cacheKey);
-        //        return Ok(cachedData);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error occurred while executing stored procedure GetBBDRedisData.");
-        //        throw;
-        //    }
-        //}
+        
 
 
         [HttpGet("GetMasterTablesData")]
@@ -727,6 +712,13 @@ IErrorLogService errorLogService
             _logger.LogInformation("GET request received at NCL_PROPERTY_ID_TEMP_INS");
             try
             {
+                if (NCLPropID.ORDERDATE != null)
+                {
+                    DateTime? documentDate = NCLPropID.ORDERDATE;
+
+                    DateTime? d2 = documentDate?.AddDays(1);
+                    NCLPropID.ORDERDATE = d2;
+                }
                 int dataSet = _IBBMPBOOKMODULE.NCL_PROPERTY_ID_TEMP_INS(ID_BASIC_PROPERTY, NCLPropID);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
@@ -801,6 +793,13 @@ IErrorLogService errorLogService
             _logger.LogInformation("GET request received at INS_NCL_PROPERTY_DOC_BBD_CLASS_TEMP");
             try
             {
+                if (nCLClassPropIdentification.DOCUMENTDATE != null)
+                {
+                    DateTime? documentDate = nCLClassPropIdentification.DOCUMENTDATE;
+
+                    DateTime? d2 = documentDate?.AddDays(1);
+                    nCLClassPropIdentification.DOCUMENTDATE = d2;
+                }
                 DataSet dataSet = _IBBMPBOOKMODULE.INS_NCL_PROPERTY_CLASS_DOC_ID_BBD_TEMP(nCLClassPropIdentification);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
