@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using NUPMS_DA;
+using iTextSharp.text.pdf;
+using NUPMS_BA;
 
 
 namespace BBMPCITZAPI.Services
@@ -1637,6 +1639,68 @@ namespace BBMPCITZAPI.Services
                 prm[2].Direction = ParameterDirection.Input;
                 prm[3].Value = null;
                 prm[3].Direction = ParameterDirection.Output;
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_React_UserFlow stored procedure.");
+                throw;
+            }
+        }
+        public int Ins_EsignPDf(Int64 propertycode, Int64 bookspropappno, byte[] pdfFilePath, string appearance)
+        {
+            try
+            {
+                byte[] appearanceBytes = System.Text.Encoding.UTF8.GetBytes(appearance);
+                string sp_name = "OBJECTIONMODULE_REACT.INS_ESIGN_PDF";
+
+                OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("V_PROPERTYCODE",OracleDbType.Int64),
+                      new OracleParameter("V_BOOKS_APP_NO",OracleDbType.Int64),
+                      new OracleParameter("v_PDF_FILE_CONTENT",OracleDbType.Blob),
+                       new OracleParameter("V_PDF_SIGNATURE_DATA",OracleDbType.Blob),
+
+            };
+                prm[0].Value = propertycode;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = bookspropappno;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = pdfFilePath;
+                prm[2].Direction = ParameterDirection.Input;
+                prm[3].Value = appearanceBytes;
+                prm[3].Direction = ParameterDirection.Input;
+
+
+                return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_React_UserFlow stored procedure.");
+                throw;
+            }
+        }
+        public DataSet Get_ESignPdf(Int64 propertycode, Int64 bookspropappno)
+        {
+            try
+            {
+                
+                string sp_name = "OBJECTIONMODULE_REACT.GET_ESIGN_PDF";
+
+                OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("V_PROPERTYCODE",OracleDbType.Int64),
+                      new OracleParameter("V_BOOKS_APP_NO",OracleDbType.Int64),
+                      new OracleParameter("V_PDF_OUT",OracleDbType.RefCursor),
+                     
+
+            };
+                prm[0].Value = propertycode;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = bookspropappno;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = null;
+                prm[2].Direction = ParameterDirection.Output;
+
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }

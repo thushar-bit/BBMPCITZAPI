@@ -17,7 +17,7 @@ using NUPMS_BA;
 namespace BBMPCITZAPI.Controllers
 {
     [ApiController]
-    [Authorize]
+   // [Authorize]
     [Route("v1/BBMPCITZAPI")]
     public class BBMPCITZController : ControllerBase
     {
@@ -103,6 +103,26 @@ IErrorLogService errorLogService
                 throw;
             }
         }
+        [HttpGet("GET_WARD_BY_WARDNUMBER")]
+        public ActionResult<DataSet> GET_WARD_BY_WARDNUMBER(string wardNumber)
+        {
+            _logger.LogInformation("GET request received at GET_WARD_BY_WARDNUMBER");
+            try
+            {
+
+                var dataSet = objModule.GET_WARD_BY_WARDNUMBER(wardNumber);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "GET_WARD_BY_WARDNUMBER");
+                _logger.LogError(ex, "Error occurred while executing stored procedure GET_WARD_BY_WARDNUMBER.");
+                throw;
+            }
+        }
+
 
         [HttpGet("LOAD_BBD_RECORDS")]
         public ActionResult<DataSet> LOAD_BBD_RECORDS(int ZoneId, int WardId, int SerachType, string Search)

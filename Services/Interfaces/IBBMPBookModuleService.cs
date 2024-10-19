@@ -1,4 +1,5 @@
 ﻿using BBMPCITZAPI.Models;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using NUPMS_BA;
 using System.Data;
@@ -78,5 +79,7 @@ namespace BBMPCITZAPI.Services.Interfaces
         DataSet GetUserCitizen(string userId);
        public int Insert_React_UserFlow(int P_BOOKS_PROP_APPNOAPPNO, int propertyCode, int currentStep, int DraftWardId, int DraftZoneId, string LoginID);
         public DataSet Get_React_UserFlow( Int64 propertyCode,Int64 BOOKAPP_NO, string LoginID);
+        public int Ins_EsignPDf(Int64 propertycode, Int64 bookspropappno, byte[] pdfFilePath, string appearance);
+        public DataSet Get_ESignPdf(Int64 propertycode, Int64 bookspropappno);
     }
 }

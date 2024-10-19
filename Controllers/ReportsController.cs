@@ -1,15 +1,25 @@
-﻿using BBMPCITZAPI.Models;
+﻿using BBMPCITZAPI.Database;
+using BBMPCITZAPI.Models;
 using BBMPCITZAPI.Services.Interfaces;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Options;
 using Microsoft.Reporting.NETCore;
+using Newtonsoft.Json;
 using NUPMS_BA;
 using NUPMS_BO;
+using Oracle.ManagedDataAccess.Client;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Utilities;
+using Serilog;
 using System.Data;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Xml;
 
 
 
@@ -24,17 +34,21 @@ namespace BBMPCITZAPI.Controllers
         private readonly ILogger<ReportsController> _logger;
         private readonly ESignSettings _Esign;
         private readonly INameMatchingService _NameMatchService;
+        private readonly IBBMPBookModuleService _BBMPBookService;
         private readonly IErrorLogService _errorLogService;
-        public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService)
+        public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService,
+           IBBMPBookModuleService BBMPBookService)
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
             _NameMatchService = NameMatchService;
             _errorLogService = errorLogService;
+            _BBMPBookService = BBMPBookService;
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
-      
+        NUPMS_BA.BBD_BA objBbd = new NUPMS_BA.BBD_BA();
+
         private string FinalSubmitValidations(DataSet dsNCLTablesData)
         {
 
@@ -770,7 +784,7 @@ namespace BBMPCITZAPI.Controllers
         }
 
 
-        private byte[] GetPDF(int propertycode, int BOOKS_PROP_APPNO)
+        private byte[] GetPDF(Int64 propertycode, Int64 BOOKS_PROP_APPNO)
         {
             try
             {
@@ -949,7 +963,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GetEsign")]
-        public ESign GetEsign(int Propertycode, int booksAppNo)
+        public ESign GetEsign(Int64 Propertycode, Int64 booksAppNo)
         {
             try
             {
@@ -960,16 +974,16 @@ namespace BBMPCITZAPI.Controllers
                 LocalReport report = new LocalReport
                 {
                     EnableExternalImages = true,
-                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP.rdlc")
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP2.rdlc")
                 };
                 report.DataSources.Clear();
-                string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP.rdlc");
+                string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP2.rdlc");
 
                 report.ReportPath = reportPath;
                 report.Refresh();
                 string Url = ConvertReportToPDF(Propertycode, booksAppNo);
                 string hash = "";
-                hash = GetPDFHash(Url, _Esign.TempFiles_ctz.ToString());
+                hash = GetPDFHash(Propertycode, booksAppNo, Url, _Esign.TempFiles_ctz.ToString());
                 string esignxml = "";
 
                 string returnURL = _Esign.ReturnURL_ctzEID.ToString();
@@ -986,7 +1000,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        protected string ConvertReportToPDF(int Propertycode, int booksAppNo)
+        protected string ConvertReportToPDF(Int64 Propertycode, Int64 booksAppNo)
         {
             string localPath = "";
             try
@@ -1050,7 +1064,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //    return pdfHash;
         //}
-        private string GetPDFHash(string pdfFilePath, string tmpPath)
+        private  string GetPDFHash(Int64 properrtycode,Int64 BooksAppNO,string pdfFilePath, string tmpPath)
         {
             //Start generating PDF Hash
             string pdfHash = "";
@@ -1091,10 +1105,12 @@ namespace BBMPCITZAPI.Controllers
                 appearance.CryptoDictionary = dic;
                 appearance.PreClose(exc);
                 pdfHash = CreatePDFSha256Hash(appearance.GetRangeStream());
-                //  Session["Stamper"] = Stamper;
+                //  Session["Stamper"] = Stamper; //DONT NEED THIS
+
                 //  Session["OutputStream"] = OutputStream;
-                //   Session["reader"] = reader;
+                //  Session["reader"] = reader;
                 //    Session["sap"] = appearance;
+                StorePDFSessionValues(properrtycode,BooksAppNO,OutputStream, reader, appearance);
             }
             catch (Exception ex)
             {
@@ -1179,116 +1195,358 @@ namespace BBMPCITZAPI.Controllers
         #endregion
 
         //  E-sign Redirection Logic
-        //[HttpGet("E-signRediredirection")]
-        //private void AttachSignature(string esignxml, string propertyCode, string BOOK_APP_NO, string LoginId)
-        //{
-        //    string signature = "", sig = "", outFile = "", Url = "", path = "";
-        //    try
-        //    {
-        //        signature = System.Text.UTF8Encoding.UTF8.GetString(Convert.FromBase64String(esignxml));
-        //        XmlDocument xmlDoc = new XmlDocument();
-        //        xmlDoc.LoadXml(signature);
-        //        XmlNodeList elemList = xmlDoc.GetElementsByTagName("EsignResp");
-        //        sig = elemList[0].ChildNodes[1].InnerText;
-        //        //Start generating PDF Hash
-        //        //PdfSignatureAppearance appearance = (PdfSignatureAppearance)Session["sap"];
-        //        //FileStream OutputStream = (FileStream)Session["OutputStream"];
-        //        //PdfReader reader = (PdfReader)Session["reader"]; //uploaded pdf is now open to attach signature
-        //        PdfSignatureAppearance appearance = (PdfSignatureAppearance);
-        //        FileStream OutputStream = (FileStream)Session["OutputStream"];
-        //        PdfReader reader = (PdfReader)Session["reader"]; //uploaded pdf is now open to attach signature
-        //        byte[] sigbytes = Convert.FromBase64String(sig); //string format of your signature is convert to bytes.
-        //        byte[] paddedSig = new byte[8192]; //alignment of the pdf is done.
-        //        Array.Copy(sigbytes, 0, paddedSig, 0, sigbytes.Length);
+        [HttpGet("E-signRediredirection")]
+        public void AttachSignature(string esignxml, Int64 propertyCode, Int64 BOOK_APP_NO, string LoginId)
+        {
+            string signature = "", sig = "", outFile = "", Url = "", path = "";
+            try
+            {
+                signature = System.Text.UTF8Encoding.UTF8.GetString(Convert.FromBase64String(esignxml));
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(signature);
+              //  XmlNodeList elemList = xmlDoc.GetElementsByTagName("EsignResp");
+               // sig = elemList[0].ChildNodes[1].InnerText;
+                //Start generating PDF Hash
+                //PdfSignatureAppearance appearance = (PdfSignatureAppearance)Session["sap"];
+                //FileStream OutputStream = (FileStream)Session["OutputStream"];
+                //PdfReader reader = (PdfReader)Session["reader"]; //uploaded pdf is now open to attach signature
+            var Dataset =    RetrievePDFSessionValues(propertyCode, BOOK_APP_NO);
+                //    PdfSignatureAppearance appearance = (PdfSignatureAppearance)Session["sap"];
+                //   FileStream OutputStream = (FileStream)Session["OutputStream"];
+                //    PdfReader reader = (PdfReader)Session["reader"]; //uploaded pdf is now open to attach signature
 
-        //        PdfDictionary dic2 = new PdfDictionary();
-        //        dic2.Put(PdfName.CONTENTS, new PdfString(paddedSig).SetHexWriting(true));
-        //        appearance.Close(dic2);
-        //        OutputStream.Close();
-        //        reader.Close();
-        //    }
-        //    catch (Exception ex1)
-        //    {
-        //        // _errorLogService.LogError(ex1, "AttachSignature1");
-        //        Alert.Show("AttachSignature1:" + ((ex1.InnerException != null) ? ex1.InnerException.Message.Replace('\n', ' ') : ex1.Message.Replace('\n', ' ')));
-        //    }
+                PdfSignatureAppearance appearance = (PdfSignatureAppearance)Dataset.Item1;
+                FileStream OutputStream = (FileStream)Dataset.Item2;
+                PdfReader reader = (PdfReader)Dataset.Item3; //uploaded pdf is now open to attach signature
 
-        //    try
-        //    {
-        //        path = Server.MapPath("../TempFiles/");
-        //        outFile = Session["SignedFileName"].ToString();
-        //        Url = _Esign.TempURl_ctz.ToString() + outFile;
+                byte[] sigbytes = Convert.FromBase64String(sig); //string format of your signature is convert to bytes.
+                byte[] paddedSig = new byte[8192]; //alignment of the pdf is done.
+                Array.Copy(sigbytes, 0, paddedSig, 0, sigbytes.Length);
 
-        //        byte[] bytes = File.ReadAllBytes(Path.Combine(path, outFile));
-        //        insertCitzData(bytes, propertyCode, BOOK_APP_NO, LoginId);
+                PdfDictionary dic2 = new PdfDictionary();
+                dic2.Put(PdfName.CONTENTS, new PdfString(paddedSig).SetHexWriting(true));
+                appearance.Close(dic2);
+                OutputStream.Close();
+                reader.Close();
+            }
+            catch (Exception ex1)
+            {
+                // _errorLogService.LogError(ex1, "AttachSignature1");
+               // Alert.Show("AttachSignature1:" + ((ex1.InnerException != null) ? ex1.InnerException.Message.Replace('\n', ' ') : ex1.Message.Replace('\n', ' ')));
+            }
 
-        //        System.Web.UI.AttributeCollection col = pdfiframe.Attributes;
-        //        col.Add("src", Url);
-        //    }
-        //    catch (Exception ex2)
-        //    {
-        //        //  _errorLogService.LogError(ex2, "AttachSignature2");
-        //        Alert.Show("AttachSignature2:" + ((ex2.InnerException != null) ? ex2.InnerException.Message.Replace('\n', ' ') : ex2.Message.Replace('\n', ' ')));
-        //    }
-        //}
+                //try
+                //{
+                //    path = Server.MapPath("../TempFiles/");
+                //    outFile = Session["SignedFileName"].ToString();
+                //    Url = _Esign.TempURl_ctz.ToString() + outFile;
 
-        //private void insertCitzData(byte[] bytes, string propertycode, string BookAPPNo, string LoginId)
-        //{
-        //    DataSet dsPropDetails = objModule.Get_Ctz_ObjectionModPendingAppl("EID", Convert.ToString(LoginId), Convert.ToString(BookAPPNo), "", 0, "");
-        //    try
-        //    {
-        //        if (dsPropDetails != null && dsPropDetails.Tables.Count > 0)
-        //        {
-        //            int res = objModule.INS_SUBMIT_CTZ_APPLICATION_OBJMOD(Convert.ToInt32(BookAPPNo), Convert.ToInt32(BookAPPNo), Convert.ToBase64String(bytes), Convert.ToString(LoginId));
-        //            //   string mobilenumber = SMSGeneration(BookAPPNo);
-        //            //    Alert.Show("Application Submitted Successfully and SMS is sent to " + mobilenumber + ". Reference No: " + Convert.ToString(BookAPPNo));
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // _errorLogService.LogError(ex, "Final Submit For Application:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
-        //        Alert.Show("Application not submitted, Please try again:" + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
-        //    }
-        //}
-        //private string SMSGeneration(string BookAPPNo)
-        //{
-        //    try
-        //    {
-        //        NUPMS_BA.Report_BA RBA = new NUPMS_BA.Report_BA();
+                //    byte[] bytes = System.IO.File.ReadAllBytes(Path.Combine(path, outFile));
+                //    insertCitzData(bytes, propertyCode, BOOK_APP_NO, LoginId);
 
-        //        string TEMPLAETID = "23";
-        //        Session["TEMPLAETID"] = TEMPLAETID;
-        //        Session["SENTFROM"] = "EAASTHI";
+                //    System.Web.UI.AttributeCollection col = pdfiframe.Attributes;
+                //    col.Add("src", Url);
+                //}
+                //catch (Exception ex2)
+                //{
+                //    //  _errorLogService.LogError(ex2, "AttachSignature2");
+                // //   Alert.Show("AttachSignature2:" + ((ex2.InnerException != null) ? ex2.InnerException.Message.Replace('\n', ' ') : ex2.Message.Replace('\n', ' ')));
+                //}
+            }
 
-        //        DataSet dsPropDetails = RBA.MutationnOTICEDetails(TEMPLAETID);
-        //        string TEMPLATETEXT = dsPropDetails.Tables[0].Rows[0]["TEMPLATETEXT"].ToString();
-        //        string SMSTEMPLATEID = dsPropDetails.Tables[0].Rows[0]["SMSTEMPLATEID"].ToString();
-        //        Session["SMSTEMPLATEID"] = SMSTEMPLATEID;
+            //private void insertCitzData(byte[] bytes, string propertycode, string BookAPPNo, string LoginId)
+            //{
+            //    DataSet dsPropDetails = objModule.Get_Ctz_ObjectionModPendingAppl("EID", Convert.ToString(LoginId), Convert.ToString(BookAPPNo), "", 0, "");
+            //    try
+            //    {
+            //        if (dsPropDetails != null && dsPropDetails.Tables.Count > 0)
+            //        {
+            //            int res = objModule.INS_SUBMIT_CTZ_APPLICATION_OBJMOD(Convert.ToInt32(BookAPPNo), Convert.ToInt32(BookAPPNo), Convert.ToBase64String(bytes), Convert.ToString(LoginId));
+            //            //   string mobilenumber = SMSGeneration(BookAPPNo);
+            //            //    Alert.Show("Application Submitted Successfully and SMS is sent to " + mobilenumber + ". Reference No: " + Convert.ToString(BookAPPNo));
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        // _errorLogService.LogError(ex, "Final Submit For Application:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
+            //        Alert.Show("Application not submitted, Please try again:" + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
+            //    }
+            //}
+            //private string SMSGeneration(string BookAPPNo)
+            //{
+            //    try
+            //    {
+            //        NUPMS_BA.Report_BA RBA = new NUPMS_BA.Report_BA();
 
-        //        DataSet dtMobileNumber = objModule.GETPropertyMobileNumberForSMS(Convert.ToInt32(BookAPPNo));
-        //        if (dtMobileNumber != null && dtMobileNumber.Tables.Count > 0 && dtMobileNumber.Tables[0].Rows.Count > 0)
-        //        {
-        //            Session["MOBILENUMBER"] = dtMobileNumber.Tables[0].Rows[0]["MOBILENUMBER"].ToString().Trim();
-        //            Session["ULBNAME"] = dtMobileNumber.Tables[1].Rows[0]["ULBNAME"].ToString();
-        //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#ULBNane#}", Session["ULBNAME"].ToString());
-        //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#Date#}", DateTime.Now.ToString());
-        //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#refno#}", Session["BOOKS_PROP_APPNO"].ToString());
+            //        string TEMPLAETID = "23";
+            //        Session["TEMPLAETID"] = TEMPLAETID;
+            //        Session["SENTFROM"] = "EAASTHI";
 
-        //            string MOBILENO = Session["MOBILENUMBER"].ToString();
-        //            string SECRET_KEY = ConfigurationManager.AppSettings["BBMP_SECRET_KEY_ctz"].ToString();
-        //            string SENDER_ADDRESS = ConfigurationManager.AppSettings["BBMP_SENDER_ADDRESS_ctz"].ToString();
+            //        DataSet dsPropDetails = RBA.MutationnOTICEDetails(TEMPLAETID);
+            //        string TEMPLATETEXT = dsPropDetails.Tables[0].Rows[0]["TEMPLATETEXT"].ToString();
+            //        string SMSTEMPLATEID = dsPropDetails.Tables[0].Rows[0]["SMSTEMPLATEID"].ToString();
+            //        Session["SMSTEMPLATEID"] = SMSTEMPLATEID;
 
-        //            EAS_BA objEAS = new EAS_BA();
-        //            objEAS.SendSMS(SECRET_KEY, SENDER_ADDRESS, MOBILENO, TEMPLATETEXT, Session["ULB"].ToString());
-        //        }
-        //        return Convert.ToString(Session["MOBILENUMBER"]);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //      //  _errorLogService.LogError(ex, "SMS for Final Submit:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]) + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
-        //        Alert.Show("Application Submitted Successfully but SMS is failed. Reference No: " + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
-        //        return "";
-        //    }
-        //}
+            //        DataSet dtMobileNumber = objModule.GETPropertyMobileNumberForSMS(Convert.ToInt32(BookAPPNo));
+            //        if (dtMobileNumber != null && dtMobileNumber.Tables.Count > 0 && dtMobileNumber.Tables[0].Rows.Count > 0)
+            //        {
+            //            Session["MOBILENUMBER"] = dtMobileNumber.Tables[0].Rows[0]["MOBILENUMBER"].ToString().Trim();
+            //            Session["ULBNAME"] = dtMobileNumber.Tables[1].Rows[0]["ULBNAME"].ToString();
+            //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#ULBNane#}", Session["ULBNAME"].ToString());
+            //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#Date#}", DateTime.Now.ToString());
+            //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#refno#}", Session["BOOKS_PROP_APPNO"].ToString());
+
+            //            string MOBILENO = Session["MOBILENUMBER"].ToString();
+            //            string SECRET_KEY = ConfigurationManager.AppSettings["BBMP_SECRET_KEY_ctz"].ToString();
+            //            string SENDER_ADDRESS = ConfigurationManager.AppSettings["BBMP_SENDER_ADDRESS_ctz"].ToString();
+
+            //            EAS_BA objEAS = new EAS_BA();
+            //            objEAS.SendSMS(SECRET_KEY, SENDER_ADDRESS, MOBILENO, TEMPLATETEXT, Session["ULB"].ToString());
+            //        }
+            //        return Convert.ToString(Session["MOBILENUMBER"]);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //      //  _errorLogService.LogError(ex, "SMS for Final Submit:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]) + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
+            //        Alert.Show("Application Submitted Successfully but SMS is failed. Reference No: " + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
+            //        return "";
+            //    }
+            //}
+
+
+
+            private  int StorePDFSessionValues(Int64 propertycode, Int64 bookspropappno,FileStream sessionId, PdfReader pdfFilePath, PdfSignatureAppearance appearance)
+    {
+        // Convert FileStream (sessionId) to byte array
+        byte[] fileContent;
+        using (MemoryStream ms = new MemoryStream())
+        {
+            sessionId.CopyTo(ms);
+            fileContent = ms.ToArray();
+        }
+
+        // Serialize PdfSignatureAppearance object to JSON
+        var signatureData = new
+        {
+            Reason = appearance.Reason,
+            SignDate = appearance.SignDate,
+            CertificationLevel = appearance.CertificationLevel,
+            Layer2Font = new
+            {
+                appearance.Layer2Font.Familyname,
+                appearance.Layer2Font.Size
+            }
+        };
+        string serializedAppearance = JsonConvert.SerializeObject(signatureData);
+            _BBMPBookService.Ins_EsignPDf(propertycode, bookspropappno, fileContent, serializedAppearance);
+            
+          
+                // Bind parameters
+            //    command.Parameters.Add(new OracleParameter("session_id", Guid.NewGuid().ToString())); // Create a unique ID
+             //   command.Parameters.Add(new OracleParameter("pdf_file_content", fileContent)); // Store file content as BLOB
+             //   command.Parameters.Add(new OracleParameter("pdf_signature_data", serializedAppearance)); // Store appearance data as JSON in CLOB
+
+            return 1;
+            }
+        public class PdfSignatureAppearanceDto
+        {
+            public string Reason { get; set; }
+            public DateTime SignDate { get; set; }
+            public string FontFamily { get; set; }
+            public float FontSize { get; set; }
+            public string CertificationLevel { get; set; }
+            // Add any other fields from PdfSignatureAppearance you want to store
+        }
+
+
+private (PdfSignatureAppearance, FileStream, PdfReader) RetrievePDFSessionValues(Int64 propertyCode, Int64 BOOK_APP_NO)
+{
+    try
+    {
+        // Call the service method to get the DataSet containing the stored PDF and signature data
+        DataSet dataSet = _BBMPBookService.Get_ESignPdf(propertyCode, BOOK_APP_NO);
+
+        // Check if the DataSet contains data
+        if (dataSet != null && dataSet.Tables[0].Rows.Count > 0)
+        {
+            // Retrieve PDF content from the "BLOB" in the database
+            byte[] pdfFileContent = (byte[])dataSet.Tables[0].Rows[0]["PDF_FILE_CONTENT"];
+                   var localPath = _Esign.TempFiles_ctz.ToString(); //take form appsettings
+                    string fileName = Guid.NewGuid().ToString() + ".pdf";
+                    localPath = localPath + fileName;
+                    System.IO.File.WriteAllBytes(localPath, pdfFileContent);
+
+                    // Retrieve signature data (stored as JSON or another serialized format)
+                    string signatureData = dataSet.Tables[0].Rows[0]["PDF_SIGNATURE_DATA"].ToString(); // Assuming it's stored as JSON
+
+            // Reconstruct PdfReader from the file content (in-memory)
+            PdfReader reader;
+            using (MemoryStream pdfStream = new MemoryStream(pdfFileContent))
+            {
+                reader = new PdfReader(pdfStream); // Open PDF for signature
+            }
+
+            // Create a temporary file for output (this would be used for signing the PDF later)
+            string tempFilePath = Path.GetTempFileName(); // Generate a temp file path
+            FileStream outputStream = new FileStream(tempFilePath, FileMode.OpenOrCreate);
+
+            // Create a PdfStamper to apply the signature
+            PdfStamper stamper = PdfStamper.CreateSignature(reader, outputStream, '\0');
+
+            // Access the PdfSignatureAppearance object from the stamper
+            PdfSignatureAppearance signatureAppearance = stamper.SignatureAppearance;
+
+            // Deserialize PdfSignatureAppearance from the stored JSON data (into a DTO)
+            var appearanceDto = JsonConvert.DeserializeObject<PdfSignatureAppearanceDto>(signatureData);
+
+            // Manually recreate the PdfSignatureAppearance object from the DTO
+            signatureAppearance.Reason = appearanceDto.Reason;
+            signatureAppearance.SignDate = appearanceDto.SignDate;
+          
+            signatureAppearance.Layer2Font = new iTextSharp.text.Font();
+            signatureAppearance.Layer2Font.SetFamily(appearanceDto.FontFamily);
+            signatureAppearance.Layer2Font.Size = appearanceDto.FontSize;
+            signatureAppearance.CertificationLevel = int.Parse(appearanceDto.CertificationLevel);
+            // Add any other properties that need to be set based on the DTO
+
+            // Return the tuple containing PdfSignatureAppearance, FileStream, and PdfReader
+            return (signatureAppearance, outputStream, reader);
+        }
+
+        // If no data found, return null values
+        return (null, null, null);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error occurred while retrieving PDF session values.");
+        throw;
     }
 }
+        public class PropertyData
+        {
+            
+ public string?   PropertyCode { get; set; }
+public string? ProperytyId { get; set; }
+            public string? BookNumber { get; set; }
+            public string? BookId { get; set; }
+        
+    }
+
+        private async Task<string> GetDraftKhataDownloadURL(PropertyData propertyData)
+        {
+            string url = "http://10.10.133.197/eaasthirestapi/api/eaasthidata/GetDraft";
+
+            // Create an HTTP client to send the request
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    // Prepare the JSON request body
+                    var requestBody = new
+                    {
+                        PropertyCode = propertyData.PropertyCode,
+                        ProperytyId = propertyData.ProperytyId,
+                        BookNumber = propertyData.BookNumber,
+                        BookId = propertyData.BookId
+                    };
+
+                    // Serialize the request body to JSON
+                    var jsonRequest = JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+                    // Send the POST request with the JSON body
+                    var response = await httpClient.PostAsync(url, content);
+
+                    // Check if the response is successful
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Read the response content
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonConvert.DeserializeObject<ResponseModel>(responseContent);
+
+                        // Check the status and return the outputDocument URL
+                        if (responseObject?.status == "success")
+                        {
+                            return responseObject.outputDocument;
+                        }
+                        else
+                        {
+                            return "Failed to retrieve the document.";
+                        }
+                    }
+                    else
+                    {
+                        return $"Error: {response.StatusCode} - {response.ReasonPhrase}";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception (optional)
+                    _logger.LogError(ex, "Error occurred while retrieving GetDraftKhataDownloadURL");
+                    _errorLogService.LogError(ex, "GetDraftKhataDownloadURL");
+                    return $"Internal server error: {ex.Message}";
+                }
+            }
+        }
+        public class ResponseModel
+        {
+            public string status { get; set; }
+            public string outputDocument { get; set; }
+        }
+
+        [HttpPost("DownloadDraftPDF")]
+        public async Task<IActionResult> GetDraftDownload(PropertyData propertyData)
+        {
+            //url will be sent as a parameter.
+            _logger.LogInformation("url coming from GetDraftKhataDownloadURL" + "bookid:"+ propertyData.BookId, "booknumber:" + propertyData.BookNumber, "bookpropertycode:" + propertyData.PropertyCode, "propertyid:" + propertyData.ProperytyId);
+            // string url = "http://10.10.133.197/eaasthirestapi/TempFiles/thushar.pdf";
+
+
+            // string url = "http://10.10.133.197/eaasthirestapi/api/eaasthidata/GetDraft";
+
+            string url = await GetDraftKhataDownloadURL(propertyData);
+            _logger.LogError("url coming from GetDraftKhataDownloadURL", url);
+           
+
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                   
+                    var response = await httpClient.GetAsync(url);
+
+                  
+                    if (response.IsSuccessStatusCode)
+                    {
+                       
+                        byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
+
+                       
+                        string mimeType = "application/pdf";
+
+                      
+                        return File(pdfBytes, mimeType, "DraftReport.pdf");
+                    }
+                    else
+                    {
+                        return BadRequest("Failed to download the PDF.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception (optional)
+                    _logger.LogError(ex, "Error occurred while retrieving DownloadDraftPDF");
+                    _errorLogService.LogError(ex, "DownloadDraftPDF");
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+            }
+        }
+
+
+    }
+}
+
+
+
+
