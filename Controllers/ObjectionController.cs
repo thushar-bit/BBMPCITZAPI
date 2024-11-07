@@ -1,4 +1,5 @@
 ﻿using BBMPCITZAPI.Models;
+using BBMPCITZAPI.Services;
 using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,11 +18,12 @@ using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 using static BBMPCITZAPI.Models.KaveriData;
+using static BBMPCITZAPI.Models.ObjectionModels;
 
 
 namespace BBMPCITZAPI.Controllers
 {
-    [Route("v1/KaveriAPI")]
+    [Route("v1/ObjectionAPI")]
     [ApiController]
 
     public class ObjectionController : ControllerBase
@@ -30,16 +32,18 @@ namespace BBMPCITZAPI.Controllers
         private readonly ILogger<EKYCController> _logger;
         private readonly KaveriSettings _kaveriSettings;
         private readonly INameMatchingService _nameMatchingService;
-        private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
+        private readonly IObjectionService _ObjectionService;
         private readonly IErrorLogService _errorLogService;
+       
         public ObjectionController(ILogger<EKYCController> logger, IOptions<KaveriSettings> kaveriSettings,
-            INameMatchingService NameMatching, IBBMPBookModuleService IBBMPBOOKMODULE, IErrorLogService errorLogService)
+            INameMatchingService NameMatching, IObjectionService ObjectionService, IErrorLogService errorLogService)
         {
             _logger = logger;
             _kaveriSettings = kaveriSettings.Value;
             _nameMatchingService = NameMatching;
-            _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
+            _ObjectionService = ObjectionService;
             _errorLogService = errorLogService;
+          
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
 
@@ -121,9 +125,9 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpPost("GetObjectionKaveriDocData")]
-        public async Task<IActionResult> GetKaveriDocData(string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
+        public async Task<IActionResult> GetKaveriDocData(string RegistrationNoNumber, string objectionid, string PropertyCode, string LoginId)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
@@ -133,7 +137,7 @@ namespace BBMPCITZAPI.Controllers
 
                 //RegistrationNumber = "NMG-1-00224-2023-24";
 
-                TransactionDetails httpResponse = await KaveriAPIRequest("KaveriDocDetailsAPI", RegistrationNoNumber, BOOKS_APP_NO, PropertyCode, LoginId);
+                TransactionDetails httpResponse = await KaveriAPIRequest("KaveriDocDetailsAPI", RegistrationNoNumber, objectionid, PropertyCode, LoginId);
                 var respornseContent = httpResponse.httpResponseMessage.Content.ReadAsStringAsync().Result;
                 APIResponse = respornseContent;
                 string respStat = httpResponse.httpResponseMessage.StatusCode.ToString();
@@ -158,7 +162,7 @@ namespace BBMPCITZAPI.Controllers
                         {
                             var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
                             documentDetailsList.Add(documentDetails);
-                            obj.INS_NCL_PROPERTY_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
+                            _ObjectionService.INS_NCL_OBJECTION_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(objectionid), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
                                 documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime, KAVERIDOC_RESPONSE_ROWID, LoginId);
 
                             if (documentDetails.propertyinfo != null)
@@ -186,15 +190,15 @@ namespace BBMPCITZAPI.Controllers
                                         CHECKBANDI_SOUTH = documentDetails?.propertyinfo[0].southboundary,
                                         CHECKBANDI_WEST = documentDetails?.propertyinfo[0].westboundary,
                                         propertyCode = Convert.ToInt64(PropertyCode),
-                                        P_BOOKS_PROP_APPNO = Convert.ToInt64(BOOKS_APP_NO),
+                                        P_BOOKS_PROP_APPNO = Convert.ToInt64(objectionid),
                                         loginId = LoginId,
                                     };
-                                    _IBBMPBOOKMODULE.UPD_AREA_CHECKBANDI_KAVERI_DATA(s);
-                                    obj.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "KAVERIDOC_RESPONSE_ROWID", KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId));
+                                   // _ObjectionService.UPD_AREA_CHECKBANDI_KAVERI_DATA(s);
+                                //    obj.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "KAVERIDOC_RESPONSE_ROWID", KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId));
                                 }
                                 foreach (var propertyinfo in documentDetails.propertyinfo)
                                 {
-                                    obj.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
+                                    _ObjectionService.INS_NCL_OBJECTION_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(objectionid), Convert.ToInt64(PropertyCode),
                                     RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, totalKavAreaMT, KAVERIDOC_RESPONSE_ROWID, LoginId);
                                 }
                             }
@@ -205,7 +209,7 @@ namespace BBMPCITZAPI.Controllers
                                 foreach (var party in documentDetails.partyinfo)
                                 {
 
-                                    obj.INS_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber, party.partyname, party.address, party.idprooftypedesc, party.idproofnumber, party.partytypename,
+                                    _ObjectionService.INS_NCL_OBJECTION_KAVERI_PARTIES_DETAILS_TEMP(Convert.ToInt64(objectionid), Convert.ToInt64(PropertyCode), RegistrationNoNumber, party.partyname, party.address, party.idprooftypedesc, party.idproofnumber, party.partytypename,
                                         party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId), ownerNumber, "", 0);
                                 }
                             }
@@ -229,28 +233,112 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        //[Authorize]
-        //[HttpPost("GetObjectionDetails")]
-        //public  ActionResult<DataSet> GetObjectionDetails( string PropertyCode, string LoginId)
-        //{
-        //  DataSet dataSet =  obj.GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP(Convert.ToInt64(PropertyCode), Convert.ToString(LoginId));
-        //    string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-        //    return Ok(json);
-        //}
+        [HttpGet("GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP")]
+        public ActionResult<DataSet> GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP(int ULBCODE, long Propertycode, long objectionid)
+        {
+            _logger.LogInformation("GET request received at GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP");
+            try
+            {
 
-        //[Authorize]
-        //[HttpPost("InsertObjection")]
-        //public async Task<IActionResult> InsertObjection(string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
-        //{
-        //    return Ok();
-        //}
-        //[Authorize]
-        //[HttpPost("InsertObjectionOwner")]
-        //public async Task<IActionResult> InsertObjectionOwner(string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
-        //{
-        //    return Ok();
-        //}
+                var dataSet = _ObjectionService.GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP(ULBCODE,Propertycode,objectionid);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP");
+                _logger.LogError(ex, "Error occurred while executing stored procedure GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP.");
+                throw;
+            }
+        }
        
+        [HttpPost("INS_NCL_PROPERTY_OBJECTOR_TEMP_WITH_EKYCDATA")]
+        public ActionResult<DataSet> INS_NCL_PROPERTY_OBJECTOR_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string IdentifierName, string MOBILENUMBER, string MOBILEVERIFY, int NAMEMATCHSCORE, string loginId, string EMAIL, string PROPERTYID, EKYCDetailsBO objEKYCDetailsBO)
+        {
+            _logger.LogInformation("GET request received at GET_WARD_BY_WARDNUMBER");
+            try
+            {
+
+                var dataSet = _ObjectionService.INS_NCL_PROPERTY_OBJECTOR_TEMP_WITH_EKYCDATA(IDENTIFIERTYPE, IdentifierName, MOBILENUMBER, MOBILEVERIFY, NAMEMATCHSCORE, EMAIL,PROPERTYID, loginId, objEKYCDetailsBO);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_OBJECTOR_TEMP_WITH_EKYCDATA");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_PROPERTY_OBJECTOR_TEMP_WITH_EKYCDATA.");
+                throw;
+            }
+        }
+      
+        [HttpPost("NCL_OBJECTION_OBJECTION_DOCUMENTS_TEMP_INS")]
+        public ActionResult<DataSet> NCL_OBJECTION_OBJECTION_DOCUMENTS_TEMP_INS(int ID_BASIC_PROPERTY, Models.NCLPropIdentification NCLPropID)
+        {
+            _logger.LogInformation("GET request received at NCL_OBJECTION_OBJECTION_DOCUMENTS_TEMP_INS");
+            try
+            {
+                if (NCLPropID.ORDERDATE != null)
+                {
+                    DateTime? documentDate = NCLPropID.ORDERDATE;
+
+                    DateTime? d2 = documentDate?.AddDays(1);
+                    NCLPropID.ORDERDATE = d2;
+                }
+                var dataSet = _ObjectionService.NCL_OBJECTION_OBJECTION_DOCUMENTS_TEMP_INS(ID_BASIC_PROPERTY, NCLPropID);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "NCL_OBJECTION_OBJECTION_DOCUMENTS_TEMP_INS");
+                _logger.LogError(ex, "Error occurred while executing stored procedure NCL_OBJECTION_OBJECTION_DOCUMENTS_TEMP_INS.");
+                throw;
+            }
+        }
+        [HttpPost("INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT")]
+        public ActionResult<DataSet> INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT(INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT final)
+        {
+            _logger.LogInformation("GET request received at INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT");
+            try
+            {
+
+                var dataSet = _ObjectionService.INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT(final);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT.");
+                throw;
+            }
+        }
+        [HttpPost("NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL")]
+        public ActionResult<int> NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL(Models.NCLPropIdentification NCLPropID)
+        {
+            _logger.LogInformation("GET request received at NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
+            try
+            {
+                int dataSet = _ObjectionService.NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL(NCLPropID);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
+                throw;
+            }
+        }
+
+
+
+
     }
 
 }

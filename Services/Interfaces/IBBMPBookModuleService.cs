@@ -81,5 +81,6 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet Get_React_UserFlow( Int64 propertyCode,Int64 BOOKAPP_NO, string LoginID);
         public int Ins_EsignPDf(Int64 propertycode, Int64 bookspropappno, byte[] pdfFilePath, string appearance);
         public DataSet Get_ESignPdf(Int64 propertycode, Int64 bookspropappno);
+        public int Ins_PDF_Draft_Exception_log(string propertycode, string Propertyid, string status, string output);
     }
 }

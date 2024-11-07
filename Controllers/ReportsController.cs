@@ -1,5 +1,6 @@
 ﻿using BBMPCITZAPI.Database;
 using BBMPCITZAPI.Models;
+using BBMPCITZAPI.Services;
 using BBMPCITZAPI.Services.Interfaces;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -35,15 +36,17 @@ namespace BBMPCITZAPI.Controllers
         private readonly ESignSettings _Esign;
         private readonly INameMatchingService _NameMatchService;
         private readonly IBBMPBookModuleService _BBMPBookService;
+        private readonly IObjectionService _ObjectionService;
         private readonly IErrorLogService _errorLogService;
         public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService,
-           IBBMPBookModuleService BBMPBookService)
+           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService)
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
             _NameMatchService = NameMatchService;
             _errorLogService = errorLogService;
             _BBMPBookService = BBMPBookService;
+            _ObjectionService = objectionService;
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
@@ -141,7 +144,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        private int OWNER_COUNT_NOTIN_BOOKS(DataTable dsNCLTable,DataTable dsBBDTable)
+        private int OWNER_COUNT_NOTIN_BOOKS(DataTable dsNCLTable, DataTable dsBBDTable)
         {
             try
             {
@@ -163,7 +166,7 @@ namespace BBMPCITZAPI.Controllers
                     }
                 }
                 return i;
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 _errorLogService.LogError(ex, "OWNER_COUNT_NOTIN_BOOKS");
                 _logger.LogError(ex, "Error in OWNER_COUNT_NOTIN_BOOKS function reportcontroller");
@@ -233,7 +236,7 @@ namespace BBMPCITZAPI.Controllers
                 throw ex;
             }
         }
-        private string OWNERMATCHEDWITH_BOOKS(DataSet dsNCLTablesData,DataSet dsBBTablesData)
+        private string OWNERMATCHEDWITH_BOOKS(DataSet dsNCLTablesData, DataSet dsBBTablesData)
         {
             try
             {
@@ -280,7 +283,7 @@ namespace BBMPCITZAPI.Controllers
                     matched = "Y";
                 }
                 return matched;
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 _errorLogService.LogError(ex, "OWNERMATCHEDWITH_BOOKS");
                 _logger.LogError(ex, "Error in OWNERMATCHEDWITH_BOOKS function  reportcontroller");
@@ -288,7 +291,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        private string GetOWNERMATCHEDWITH_KAVERIDOC(DataSet dsNCLTablesData, int OWNER_COUNT_KAVERIDOC,string LoginId)
+        private string GetOWNERMATCHEDWITH_KAVERIDOC(DataSet dsNCLTablesData, int OWNER_COUNT_KAVERIDOC, string LoginId)
         {
             try
             {
@@ -342,7 +345,7 @@ namespace BBMPCITZAPI.Controllers
                     matched = "Y";
                 }
                 return matched;
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 _errorLogService.LogError(ex, "GetOWNERMATCHEDWITH_KAVERIDOC");
                 _logger.LogError(ex, "Error in GetOWNERMATCHEDWITH_KAVERIDOC function  reportcontroller");
@@ -350,7 +353,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        private string GetOWNERMATCHEDWITH_KAVERIEC(DataSet dsNCLTablesData, int OWNER_COUNT_KAVERIEC,string LoginId)
+        private string GetOWNERMATCHEDWITH_KAVERIEC(DataSet dsNCLTablesData, int OWNER_COUNT_KAVERIEC, string LoginId)
         {
             try
             {
@@ -403,7 +406,7 @@ namespace BBMPCITZAPI.Controllers
                 }
                 return matched;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _errorLogService.LogError(ex, "GetOWNERMATCHEDWITH_KAVERIEC");
                 _logger.LogError(ex, "Error in GetOWNERMATCHEDWITH_KAVERIEC function  reportcontroller");
@@ -411,58 +414,58 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        private string GetOWNERMATCHEDWITH_SASDATA(DataTable dtSASData,DataSet dsNCLTablesData, string LoginId)
+        private string GetOWNERMATCHEDWITH_SASDATA(DataTable dtSASData, DataSet dsNCLTablesData, string LoginId)
         {
             try
             {
                 string matched = "N";
-            bool isNameMatchFailed = false;
+                bool isNameMatchFailed = false;
 
-            Dictionary<Int64, string> dicTaxDataOwners = new Dictionary<Int64, string>();
-            foreach (DataRow dr in dtSASData.Rows)
-            {
-                dicTaxDataOwners.Add(Convert.ToInt32(dr["ROW_ID"]), Convert.ToString(dr["OWNERNAME"]));
-            }
-
-            Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
-            foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
-            {
-
-                dicEkycOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
-
-            }
-
-           
-            List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
-            objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicTaxDataOwners, dicEkycOwners);
-
-            foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
-            {
-                if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
+                Dictionary<Int64, string> dicTaxDataOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dtSASData.Rows)
                 {
-                    isNameMatchFailed = true;
+                    dicTaxDataOwners.Add(Convert.ToInt32(dr["ROW_ID"]), Convert.ToString(dr["OWNERNAME"]));
                 }
-                string SASOwnerName = "thushar";
-                objModule.UPD_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["BOOKS_PROP_APPNO"]), Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["PROPERTYCODE"]), objNameMatchingResult.OwnerNo, SASOwnerName, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
-            }
 
-            if (Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]) != "1")
-            {
-                matched = "N";
-            }
-            else if (dtSASData.Rows.Count != dsNCLTablesData.Tables.Count)
-            {
-                matched = "N";
-            }
-            else if (isNameMatchFailed == true)
-            {
-                matched = "N";
-            }
-            else
-            {
-                matched = "Y";
-            }
-            return matched;
+                Dictionary<Int64, string> dicEkycOwners = new Dictionary<Int64, string>();
+                foreach (DataRow dr in dsNCLTablesData.Tables[5].Rows)
+                {
+
+                    dicEkycOwners.Add(Convert.ToInt64(dr["OWNERNUMBER"]), Convert.ToString(dr["OWNERNAME_EN"]));
+
+                }
+
+
+                List<NameMatchingResult> objFinalListNameMatchingResult = new List<NameMatchingResult>();
+                objFinalListNameMatchingResult = _NameMatchService.CompareDictionaries(dicTaxDataOwners, dicEkycOwners);
+
+                foreach (NameMatchingResult objNameMatchingResult in objFinalListNameMatchingResult)
+                {
+                    if (objNameMatchingResult.NameMatchScore < Convert.ToInt32(75))
+                    {
+                        isNameMatchFailed = true;
+                    }
+                    string SASOwnerName = "thushar";
+                    objModule.UPD_NCL_PROPERTY_SAS_APP_NAMEMATCH_TEMP(Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["BOOKS_PROP_APPNO"]), Convert.ToInt64(dsNCLTablesData.Tables[5].Rows[0]["PROPERTYCODE"]), objNameMatchingResult.OwnerNo, SASOwnerName, objNameMatchingResult.EKYCOwnerNo, objNameMatchingResult.EKYCOwnerName, objNameMatchingResult.NameMatchScore, Convert.ToString(LoginId));
+                }
+
+                if (Convert.ToString(dsNCLTablesData.Tables[20].Rows[0]["KAVERIDOC_AVAILABLE"]) != "1")
+                {
+                    matched = "N";
+                }
+                else if (dtSASData.Rows.Count != dsNCLTablesData.Tables.Count)
+                {
+                    matched = "N";
+                }
+                else if (isNameMatchFailed == true)
+                {
+                    matched = "N";
+                }
+                else
+                {
+                    matched = "Y";
+                }
+                return matched;
             }
             catch (Exception ex)
             {
@@ -473,20 +476,20 @@ namespace BBMPCITZAPI.Controllers
         }
         private int KAVERIDOCOwnerCount(DataTable dt)
         {
-                try
-                {
-                    int i = 0;
-
-
-            foreach (DataRow dr in dt.Rows)
+            try
             {
-                if (Convert.ToString(dr["PARTYTYPE"]) == "Claimant")
-                {
-                    i = i + 1;
-                }
-            }
+                int i = 0;
 
-            return i;
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (Convert.ToString(dr["PARTYTYPE"]) == "Claimant")
+                    {
+                        i = i + 1;
+                    }
+                }
+
+                return i;
             }
             catch (Exception ex)
             {
@@ -498,20 +501,20 @@ namespace BBMPCITZAPI.Controllers
 
         private int KAVERIECOwnerCount(DataTable dt)
         {
-                    try
-                    {
-                        int i = 0;
-
-
-            foreach (DataRow dr in dt.Rows)
+            try
             {
-                if (Convert.ToString(dr["ISCLAIMANTOREXECUTANT"]) == "C")
-                {
-                    i = i + 1;
-                }
-            }
+                int i = 0;
 
-            return i;
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (Convert.ToString(dr["ISCLAIMANTOREXECUTANT"]) == "C")
+                    {
+                        i = i + 1;
+                    }
+                }
+
+                return i;
             }
             catch (Exception ex)
             {
@@ -520,7 +523,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-       
+
         [HttpGet("GetFinalBBMPReport")]
         public IActionResult GetFinalReport(int propertycode, int BOOKS_PROP_APPNO, string LoginId)
         {
@@ -561,7 +564,7 @@ namespace BBMPCITZAPI.Controllers
                 param[1] = new ReportParameter("P_CENTERNAME", "NA");
                 param[2] = new ReportParameter("P_PROPERTYCATEGORYID", Convert.ToString(dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]));
                 param[4] = new ReportParameter("P_LANGUAGE", "0"); //English
-             //   param[4] = new ReportParameter("P_LANGUAGE", "1"); //Kannada
+                                                                   //   param[4] = new ReportParameter("P_LANGUAGE", "1"); //Kannada
                 foreach (DataRow row in dsNCLTablesData.Tables[5].Rows)
                 {
                     if (row["OWNERIDENTITYSLNO"] != DBNull.Value)
@@ -688,6 +691,187 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("GetFinalObjectionAcknowledgementReport")]
+        public IActionResult GetFinalObjectionAcknowledgementReport(int propertycode, int OBJECTIONID, string LoginId,long WardId)
+        {
+            try
+            {
+                string Date = DateTime.Now.ToShortDateString();
+                DataSet dsNCLTablesData = _ObjectionService.GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP(555, propertycode, OBJECTIONID); // Data from NCL temp tables  
+                DataSet dsNCLTablesDataDummy = _BBMPBookService.GET_PROPERTY_PENDING_CITZ_BBD_DRAFT_React("555",propertycode,"ADDRESS");
+
+                LocalReport report = new LocalReport
+                {
+                    EnableExternalImages = true,
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP4.rdlc")
+                };
+
+
+                report.DataSources.Clear();
+
+                int rcount = 0;
+                // Set up parameters
+                DataSet dsReportData = _ObjectionService.SEL_CitzeObjectionAcknowledgement(Convert.ToInt32(OBJECTIONID), Convert.ToInt32(propertycode), Convert.ToString(LoginId), WardId);
+                ReportParameter[] param = new ReportParameter[19];
+
+                param[7] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]).Trim());
+                param[8] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SUB_DIVISION_NAME"]).Trim());
+                param[9] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"]).Trim());
+                param[10] = new ReportParameter("P_DOORSITENO", Convert.ToString(dsReportData.Tables[0].Rows[0]["DOORNO"]).Trim());
+                param[11] = new ReportParameter("P_BUIDINGNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"]).Trim());
+               // param[12] = new ReportParameter("P_STREETNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["STREETNAME"]));
+                param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]).Trim());
+                param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]).Trim());
+
+                //param[7] = new ReportParameter("P_ZONENAME", "red");
+                //param[8] = new ReportParameter("SUB_DIVISION_NAME", "SUB_DIVISION_NAME");
+                //param[9] = new ReportParameter("P_WARD_NAME", "WARD_NAME");
+                //param[10] = new ReportParameter("P_DOORSITENO", "DOORNO");
+                //param[11] = new ReportParameter("P_BUIDINGNAME1", "BUILDINGNAME");
+                param[12] = new ReportParameter("P_STREETNAME1", "STREETNAME");
+                //param[13] = new ReportParameter("P_APPLICANTNAME", "APPLICANTNAME");
+                param[16] = new ReportParameter("P_OBJECTIONNAME", Convert.ToString(dsNCLTablesData.Tables[4].Rows[0]["OBJECTIONNAME_EN"]).Trim());
+                param[17] = new ReportParameter("P_OBJECTIONADDRESS", Convert.ToString(dsNCLTablesData.Tables[4].Rows[0]["OBJECTIONADDRESS_EN"]).Trim());
+                param[18] = new ReportParameter("P_OBJECTIONPHOTO", Convert.ToString(dsNCLTablesData.Tables[4].Rows[0]["OWNERPHOTO"]).Trim());
+                //param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", "APPLICANTPOSTALADDRESS");
+                param[15] = new ReportParameter("P_BOOKS_PROP_APPNO", "K-" + Convert.ToString(OBJECTIONID));
+                param[6] = new ReportParameter("P_Hname", "Objection");
+                param[3] = new ReportParameter("P_USERTYPE", "CITIZEN");
+                param[3] = new ReportParameter("P_USERTYPE", "NA");
+                param[0] = new ReportParameter("P_OPRNAME", "NA");
+                param[1] = new ReportParameter("P_CENTERNAME", "NA");
+                param[2] = new ReportParameter("P_PROPERTYCATEGORYID", "23");
+                param[4] = new ReportParameter("P_LANGUAGE", "0"); //English
+                param[5] = new ReportParameter("P_ISCOMPANY", "N");                              
+                //   param[4] = new ReportParameter("P_LANGUAGE", "1"); //Kannada
+                foreach (DataRow row in dsNCLTablesData.Tables[4].Rows)
+                {
+                    if (row["OWNERIDENTITYSLNO"] != DBNull.Value)
+                    {
+                        string ownerMobileNo = MaskMobileNo(dsNCLTablesData.Tables[4].Rows[rcount]["MOBILENUMBER"].ToString());
+                        row["MOBILENUMBER"] = ownerMobileNo;
+                        //if (ownerMobileNo == "")
+                        //{
+                        //    return;
+                        //}
+                    }
+                    rcount++;
+                }
+
+                //foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
+                //{
+                //    if (row["APARTMENTLANDPID"] == DBNull.Value)
+                //    {
+                //        row["APARTMENTLANDPID"] = "N.A.";
+                //    }
+                //}
+                //foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
+                //{
+                //    if (row["MUNICIPALOLDNUMBER"] == DBNull.Value)
+                //    {
+                //        row["MUNICIPALOLDNUMBER"] = "N.A.";
+                //    }
+                //}
+                //foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
+                //{
+                //    if (row["ASSESMENTNUMBER"] == DBNull.Value)
+                //    {
+                //        row["ASSESMENTNUMBER"] = "N.A.";
+                //    }
+                //}
+                //foreach (DataRow row in dsNCLTablesDataDummy.Tables[0].Rows)
+                //{
+                //    if (row["surveyno"] == DBNull.Value)
+                //    {
+                //        row["surveyno"] = "N.A.";
+                //    }
+                //}
+                //foreach (DataRow row in dsNCLTablesData.Tables[4].Rows)
+                //{
+                //    if (row["longitude"] == DBNull.Value)
+                //    {
+                //        row["longitude"] = "N.A.";
+                //    }
+                //    if (row["latitude"] == DBNull.Value)
+                //    {
+                //        row["latitude"] = "N.A.";
+                //    }
+                //}
+
+                //foreach (DataRow row in dsNCLTablesData.Tables[4].Rows)
+                //{
+                //    if (row["ISCOMPANY"] != DBNull.Value)
+                //    {
+                //        if (row["ISCOMPANY"].ToString() == "N")
+                //        {
+                //            param[5] = new ReportParameter("P_ISCOMPANY", "N");
+                //        }
+                //        else
+                //        {
+                //            param[5] = new ReportParameter("P_ISCOMPANY", "Y");
+                //        }
+                //    }
+                //    else
+                //    {
+                //        param[5] = new ReportParameter("P_ISCOMPANY", "N");
+                //    }
+
+                //}
+
+                //foreach (DataRow row in dsNCLTablesData.Tables[9].Rows)
+                //{
+                //    if (row["DOCUMENTDETAILS"] == DBNull.Value)
+                //    {
+                //        row["DOCUMENTDETAILS"] = "N.A.";
+                //    }
+                //}
+                DataTable ds = new DataTable();
+                report.DataSources.Add(new ReportDataSource("DataSet1", dsNCLTablesDataDummy.Tables[1]));
+                report.DataSources.Add(new ReportDataSource("PropSite", ds));
+                report.DataSources.Add(new ReportDataSource("PropPhoto", ds));
+                report.DataSources.Add(new ReportDataSource("PropDimention", ds));
+                report.DataSources.Add(new ReportDataSource("PropCoordinates", ds));
+                report.DataSources.Add(new ReportDataSource("OwnerDet", dsNCLTablesData.Tables[4]));
+                report.DataSources.Add(new ReportDataSource("Rights", ds));
+                report.DataSources.Add(new ReportDataSource("DocsToUpl", ds));
+                report.DataSources.Add(new ReportDataSource("Apartment", ds));
+               report.DataSources.Add(new ReportDataSource("Kattada", ds));
+                report.DataSources.Add(new ReportDataSource("PropSurvey", ds));
+                report.DataSources.Add(new ReportDataSource("Liabilities", ds));
+                report.DataSources.Add(new ReportDataSource("MOBuilding", ds));
+                report.SetParameters(param);
+                report.Refresh();
+                string reportType = "PDF";
+                string mimeType;
+                string encoding;
+                string deviceInfo = "<DeviceInfo>" +
+                   "  <OutputFormat>PDF</OutputFormat>" +
+                   "  <PageWidth>8.27in</PageWidth>" +
+                   "  <PageHeight>11.69in</PageHeight>" +
+                   "  <MarginTop>0.2in</MarginTop>" +
+                   "  <MarginLeft>0.2in</MarginLeft>" +
+                   "  <MarginRight>0.2in</MarginRight>" +
+                   "  <MarginBottom>0.2in</MarginBottom>" +
+                   "</DeviceInfo>";
+
+                Warning[] warnings;
+                string[] streamIds;
+                string extension = string.Empty;
+                byte[] bytes = report.Render(reportType, deviceInfo, out mimeType, out encoding, out extension, out streamIds, out warnings);
+                string fileName = String.Empty;
+                fileName = "Objectors Acknowledgement";
+                return File(bytes, mimeType, "ObjectorsAcknowledgement.pdf");
+                // return bytes;
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "ObjectorsAcknowledgement");
+                _logger.LogError(ex, "Error ObjectorsAcknowledgement function the report.");
+                throw;
+            }
+        }
+
         [HttpGet("GetEndorsementReport")]
         public IActionResult GetEndorsementReport(int propertycode, int BOOKS_PROP_APPNO, string LoginId)
         {
@@ -718,7 +902,7 @@ namespace BBMPCITZAPI.Controllers
                 param[4] = new ReportParameter("ARO_ADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["ARO_ADDRESS"]));
                 param[5] = new ReportParameter("P_REASON", Convert.ToString(dsReportData.Tables[0].Rows[0]["REASON"]));
                 param[6] = new ReportParameter("P_TYPEOFPROPERTY", dsReportData.Tables[0].Rows[0]["TYPEOFPROPERTY"].ToString());
-                param[7] = new ReportParameter("P_OWNERNAMEBBMP",  string.IsNullOrEmpty(Convert.ToString(dsReportData.Tables[0].Rows[0]["BBMP_REG_OWNERNAMES"])) ? "NA" : Convert.ToString(dsReportData.Tables[0].Rows[0]["BBMP_REG_OWNERNAMES"]));
+                param[7] = new ReportParameter("P_OWNERNAMEBBMP", string.IsNullOrEmpty(Convert.ToString(dsReportData.Tables[0].Rows[0]["BBMP_REG_OWNERNAMES"])) ? "NA" : Convert.ToString(dsReportData.Tables[0].Rows[0]["BBMP_REG_OWNERNAMES"]));
                 param[8] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]));
                 param[9] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]));
                 param[10] = new ReportParameter("P_PROPERTYID", Convert.ToString(propertycode));
@@ -1064,7 +1248,7 @@ namespace BBMPCITZAPI.Controllers
         //    }
         //    return pdfHash;
         //}
-        private  string GetPDFHash(Int64 properrtycode,Int64 BooksAppNO,string pdfFilePath, string tmpPath)
+        private string GetPDFHash(Int64 properrtycode, Int64 BooksAppNO, string pdfFilePath, string tmpPath)
         {
             //Start generating PDF Hash
             string pdfHash = "";
@@ -1110,7 +1294,7 @@ namespace BBMPCITZAPI.Controllers
                 //  Session["OutputStream"] = OutputStream;
                 //  Session["reader"] = reader;
                 //    Session["sap"] = appearance;
-                StorePDFSessionValues(properrtycode,BooksAppNO,OutputStream, reader, appearance);
+                StorePDFSessionValues(properrtycode, BooksAppNO, OutputStream, reader, appearance);
             }
             catch (Exception ex)
             {
@@ -1142,7 +1326,7 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                _errorLogService.LogError(ex,"");
+                _errorLogService.LogError(ex, "");
             }
             return Convert.ToBase64String(System.Text.UTF8Encoding.UTF8.GetBytes(strXML));
         }
@@ -1204,13 +1388,13 @@ namespace BBMPCITZAPI.Controllers
                 signature = System.Text.UTF8Encoding.UTF8.GetString(Convert.FromBase64String(esignxml));
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(signature);
-              //  XmlNodeList elemList = xmlDoc.GetElementsByTagName("EsignResp");
-               // sig = elemList[0].ChildNodes[1].InnerText;
+                //  XmlNodeList elemList = xmlDoc.GetElementsByTagName("EsignResp");
+                // sig = elemList[0].ChildNodes[1].InnerText;
                 //Start generating PDF Hash
                 //PdfSignatureAppearance appearance = (PdfSignatureAppearance)Session["sap"];
                 //FileStream OutputStream = (FileStream)Session["OutputStream"];
                 //PdfReader reader = (PdfReader)Session["reader"]; //uploaded pdf is now open to attach signature
-            var Dataset =    RetrievePDFSessionValues(propertyCode, BOOK_APP_NO);
+                var Dataset = RetrievePDFSessionValues(propertyCode, BOOK_APP_NO);
                 //    PdfSignatureAppearance appearance = (PdfSignatureAppearance)Session["sap"];
                 //   FileStream OutputStream = (FileStream)Session["OutputStream"];
                 //    PdfReader reader = (PdfReader)Session["reader"]; //uploaded pdf is now open to attach signature
@@ -1232,122 +1416,122 @@ namespace BBMPCITZAPI.Controllers
             catch (Exception ex1)
             {
                 // _errorLogService.LogError(ex1, "AttachSignature1");
-               // Alert.Show("AttachSignature1:" + ((ex1.InnerException != null) ? ex1.InnerException.Message.Replace('\n', ' ') : ex1.Message.Replace('\n', ' ')));
+                // Alert.Show("AttachSignature1:" + ((ex1.InnerException != null) ? ex1.InnerException.Message.Replace('\n', ' ') : ex1.Message.Replace('\n', ' ')));
             }
 
-                //try
-                //{
-                //    path = Server.MapPath("../TempFiles/");
-                //    outFile = Session["SignedFileName"].ToString();
-                //    Url = _Esign.TempURl_ctz.ToString() + outFile;
-
-                //    byte[] bytes = System.IO.File.ReadAllBytes(Path.Combine(path, outFile));
-                //    insertCitzData(bytes, propertyCode, BOOK_APP_NO, LoginId);
-
-                //    System.Web.UI.AttributeCollection col = pdfiframe.Attributes;
-                //    col.Add("src", Url);
-                //}
-                //catch (Exception ex2)
-                //{
-                //    //  _errorLogService.LogError(ex2, "AttachSignature2");
-                // //   Alert.Show("AttachSignature2:" + ((ex2.InnerException != null) ? ex2.InnerException.Message.Replace('\n', ' ') : ex2.Message.Replace('\n', ' ')));
-                //}
-            }
-
-            //private void insertCitzData(byte[] bytes, string propertycode, string BookAPPNo, string LoginId)
+            //try
             //{
-            //    DataSet dsPropDetails = objModule.Get_Ctz_ObjectionModPendingAppl("EID", Convert.ToString(LoginId), Convert.ToString(BookAPPNo), "", 0, "");
-            //    try
-            //    {
-            //        if (dsPropDetails != null && dsPropDetails.Tables.Count > 0)
-            //        {
-            //            int res = objModule.INS_SUBMIT_CTZ_APPLICATION_OBJMOD(Convert.ToInt32(BookAPPNo), Convert.ToInt32(BookAPPNo), Convert.ToBase64String(bytes), Convert.ToString(LoginId));
-            //            //   string mobilenumber = SMSGeneration(BookAPPNo);
-            //            //    Alert.Show("Application Submitted Successfully and SMS is sent to " + mobilenumber + ". Reference No: " + Convert.ToString(BookAPPNo));
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        // _errorLogService.LogError(ex, "Final Submit For Application:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
-            //        Alert.Show("Application not submitted, Please try again:" + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
-            //    }
+            //    path = Server.MapPath("../TempFiles/");
+            //    outFile = Session["SignedFileName"].ToString();
+            //    Url = _Esign.TempURl_ctz.ToString() + outFile;
+
+            //    byte[] bytes = System.IO.File.ReadAllBytes(Path.Combine(path, outFile));
+            //    insertCitzData(bytes, propertyCode, BOOK_APP_NO, LoginId);
+
+            //    System.Web.UI.AttributeCollection col = pdfiframe.Attributes;
+            //    col.Add("src", Url);
             //}
-            //private string SMSGeneration(string BookAPPNo)
+            //catch (Exception ex2)
             //{
-            //    try
-            //    {
-            //        NUPMS_BA.Report_BA RBA = new NUPMS_BA.Report_BA();
-
-            //        string TEMPLAETID = "23";
-            //        Session["TEMPLAETID"] = TEMPLAETID;
-            //        Session["SENTFROM"] = "EAASTHI";
-
-            //        DataSet dsPropDetails = RBA.MutationnOTICEDetails(TEMPLAETID);
-            //        string TEMPLATETEXT = dsPropDetails.Tables[0].Rows[0]["TEMPLATETEXT"].ToString();
-            //        string SMSTEMPLATEID = dsPropDetails.Tables[0].Rows[0]["SMSTEMPLATEID"].ToString();
-            //        Session["SMSTEMPLATEID"] = SMSTEMPLATEID;
-
-            //        DataSet dtMobileNumber = objModule.GETPropertyMobileNumberForSMS(Convert.ToInt32(BookAPPNo));
-            //        if (dtMobileNumber != null && dtMobileNumber.Tables.Count > 0 && dtMobileNumber.Tables[0].Rows.Count > 0)
-            //        {
-            //            Session["MOBILENUMBER"] = dtMobileNumber.Tables[0].Rows[0]["MOBILENUMBER"].ToString().Trim();
-            //            Session["ULBNAME"] = dtMobileNumber.Tables[1].Rows[0]["ULBNAME"].ToString();
-            //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#ULBNane#}", Session["ULBNAME"].ToString());
-            //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#Date#}", DateTime.Now.ToString());
-            //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#refno#}", Session["BOOKS_PROP_APPNO"].ToString());
-
-            //            string MOBILENO = Session["MOBILENUMBER"].ToString();
-            //            string SECRET_KEY = ConfigurationManager.AppSettings["BBMP_SECRET_KEY_ctz"].ToString();
-            //            string SENDER_ADDRESS = ConfigurationManager.AppSettings["BBMP_SENDER_ADDRESS_ctz"].ToString();
-
-            //            EAS_BA objEAS = new EAS_BA();
-            //            objEAS.SendSMS(SECRET_KEY, SENDER_ADDRESS, MOBILENO, TEMPLATETEXT, Session["ULB"].ToString());
-            //        }
-            //        return Convert.ToString(Session["MOBILENUMBER"]);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //      //  _errorLogService.LogError(ex, "SMS for Final Submit:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]) + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
-            //        Alert.Show("Application Submitted Successfully but SMS is failed. Reference No: " + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
-            //        return "";
-            //    }
+            //    //  _errorLogService.LogError(ex2, "AttachSignature2");
+            // //   Alert.Show("AttachSignature2:" + ((ex2.InnerException != null) ? ex2.InnerException.Message.Replace('\n', ' ') : ex2.Message.Replace('\n', ' ')));
             //}
-
-
-
-            private  int StorePDFSessionValues(Int64 propertycode, Int64 bookspropappno,FileStream sessionId, PdfReader pdfFilePath, PdfSignatureAppearance appearance)
-    {
-        // Convert FileStream (sessionId) to byte array
-        byte[] fileContent;
-        using (MemoryStream ms = new MemoryStream())
-        {
-            sessionId.CopyTo(ms);
-            fileContent = ms.ToArray();
         }
 
-        // Serialize PdfSignatureAppearance object to JSON
-        var signatureData = new
+        //private void insertCitzData(byte[] bytes, string propertycode, string BookAPPNo, string LoginId)
+        //{
+        //    DataSet dsPropDetails = objModule.Get_Ctz_ObjectionModPendingAppl("EID", Convert.ToString(LoginId), Convert.ToString(BookAPPNo), "", 0, "");
+        //    try
+        //    {
+        //        if (dsPropDetails != null && dsPropDetails.Tables.Count > 0)
+        //        {
+        //            int res = objModule.INS_SUBMIT_CTZ_APPLICATION_OBJMOD(Convert.ToInt32(BookAPPNo), Convert.ToInt32(BookAPPNo), Convert.ToBase64String(bytes), Convert.ToString(LoginId));
+        //            //   string mobilenumber = SMSGeneration(BookAPPNo);
+        //            //    Alert.Show("Application Submitted Successfully and SMS is sent to " + mobilenumber + ". Reference No: " + Convert.ToString(BookAPPNo));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // _errorLogService.LogError(ex, "Final Submit For Application:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
+        //        Alert.Show("Application not submitted, Please try again:" + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
+        //    }
+        //}
+        //private string SMSGeneration(string BookAPPNo)
+        //{
+        //    try
+        //    {
+        //        NUPMS_BA.Report_BA RBA = new NUPMS_BA.Report_BA();
+
+        //        string TEMPLAETID = "23";
+        //        Session["TEMPLAETID"] = TEMPLAETID;
+        //        Session["SENTFROM"] = "EAASTHI";
+
+        //        DataSet dsPropDetails = RBA.MutationnOTICEDetails(TEMPLAETID);
+        //        string TEMPLATETEXT = dsPropDetails.Tables[0].Rows[0]["TEMPLATETEXT"].ToString();
+        //        string SMSTEMPLATEID = dsPropDetails.Tables[0].Rows[0]["SMSTEMPLATEID"].ToString();
+        //        Session["SMSTEMPLATEID"] = SMSTEMPLATEID;
+
+        //        DataSet dtMobileNumber = objModule.GETPropertyMobileNumberForSMS(Convert.ToInt32(BookAPPNo));
+        //        if (dtMobileNumber != null && dtMobileNumber.Tables.Count > 0 && dtMobileNumber.Tables[0].Rows.Count > 0)
+        //        {
+        //            Session["MOBILENUMBER"] = dtMobileNumber.Tables[0].Rows[0]["MOBILENUMBER"].ToString().Trim();
+        //            Session["ULBNAME"] = dtMobileNumber.Tables[1].Rows[0]["ULBNAME"].ToString();
+        //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#ULBNane#}", Session["ULBNAME"].ToString());
+        //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#Date#}", DateTime.Now.ToString());
+        //            TEMPLATETEXT = TEMPLATETEXT.Replace("{#refno#}", Session["BOOKS_PROP_APPNO"].ToString());
+
+        //            string MOBILENO = Session["MOBILENUMBER"].ToString();
+        //            string SECRET_KEY = ConfigurationManager.AppSettings["BBMP_SECRET_KEY_ctz"].ToString();
+        //            string SENDER_ADDRESS = ConfigurationManager.AppSettings["BBMP_SENDER_ADDRESS_ctz"].ToString();
+
+        //            EAS_BA objEAS = new EAS_BA();
+        //            objEAS.SendSMS(SECRET_KEY, SENDER_ADDRESS, MOBILENO, TEMPLATETEXT, Session["ULB"].ToString());
+        //        }
+        //        return Convert.ToString(Session["MOBILENUMBER"]);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //      //  _errorLogService.LogError(ex, "SMS for Final Submit:" + Convert.ToString(Session["BOOKS_PROP_APPNO"]) + ((ex.InnerException != null) ? ex.InnerException.Message.Replace('\n', ' ') : ex.Message.Replace('\n', ' ')));
+        //        Alert.Show("Application Submitted Successfully but SMS is failed. Reference No: " + Convert.ToString(Session["BOOKS_PROP_APPNO"]));
+        //        return "";
+        //    }
+        //}
+
+
+
+        private int StorePDFSessionValues(Int64 propertycode, Int64 bookspropappno, FileStream sessionId, PdfReader pdfFilePath, PdfSignatureAppearance appearance)
         {
-            Reason = appearance.Reason,
-            SignDate = appearance.SignDate,
-            CertificationLevel = appearance.CertificationLevel,
-            Layer2Font = new
+            // Convert FileStream (sessionId) to byte array
+            byte[] fileContent;
+            using (MemoryStream ms = new MemoryStream())
             {
-                appearance.Layer2Font.Familyname,
-                appearance.Layer2Font.Size
+                sessionId.CopyTo(ms);
+                fileContent = ms.ToArray();
             }
-        };
-        string serializedAppearance = JsonConvert.SerializeObject(signatureData);
+
+            // Serialize PdfSignatureAppearance object to JSON
+            var signatureData = new
+            {
+                Reason = appearance.Reason,
+                SignDate = appearance.SignDate,
+                CertificationLevel = appearance.CertificationLevel,
+                Layer2Font = new
+                {
+                    appearance.Layer2Font.Familyname,
+                    appearance.Layer2Font.Size
+                }
+            };
+            string serializedAppearance = JsonConvert.SerializeObject(signatureData);
             _BBMPBookService.Ins_EsignPDf(propertycode, bookspropappno, fileContent, serializedAppearance);
-            
-          
-                // Bind parameters
+
+
+            // Bind parameters
             //    command.Parameters.Add(new OracleParameter("session_id", Guid.NewGuid().ToString())); // Create a unique ID
-             //   command.Parameters.Add(new OracleParameter("pdf_file_content", fileContent)); // Store file content as BLOB
-             //   command.Parameters.Add(new OracleParameter("pdf_signature_data", serializedAppearance)); // Store appearance data as JSON in CLOB
+            //   command.Parameters.Add(new OracleParameter("pdf_file_content", fileContent)); // Store file content as BLOB
+            //   command.Parameters.Add(new OracleParameter("pdf_signature_data", serializedAppearance)); // Store appearance data as JSON in CLOB
 
             return 1;
-            }
+        }
         public class PdfSignatureAppearanceDto
         {
             public string Reason { get; set; }
@@ -1359,19 +1543,19 @@ namespace BBMPCITZAPI.Controllers
         }
 
 
-private (PdfSignatureAppearance, FileStream, PdfReader) RetrievePDFSessionValues(Int64 propertyCode, Int64 BOOK_APP_NO)
-{
-    try
-    {
-        // Call the service method to get the DataSet containing the stored PDF and signature data
-        DataSet dataSet = _BBMPBookService.Get_ESignPdf(propertyCode, BOOK_APP_NO);
-
-        // Check if the DataSet contains data
-        if (dataSet != null && dataSet.Tables[0].Rows.Count > 0)
+        private (PdfSignatureAppearance, FileStream, PdfReader) RetrievePDFSessionValues(Int64 propertyCode, Int64 BOOK_APP_NO)
         {
-            // Retrieve PDF content from the "BLOB" in the database
-            byte[] pdfFileContent = (byte[])dataSet.Tables[0].Rows[0]["PDF_FILE_CONTENT"];
-                   var localPath = _Esign.TempFiles_ctz.ToString(); //take form appsettings
+            try
+            {
+                // Call the service method to get the DataSet containing the stored PDF and signature data
+                DataSet dataSet = _BBMPBookService.Get_ESignPdf(propertyCode, BOOK_APP_NO);
+
+                // Check if the DataSet contains data
+                if (dataSet != null && dataSet.Tables[0].Rows.Count > 0)
+                {
+                    // Retrieve PDF content from the "BLOB" in the database
+                    byte[] pdfFileContent = (byte[])dataSet.Tables[0].Rows[0]["PDF_FILE_CONTENT"];
+                    var localPath = _Esign.TempFiles_ctz.ToString(); //take form appsettings
                     string fileName = Guid.NewGuid().ToString() + ".pdf";
                     localPath = localPath + fileName;
                     System.IO.File.WriteAllBytes(localPath, pdfFileContent);
@@ -1379,58 +1563,58 @@ private (PdfSignatureAppearance, FileStream, PdfReader) RetrievePDFSessionValues
                     // Retrieve signature data (stored as JSON or another serialized format)
                     string signatureData = dataSet.Tables[0].Rows[0]["PDF_SIGNATURE_DATA"].ToString(); // Assuming it's stored as JSON
 
-            // Reconstruct PdfReader from the file content (in-memory)
-            PdfReader reader;
-            using (MemoryStream pdfStream = new MemoryStream(pdfFileContent))
-            {
-                reader = new PdfReader(pdfStream); // Open PDF for signature
+                    // Reconstruct PdfReader from the file content (in-memory)
+                    PdfReader reader;
+                    using (MemoryStream pdfStream = new MemoryStream(pdfFileContent))
+                    {
+                        reader = new PdfReader(pdfStream); // Open PDF for signature
+                    }
+
+                    // Create a temporary file for output (this would be used for signing the PDF later)
+                    string tempFilePath = Path.GetTempFileName(); // Generate a temp file path
+                    FileStream outputStream = new FileStream(tempFilePath, FileMode.OpenOrCreate);
+
+                    // Create a PdfStamper to apply the signature
+                    PdfStamper stamper = PdfStamper.CreateSignature(reader, outputStream, '\0');
+
+                    // Access the PdfSignatureAppearance object from the stamper
+                    PdfSignatureAppearance signatureAppearance = stamper.SignatureAppearance;
+
+                    // Deserialize PdfSignatureAppearance from the stored JSON data (into a DTO)
+                    var appearanceDto = JsonConvert.DeserializeObject<PdfSignatureAppearanceDto>(signatureData);
+
+                    // Manually recreate the PdfSignatureAppearance object from the DTO
+                    signatureAppearance.Reason = appearanceDto.Reason;
+                    signatureAppearance.SignDate = appearanceDto.SignDate;
+
+                    signatureAppearance.Layer2Font = new iTextSharp.text.Font();
+                    signatureAppearance.Layer2Font.SetFamily(appearanceDto.FontFamily);
+                    signatureAppearance.Layer2Font.Size = appearanceDto.FontSize;
+                    signatureAppearance.CertificationLevel = int.Parse(appearanceDto.CertificationLevel);
+                    // Add any other properties that need to be set based on the DTO
+
+                    // Return the tuple containing PdfSignatureAppearance, FileStream, and PdfReader
+                    return (signatureAppearance, outputStream, reader);
+                }
+
+                // If no data found, return null values
+                return (null, null, null);
             }
-
-            // Create a temporary file for output (this would be used for signing the PDF later)
-            string tempFilePath = Path.GetTempFileName(); // Generate a temp file path
-            FileStream outputStream = new FileStream(tempFilePath, FileMode.OpenOrCreate);
-
-            // Create a PdfStamper to apply the signature
-            PdfStamper stamper = PdfStamper.CreateSignature(reader, outputStream, '\0');
-
-            // Access the PdfSignatureAppearance object from the stamper
-            PdfSignatureAppearance signatureAppearance = stamper.SignatureAppearance;
-
-            // Deserialize PdfSignatureAppearance from the stored JSON data (into a DTO)
-            var appearanceDto = JsonConvert.DeserializeObject<PdfSignatureAppearanceDto>(signatureData);
-
-            // Manually recreate the PdfSignatureAppearance object from the DTO
-            signatureAppearance.Reason = appearanceDto.Reason;
-            signatureAppearance.SignDate = appearanceDto.SignDate;
-          
-            signatureAppearance.Layer2Font = new iTextSharp.text.Font();
-            signatureAppearance.Layer2Font.SetFamily(appearanceDto.FontFamily);
-            signatureAppearance.Layer2Font.Size = appearanceDto.FontSize;
-            signatureAppearance.CertificationLevel = int.Parse(appearanceDto.CertificationLevel);
-            // Add any other properties that need to be set based on the DTO
-
-            // Return the tuple containing PdfSignatureAppearance, FileStream, and PdfReader
-            return (signatureAppearance, outputStream, reader);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving PDF session values.");
+                throw;
+            }
         }
-
-        // If no data found, return null values
-        return (null, null, null);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error occurred while retrieving PDF session values.");
-        throw;
-    }
-}
         public class PropertyData
         {
-            
- public string?   PropertyCode { get; set; }
-public string? ProperytyId { get; set; }
+
+            public string? PropertyCode { get; set; }
+            public string? ProperytyId { get; set; }
             public string? BookNumber { get; set; }
             public string? BookId { get; set; }
-        
-    }
+
+        }
 
         private async Task<string> GetDraftKhataDownloadURL(PropertyData propertyData)
         {
@@ -1463,10 +1647,11 @@ public string? ProperytyId { get; set; }
                         // Read the response content
                         var responseContent = await response.Content.ReadAsStringAsync();
                         var responseObject = JsonConvert.DeserializeObject<ResponseModel>(responseContent);
-
+                        _BBMPBookService.Ins_PDF_Draft_Exception_log(propertyData.PropertyCode, propertyData.ProperytyId, responseObject?.status, responseObject?.outputDocument);
                         // Check the status and return the outputDocument URL
                         if (responseObject?.status == "success")
                         {
+
                             return responseObject.outputDocument;
                         }
                         else
@@ -1482,6 +1667,7 @@ public string? ProperytyId { get; set; }
                 catch (Exception ex)
                 {
                     // Log the exception (optional)
+                    
                     _logger.LogError(ex, "Error occurred while retrieving GetDraftKhataDownloadURL");
                     _errorLogService.LogError(ex, "GetDraftKhataDownloadURL");
                     return $"Internal server error: {ex.Message}";
@@ -1498,34 +1684,35 @@ public string? ProperytyId { get; set; }
         public async Task<IActionResult> GetDraftDownload(PropertyData propertyData)
         {
             //url will be sent as a parameter.
-            _logger.LogInformation("url coming from GetDraftKhataDownloadURL" + "bookid:"+ propertyData.BookId, "booknumber:" + propertyData.BookNumber, "bookpropertycode:" + propertyData.PropertyCode, "propertyid:" + propertyData.ProperytyId);
+            _logger.LogInformation("url coming from GetDraftKhataDownloadURL" + "bookid:" + propertyData.BookId, "booknumber:" + propertyData.BookNumber, "bookpropertycode:" + propertyData.PropertyCode, "propertyid:" + propertyData.ProperytyId);
             // string url = "http://10.10.133.197/eaasthirestapi/TempFiles/thushar.pdf";
 
 
             // string url = "http://10.10.133.197/eaasthirestapi/api/eaasthidata/GetDraft";
 
             string url = await GetDraftKhataDownloadURL(propertyData);
-            _logger.LogError("url coming from GetDraftKhataDownloadURL", url);
-           
+            _logger.LogError($"url coming from GetDraftKhataDownloadURL: {url}");
+
+
 
 
             using (var httpClient = new HttpClient())
             {
                 try
-                {
-                   
+                {  
+
                     var response = await httpClient.GetAsync(url);
 
-                  
+
                     if (response.IsSuccessStatusCode)
                     {
-                       
+
                         byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
 
-                       
+
                         string mimeType = "application/pdf";
 
-                      
+
                         return File(pdfBytes, mimeType, "DraftReport.pdf");
                     }
                     else
@@ -1542,11 +1729,40 @@ public string? ProperytyId { get; set; }
                 }
             }
         }
+        [HttpPost("DownloadPagePDF")]
+        public async Task<IActionResult> GetPageDocumentDownload(string BookNo, string pageno)
+        {
+           
+            _logger.LogInformation("url coming from GetPageDocumentDownload" + "bookno:" + BookNo, "pageno:" + pageno );
+            DataSet dsPageData = objBbd.GetPdf(int.Parse(BookNo.ToString()), int.Parse(pageno.Trim()));
+            try
+            {
+                if (dsPageData != null && dsPageData.Tables.Count > 0 && dsPageData.Tables[0].Rows.Count > 0)
+                {
+                    byte[] pdfBytes;
+                    pdfBytes = await System.IO.File.ReadAllBytesAsync(dsPageData.Tables[0].Rows[0]["FILEPATH"].ToString());
+                    string mimeType = "application/pdf";
+                    string base64String4 = Convert.ToBase64String(pdfBytes, 0, pdfBytes.Length);
+                 
+                   return Ok(base64String4);
+                }
+                else
+                {
+                    return BadRequest("Failed to download the PDF.");
+                }
+            }
 
-
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+               
+                _logger.LogError(ex, "Error occurred while retrieving DownloadDraftPDF");
+                _errorLogService.LogError(ex, "DownloadDraftPDF");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
-
 
 
 

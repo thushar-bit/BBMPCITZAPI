@@ -16,6 +16,7 @@ using static System.Net.WebRequestMethods;
 using NUPMS_BA;
 using System.Xml;
 using Microsoft.AspNetCore.Authorization;
+using BBMPCITZAPI.Services;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -29,18 +30,50 @@ namespace BBMPCITZAPI.Controllers
         private readonly EKYCSettings _ekycSettings;
         private readonly BBMPSMSSETTINGS _BBMPSMSSETTINGS;
         private readonly IErrorLogService _errorLogService;
+        private readonly IObjectionService _ObjectionService;
+
         public EKYCController(ILogger<EKYCController> logger,  IOptions<EKYCSettings> ekycSettings, IErrorLogService errorLogService,
-            IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS)
+            IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS, IObjectionService ObjectionService)
         {
             _logger = logger;
             _ekycSettings = ekycSettings.Value;
             _BBMPSMSSETTINGS = BBMPSMSSETTINGS.Value;
             _errorLogService = errorLogService;
+            _ObjectionService = ObjectionService;
         }
-       
-        [Authorize]
+
+        //[Authorize]
+        [HttpPost("INS_NCL_OBJECTION_MAIN")]
+        public async Task<string> INS_NCL_OBJECTION_MAIN(int ULBCODE, long Propertycode, long PropertyEID)
+        {
+            _logger.LogInformation("GET request received at INS_NCL_OBJECTION_MAIN");
+            try
+            {
+
+                var dataSet = _ObjectionService.INS_NCL_OBJECTION_MAIN(ULBCODE, Propertycode, PropertyEID);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                long objid = 0;
+
+                if (dataSet.Tables.Count > 0 &&
+                    dataSet.Tables[0].Rows.Count > 0 &&
+                    dataSet.Tables[0].Columns.Contains("OBJID") &&
+                    dataSet.Tables[0].Rows[0]["OBJID"] != DBNull.Value)
+                {
+                    objid = Convert.ToInt64(dataSet.Tables[0].Rows[0]["OBJID"]);
+                }
+
+           string json1 = await GetEKYCRequest(1, objid, Propertycode);
+                return json1;
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_OBJECTION_MAIN");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_OBJECTION_MAIN.");
+                throw;
+            }
+        }
         [HttpPost("RequestEKYC")]
-        public string GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
+        public async Task<string> GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
         {
             try
             {
@@ -199,7 +232,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [Authorize]
+     //   [Authorize]
         [HttpGet("UPDATE_EKYC_OWNER_VAULT_RESPONSE")]
         public int UPDATE_EKYC_OWNER_VAULT_RESPONSE(int txnNo,string success,string vaultrefno,string loginid)
         {

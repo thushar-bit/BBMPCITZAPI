@@ -1285,7 +1285,8 @@ namespace BBMPCITZAPI.Services
                 new OracleParameter("P_CATEGORYID",OracleDbType.Int32,ParameterDirection.Input),
                 new OracleParameter("P_ClaimTypeID",OracleDbType.Int32,ParameterDirection.Input),
                 new OracleParameter("C_RECORD",OracleDbType.RefCursor,ParameterDirection.Output),
-                new OracleParameter("C_RECORD1",OracleDbType.RefCursor,ParameterDirection.Output)
+                new OracleParameter("C_RECORD1",OracleDbType.RefCursor,ParameterDirection.Output),
+                new OracleParameter("C_ECDOCRECORD",OracleDbType.RefCursor,ParameterDirection.Output)
                             };
 
                 prm[0].Value = ULBCODE;
@@ -1705,6 +1706,39 @@ namespace BBMPCITZAPI.Services
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_React_UserFlow stored procedure.");
+                throw;
+            }
+        }
+        public int Ins_PDF_Draft_Exception_log(string propertycode,string Propertyid,string status,string output)
+        {
+            try
+            {
+
+                string sp_name = "OBJECTIONMODULE_REACT.INS_BBD_DRAFT_EXCEPTION_REACT";
+
+                OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("V_PROPERTYCODE",OracleDbType.Varchar2),
+                     new OracleParameter("V_PROPERTYID",OracleDbType.Varchar2),
+                      new OracleParameter("V_SUCCESSSTATUS",OracleDbType.Varchar2),
+                      new OracleParameter("V_FILEPATH",OracleDbType.Varchar2),
+
+
+            };
+                prm[0].Value = propertycode;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = Propertyid;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = status;
+                prm[2].Direction = ParameterDirection.Input;
+                prm[3].Value = output;
+                prm[3].Direction = ParameterDirection.Input;
+
+
+                return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch(Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_React_UserFlow stored procedure.");
                 throw;

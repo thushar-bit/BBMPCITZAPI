@@ -81,13 +81,14 @@ builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddSingleton<TokenService>();
 //builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
+builder.Services.AddScoped<IObjectionService, ObjectionService>();
 builder.Services.AddScoped<INameMatchingService, NameMatchingService>();
 builder.Services.AddScoped<IErrorLogService, ErrorLoggingService>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // Read configuration from appsettings.json
     .Enrich.FromLogContext()
     .WriteTo.Console() // Optional: Logs to console
-    .WriteTo.File("E:\\MyCustomLogs\\log-.txt", rollingInterval: RollingInterval.Day) // Logs to a file
+    .WriteTo.File("E:\\ObjectionLogs\\log-.txt", rollingInterval: RollingInterval.Day) // Logs to a file
     .CreateLogger();
 
 // Replace default logging with Serilog
@@ -102,6 +103,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowCredentials());
 });
+
 var app = builder.Build();
 
 

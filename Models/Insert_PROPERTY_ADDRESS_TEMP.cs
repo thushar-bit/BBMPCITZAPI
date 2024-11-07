@@ -2,17 +2,17 @@
 {
     public class INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP
     {
-        public  int? propertyCode { get; set; }
+        public long? propertyCode { get; set; }
       
         public int? categoryId { get; set; }
         public string? PUIDNo { get; set; }
         public string? loginId { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class INS_UPD_NCL_PROPERTY_ADDRESS_TEMP2
     {
-        public int? propertyCode { get; set; }
+        public long? propertyCode { get; set; }
         public int? STREETID { get; set; }
         public string? DOORNO { get; set; }
         public string? BUILDINGNAME { get; set; }
@@ -24,13 +24,13 @@
     
     
         public string? loginId { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
         public string? Latitude { get; set; }
         public string? Longitude { get; set; }
     }
     public class UPD_NCL_PROPERTY_SITE_DIMENSION_TEMP 
     {
-        public int? propertyCode { get; set; }
+        public long? propertyCode { get; set; }
         public string? SITEORBUILDING { get; set; }
         public string? EVENORODDSITE { get; set; }
          public decimal? SITEAREA { get; set; }
@@ -53,17 +53,17 @@
         public decimal? SITEAREA_KAVERI_MT { get; set; }
         public decimal? SITEAREA_KAVERI_FT { get; set; }
         public string? loginId { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }  
+        public long? P_BOOKS_PROP_APPNO { get; set; }  
     }
     public class UPD_NCL_PROPERTY_MAIN_TEMP_CHECKBANDI
     {
-       public int? propertyCode { get; set; }
+       public long? propertyCode { get; set; }
         public string? CHECKBANDI_NORTH { get; set; }
         public string? CHECKBANDI_SOUTH { get; set; }
         public string? CHECKBANDI_EAST { get; set; }
         public string? CHECKBANDI_WEST { get; set; }
         public string? loginId { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class UPD_AREA_CHECKBANDI_KAVERI_DATA
     {
@@ -79,21 +79,21 @@
     }
     public class UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA 
     {
-        public int? propertyCode { get; set; }
+        public long? propertyCode { get; set; }
         public decimal? CARPETAREA { get; set; }
         public decimal? ADDITIONALAREA { get; set; }
         public decimal? SUPERBUILTUPAREA { get; set; }
         public string? loginId { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class UPD_NCL_PROPERTY_SITE_TEMP_USAGE 
     {
-        public int? propertyCode { get; set; }
+        public long? propertyCode { get; set; }
         public int? FEATUREHEADID { get; set; }
         public int? FEATUREID { get; set; }
         public int? BUILTYEAR { get; set; }
         public string? loginId { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLBuilding
     {
@@ -127,7 +127,7 @@
         public string? CREATEDIP { get; set; }
         public decimal? ownUseArea { get; set; }
         public decimal? rentedArea { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class NCLAPARTMENT
@@ -164,7 +164,7 @@
         public int? BUILDINGUSAGETYPEID { get; set; }//NUMBER, 
         public int? BHKID { get; set; } //number
         public string? CREATEDIP { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class NCLPropOwner
@@ -186,7 +186,7 @@
         public string? ISCOMPANY { get; set; }
         public int? PROPERTYTYPE { get; set; }
         public string? CREATEDIP { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropOwnerID
     {
@@ -195,14 +195,14 @@
         public string? CREATEDBY { get; set; }// VARCHAR2(20);
         public string? OWNERIDENTITYID { get; set; }// NUMBER;
         public string? UPDATEDBY { get; set; }// VARCHAR2(20);
-        public int? PROPERTYCODE { get; set; }// NUMBER;
+        public long? PROPERTYCODE { get; set; }// NUMBER;
         public DateTime? CREATEDON { get; set; }// DATE;
         public string? OWNERIDENTITYSLNO { get; set; }// VARCHAR2(100);
         public int? IDENTITYTYPEID { get; set; }// NUMBER;
         public int? ULBCODE { get; set; }// NUMBER;
         public string? AADHAARNO { get; set; }// VARCHAR2(20);
         public string? ENCRYPT { get; set; }// VARCHAR2(3);
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropOwnerIDDoc
     {
@@ -211,11 +211,11 @@
         public string? CREATEDBY { get; set; }// VARCHAR2(20);
         public int? OWNERIDENTITYID { get; set; }// NUMBER;
         public string? UPDATEDBY { get; set; }// VARCHAR2(20);
-        public int? PROPERTYCODE { get; set; }// NUMBER;
+        public long? PROPERTYCODE { get; set; }// NUMBER;
         public int? ULBCODE { get; set; }// NUMBER;
         public DateTime? CREATEDON { get; set; }// DATE;
         public byte[]? SCANNEDIDENEITY { get; set; }// BFILE;
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
 
     }
     public class NCLPropOwnerPhoto
@@ -223,13 +223,13 @@
         public DateTime? UPDATEDON { get; set; }// DATE;
         public int? OWNERNUMBER { get; set; }// NUMBER;
         public string? CREATEDBY { get; set; }// VARCHAR2(20);
-        public int? PROPERTYCODE { get; set; }// NUMBER;
+        public long? PROPERTYCODE { get; set; }// NUMBER;
         public DateTime? CREATEDON { get; set; }// DATE;
         public byte[]? OWNERPHOTO { get; set; }// BFILE;
         public int? PHOTOID { get; set; }// NUMBER;
         public int? ULBCODE { get; set; }// NUMBER;
         public string? UPDATEDBYE { get; set; }// VARCHAR2(20);
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropRights
     {
@@ -242,7 +242,7 @@
         public DateTime? CREATEDON { get; set; }// DATE;
         public int? ULBCODE { get; set; }// NUMBER;
 
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
     public class NCLPropIdentification
     {
@@ -251,7 +251,7 @@
         public string? CREATEDBY { get; set; }// VARCHAR2(20);
         public string? UPDATEDBY { get; set; }// VARCHAR2(20);
         public string? DOCUMENTEXTENSION { get; set; }// VARCHAR2(100);
-        public int? PROPERTYCODE { get; set; }// NUMBER;
+        public long? PROPERTYCODE { get; set; }// NUMBER;
         public DateTime? CREATEDON { get; set; }// DATE;
         public string? DOCUMENTDETAILS { get; set; }// VARCHAR2(2000);
         public byte[]? SCANNEDDOCUMENT { get; set; }// BFILE;
@@ -261,7 +261,8 @@
         public int? ULBCODE { get; set; }// NUMBER;
         public int? MUTAPPLID { get; set; }// NUMBER;
         public string? CREATEDIP { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
+        public int? ObjectionId { get; set; }
     }
     public class NCLClassPropIdentification
     {
@@ -269,7 +270,7 @@
         public string? DOCUMENTNUMBER { get; set; }// VARCHAR2(200);
         public string? CREATEDBY { get; set; }// VARCHAR2(20);
         public string? DOCUMENTEXTENSION { get; set; }// VARCHAR2(100);
-        public int? PROPERTYCODE { get; set; }// NUMBER;
+        public long? PROPERTYCODE { get; set; }// NUMBER;
         public string? DOCUMENTDETAILS { get; set; }// VARCHAR2(2000);
        public byte[]? SCANNEDDOCUMENT { get; set; }// BFILE;
         public int? DOCUMENTID { get; set; }// NUMBER;
@@ -279,7 +280,7 @@
        // public int? SUBCLASSIFICATIONID { get; set; }
 
         public string? CREATEDIP { get; set; }
-        public int? P_BOOKS_PROP_APPNO { get; set; }
+        public long? P_BOOKS_PROP_APPNO { get; set; }
     }
 
 }

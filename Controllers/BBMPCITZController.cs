@@ -125,13 +125,13 @@ IErrorLogService errorLogService
 
 
         [HttpGet("LOAD_BBD_RECORDS")]
-        public ActionResult<DataSet> LOAD_BBD_RECORDS(int ZoneId, int WardId, int SerachType, string Search)
+        public ActionResult<DataSet> LOAD_BBD_RECORDS(int ZoneId, int WardId, int SerachType, string Search, int page = 1, int pageSize = 10)
         {
             _logger.LogInformation("GET request received at LOAD_BBD_RECORDS_BY_WARD");
             try
             {
 
-                var dataSet = objModule.GET_EKHATA_BBD_RECORDS(ZoneId, WardId, SerachType, Search);
+                var dataSet = objModule.GET_EKHATA_BBD_RECORDS(ZoneId, WardId, SerachType, Search, page, pageSize);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);
