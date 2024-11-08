@@ -1761,6 +1761,25 @@ namespace BBMPCITZAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("GetEAASTHIStatus")]
+        public  ActionResult<DataSet> GetEAASTHIStatus()
+        {
+            try
+            {
+                DataSet dataSet =  _BBMPBookService.GetEAASTHIStatus();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving Get_EAASTHI_Status");
+                _errorLogService.LogError(ex, "Get_EAASTHI_Status");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
 

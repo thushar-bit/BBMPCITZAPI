@@ -1744,5 +1744,24 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public DataSet GetEAASTHIStatus()
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.Get_EAASTHI_Status";
+                OracleParameter[] prm = new OracleParameter[] {
+                      new OracleParameter("C_RECORD",OracleDbType.RefCursor),
+            };
+               
+                prm[0].Value = null;
+                prm[0].Direction = ParameterDirection.Output;
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_EAASTHI_Status stored procedure.");
+                throw;
+            }
+        }
     }
 }
