@@ -710,9 +710,29 @@ namespace BBMPCITZAPI.Controllers
                 report.DataSources.Clear();
 
                 int rcount = 0;
+                string ReasonType = "";
+               
+                switch (Convert.ToString(dsNCLTablesData.Tables[3].Rows[0]["REASONID"]))
+                {
+                    case "1":   ReasonType = "It is GOVT/BBMP Land";
+                        break;
+                    case "2":
+                        ReasonType = "Court Order";
+                        break;
+                    case "3":
+                        ReasonType = "Latest Registration/Sale Deed in another person name";
+                        break;
+                    case "4":
+                        ReasonType = "Inheritance /Succession Dispute";
+                        break;
+                    case "5":
+                        ReasonType = "Others";
+                        break;
+                }
+
                 // Set up parameters
                 DataSet dsReportData = _ObjectionService.SEL_CitzeObjectionAcknowledgement(Convert.ToInt32(OBJECTIONID), Convert.ToInt32(propertycode), Convert.ToString(LoginId), WardId);
-                ReportParameter[] param = new ReportParameter[19];
+                ReportParameter[] param = new ReportParameter[20];
 
                 param[7] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]).Trim());
                 param[8] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SUB_DIVISION_NAME"]).Trim());
@@ -722,18 +742,15 @@ namespace BBMPCITZAPI.Controllers
                // param[12] = new ReportParameter("P_STREETNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["STREETNAME"]));
                 param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]).Trim());
                 param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]).Trim());
-
-                //param[7] = new ReportParameter("P_ZONENAME", "red");
-                //param[8] = new ReportParameter("SUB_DIVISION_NAME", "SUB_DIVISION_NAME");
-                //param[9] = new ReportParameter("P_WARD_NAME", "WARD_NAME");
-                //param[10] = new ReportParameter("P_DOORSITENO", "DOORNO");
-                //param[11] = new ReportParameter("P_BUIDINGNAME1", "BUILDINGNAME");
+             
+                param[19] = new ReportParameter("P_REASONTYPE", ReasonType == "Others" ? "Others :- " +Convert.ToString(dsNCLTablesData.Tables[3].Rows[0]["REASONDETAILS"]).Trim() : ReasonType);
+                
                 param[12] = new ReportParameter("P_STREETNAME1", "STREETNAME");
-                //param[13] = new ReportParameter("P_APPLICANTNAME", "APPLICANTNAME");
+             
                 param[16] = new ReportParameter("P_OBJECTIONNAME", Convert.ToString(dsNCLTablesData.Tables[4].Rows[0]["OBJECTIONNAME_EN"]).Trim());
                 param[17] = new ReportParameter("P_OBJECTIONADDRESS", Convert.ToString(dsNCLTablesData.Tables[4].Rows[0]["OBJECTIONADDRESS_EN"]).Trim());
                 param[18] = new ReportParameter("P_OBJECTIONPHOTO", Convert.ToString(dsNCLTablesData.Tables[4].Rows[0]["OWNERPHOTO"]).Trim());
-                //param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", "APPLICANTPOSTALADDRESS");
+              
                 param[15] = new ReportParameter("P_BOOKS_PROP_APPNO", "K-" + Convert.ToString(OBJECTIONID));
                 param[6] = new ReportParameter("P_Hname", "Objection");
                 param[3] = new ReportParameter("P_USERTYPE", "CITIZEN");
@@ -750,81 +767,12 @@ namespace BBMPCITZAPI.Controllers
                     {
                         string ownerMobileNo = MaskMobileNo(dsNCLTablesData.Tables[4].Rows[rcount]["MOBILENUMBER"].ToString());
                         row["MOBILENUMBER"] = ownerMobileNo;
-                        //if (ownerMobileNo == "")
-                        //{
-                        //    return;
-                        //}
+                        
                     }
                     rcount++;
                 }
 
-                //foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
-                //{
-                //    if (row["APARTMENTLANDPID"] == DBNull.Value)
-                //    {
-                //        row["APARTMENTLANDPID"] = "N.A.";
-                //    }
-                //}
-                //foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
-                //{
-                //    if (row["MUNICIPALOLDNUMBER"] == DBNull.Value)
-                //    {
-                //        row["MUNICIPALOLDNUMBER"] = "N.A.";
-                //    }
-                //}
-                //foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
-                //{
-                //    if (row["ASSESMENTNUMBER"] == DBNull.Value)
-                //    {
-                //        row["ASSESMENTNUMBER"] = "N.A.";
-                //    }
-                //}
-                //foreach (DataRow row in dsNCLTablesDataDummy.Tables[0].Rows)
-                //{
-                //    if (row["surveyno"] == DBNull.Value)
-                //    {
-                //        row["surveyno"] = "N.A.";
-                //    }
-                //}
-                //foreach (DataRow row in dsNCLTablesData.Tables[4].Rows)
-                //{
-                //    if (row["longitude"] == DBNull.Value)
-                //    {
-                //        row["longitude"] = "N.A.";
-                //    }
-                //    if (row["latitude"] == DBNull.Value)
-                //    {
-                //        row["latitude"] = "N.A.";
-                //    }
-                //}
-
-                //foreach (DataRow row in dsNCLTablesData.Tables[4].Rows)
-                //{
-                //    if (row["ISCOMPANY"] != DBNull.Value)
-                //    {
-                //        if (row["ISCOMPANY"].ToString() == "N")
-                //        {
-                //            param[5] = new ReportParameter("P_ISCOMPANY", "N");
-                //        }
-                //        else
-                //        {
-                //            param[5] = new ReportParameter("P_ISCOMPANY", "Y");
-                //        }
-                //    }
-                //    else
-                //    {
-                //        param[5] = new ReportParameter("P_ISCOMPANY", "N");
-                //    }
-
-                //}
-
-                //foreach (DataRow row in dsNCLTablesData.Tables[9].Rows)
-                //{
-                //    if (row["DOCUMENTDETAILS"] == DBNull.Value)
-                //    {
-                //        row["DOCUMENTDETAILS"] = "N.A.";
-                //    }
-                //}
+                
                 DataTable ds = new DataTable();
                 report.DataSources.Add(new ReportDataSource("DataSet1", dsNCLTablesDataDummy.Tables[1]));
                 report.DataSources.Add(new ReportDataSource("PropSite", ds));
