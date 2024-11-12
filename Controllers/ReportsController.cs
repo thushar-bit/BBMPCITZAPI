@@ -743,7 +743,7 @@ namespace BBMPCITZAPI.Controllers
                 param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]).Trim());
                 param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]).Trim());
              
-                param[19] = new ReportParameter("P_REASONTYPE", ReasonType == "Others" ? "Others :- " +Convert.ToString(dsNCLTablesData.Tables[3].Rows[0]["REASONDETAILS"]).Trim() : ReasonType);
+                param[19] = new ReportParameter("P_REASONTYPE", ReasonType == "Others" ? Convert.ToString(dsNCLTablesData.Tables[3].Rows[0]["REASONDETAILS"]).Trim() : ReasonType);
                 
                 param[12] = new ReportParameter("P_STREETNAME1", "STREETNAME");
              
@@ -794,7 +794,7 @@ namespace BBMPCITZAPI.Controllers
                 string encoding;
                 string deviceInfo = "<DeviceInfo>" +
                    "  <OutputFormat>PDF</OutputFormat>" +
-                   "  <PageWidth>8.27in</PageWidth>" +
+                   "  <PageWidth>8.90in</PageWidth>" +
                    "  <PageHeight>11.69in</PageHeight>" +
                    "  <MarginTop>0.2in</MarginTop>" +
                    "  <MarginLeft>0.2in</MarginLeft>" +
