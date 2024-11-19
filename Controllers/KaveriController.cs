@@ -703,8 +703,8 @@ namespace BBMPCITZAPI.Controllers
         {
             public long Propertycode { get; set; }
             public long ReqId { get; set; }
-            public byte[] KaveriECDoc { get; set; }
-            public string KaveriDocName { get; set; }
+            public byte[]? KaveriECDoc { get; set; }
+            public string? KaveriDocName { get; set; }
             public string LoginId { get; set; }
         }
 
