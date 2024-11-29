@@ -2,6 +2,7 @@
 using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -10,13 +11,17 @@ using NUPMS_BA;
 using NUPMS_BO;
 using System;
 using System.Data;
+using System.DirectoryServices.Protocols;
 using System.IdentityModel.Claims;
 using System.IO;
 using System.Net;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
+using System.ServiceModel.Channels;
 using System.Text;
+using static BBMPCITZAPI.Controllers.KaveriController;
 using static BBMPCITZAPI.Models.KaveriData;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace BBMPCITZAPI.Controllers
@@ -63,7 +68,7 @@ namespace BBMPCITZAPI.Controllers
                 return Convert.ToBase64String(encryptedData);
             }
         }
-        private class TransactionDetails
+        public class TransactionDetails
         {
             public HttpResponseMessage httpResponseMessage {  get; set; }   
             public Int64 transactionId { get; set; }   
@@ -142,7 +147,7 @@ namespace BBMPCITZAPI.Controllers
                     requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
                     Json = "{\r\n \"apikey\":\"" + Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
                     //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
-                    transactionNo = obj.INS_WS_KAVERI_API_ECDOC_REQUEST( Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
+                    transactionNo = obj.INS_WS_KAVERI_API_ECDOC_REQUEST(Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
                 }
                 // ViewState["Kaveri_TransactionNo"] = transactionNo;
 
@@ -327,6 +332,7 @@ namespace BBMPCITZAPI.Controllers
                             List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
                     
                         var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
+                            RegistrationNoNumber = RegistrationNoNumber.ToUpper();
                         bool DoesExist = documentSummaries.Contains(RegistrationNoNumber);
                         var registrationNumberPosition = 0;
                         if (DoesExist)
@@ -451,176 +457,558 @@ namespace BBMPCITZAPI.Controllers
 
         public class ECRequest
         {
-          public  string ECNumber { get; set; }
-            public string RegistrationNoNumber { get; set; }
-            public Int64 PropertyCode{ get; set; }
-            public string LoginId{ get; set; }
-            public DateTime RegsiteredDateTime { get; set; }
+            public string ECNumber { get; set; }
+            public string? RegistrationNoNumber { get; set; }
+            public Int64 PropertyCode { get; set; }
+            public string LoginId { get; set; }
+            public string? RegisteredDateTime { get; set; }
+            public int RegistrationType { get; set; }
         }
+
         [HttpPost("GetKaveriEC")]
-        public async Task<IActionResult> GetKaveriECUploadData(ECRequest ECREQUEST)
+        public async Task<IActionResult> GetKaveriECUploadData(ECRequest ecRequest)
         {
             string APIResponse = "", APIResponseStatus = "";
             bool isResponseStored = false;
 
             try
-
             {
-
-                //RegistrationNumber = "NMG-1-00224-2023-24";
-
-                TransactionDetails httpResponse = await KaveriAPIRequestEC("KaveriECDocAPI", ECREQUEST.ECNumber, Convert.ToString(ECREQUEST.PropertyCode), ECREQUEST.LoginId);
+                TransactionDetails httpResponse = await KaveriAPIRequestEC("KaveriECDocAPI", ecRequest.ECNumber, Convert.ToString(ecRequest.PropertyCode), ecRequest.LoginId);
                 var respornseContent = httpResponse.httpResponseMessage.Content.ReadAsStringAsync().Result;
                 APIResponse = respornseContent;
                 string respStat = httpResponse.httpResponseMessage.StatusCode.ToString();
-                if (respStat == "OK")
+
+                if (respStat != "OK")
                 {
-                    JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
-                    string responseCode = (string)Obj_Json.SelectToken("responseCode");
-                    APIResponseStatus = "SUCCESS";
-                    string KAVERIDOC_RESPONSE_ROWID = "";
+                    return Ok(new { success = false, message = $"Unable to Fetch Data from Kaveri: {respStat} .Please Contact Kaveri." });
+                }
 
-                    isResponseStored = true;
-                    string responseMessage = (string)Obj_Json.SelectToken("responseMessage");
-                    if (responseMessage == "Sucess")
+                JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
+                string responseCode = (string)Obj_Json.SelectToken("responseCode");
+                string responseMessage = (string)Obj_Json.SelectToken("responseMessage");
+                APIResponseStatus = "SUCCESS";
+                string KAVERIDOC_RESPONSE_ROWID = "";
+              
+               
+
+                if (responseMessage != "Sucess")
+                {
+
+                    return Ok(new { success = false, message = $"Unable to Fetch Data from Kaveri: {responseMessage} .Please Contact Kaveri." });
+                }
+
+                string base64String = (string)Obj_Json.SelectToken("json");
+                byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
+
+                string responseRawContent = respornseContent.ToString();
+                if (responseRawContent.IndexOf("fromDate", 0) < 0 || responseRawContent.IndexOf("toDate", 0) < 0)
+                {
+                    return Ok(new { success = false, message = "EC Data doesn't have valid from date and to date" });
+                }
+
+                string fromDate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
+                string toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
+                List<KaveriData.EcData> ECdocumentDetails = new List<KaveriData.EcData>();
+
+               try {  
+                    ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
+                }
+                catch (JsonException ex)
+                {
+                    // Handle JSON parsing specific errors
+                    obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                 Convert.ToInt64(httpResponse.transactionId),
+                 APIResponseStatus,
+                 APIResponse,
+                 0,
+                0,
+                 base64String1,
+                 Convert.ToInt64(ecRequest.PropertyCode),
+                 ecRequest.LoginId
+             );
+                    return Ok(new
                     {
-                        string base64String = (string)Obj_Json.SelectToken("json");
-                        byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
-                       
-                        string responseRawContent = respornseContent.ToString();
-                        if (responseRawContent.IndexOf("fromDate", 0) < 0 || responseRawContent.IndexOf("toDate", 0) < 0)
-                        {
+                        success = false,
+                        message = $"Unable to Fetch Data from Kaveri {base64String}.Please Contact Kaveri."
+                    });
+                }
+                catch (Exception ex)
+                {
+                    // Catch any other unexpected errors
+                    obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                 Convert.ToInt64(httpResponse.transactionId),
+                 APIResponseStatus,
+                 APIResponse,
+                 0,
+                0,
+                 base64String1,
+                 Convert.ToInt64(ecRequest.PropertyCode),
+                 ecRequest.LoginId
+             );
+                    return Ok(new
+                    {
+                        success = false,
+                        message = $"Unable to Fetch Data from Kaveri {base64String}.Please Contact Kaveri."
+                    });
+                }
 
-                            return Ok(new { success = false, message = "EC Data doesn't have valid from date and to date" });
-                        }
-                        string fromDate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
-                        string toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
-                        DateTime dtECEndDateForValidate = new DateTime(2024, 10, 31);
-                        List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
+                DateTime dtECEndDateForValidate = new DateTime(2024, 10, 31);
+                DateTime dtECFromDateForValidate = new DateTime(2004, 04, 01);
+                var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
+                if (string.IsNullOrEmpty(ecRequest.RegistrationNoNumber))
+                {
+                    return Ok(new
+                    {
+                        success = false,
+                        message = $"Registation No Not Found {ecRequest.RegistrationNoNumber}"
+                    });
+                }
 
-                        var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
-                        bool DoesExist = documentSummaries.Contains(ECREQUEST.RegistrationNoNumber);
-                        var registrationNumberPosition = 0;
+                bool DoesExist = documentSummaries.Contains(ecRequest.RegistrationNoNumber.ToUpper());
+                var registrationNumberPosition = DoesExist ?
+                    ECdocumentDetails.FindIndex(doc => doc.DocSummary == ecRequest.RegistrationNoNumber) : -1;
+
+                DataSet KAVERIDOC_RESPONSE = obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                    Convert.ToInt64(httpResponse.transactionId),
+                    APIResponseStatus,
+                    APIResponse,
+                    registrationNumberPosition,
+                   0,
+                    base64String1,
+                    Convert.ToInt64(ecRequest.PropertyCode),
+                    ecRequest.LoginId
+                );
+                isResponseStored = true;
+                DataTable dataTableByName = KAVERIDOC_RESPONSE.Tables["Table"];
+                DataTable ArticleMaster = KAVERIDOC_RESPONSE.Tables["Table1"];
+                KAVERIDOC_RESPONSE_ROWID = Convert.ToString(dataTableByName.Rows[0]["KAVERIECDOC_RESPONSE_ROWID"])!;
+                // Handle different registration types
+                if (ecRequest.RegistrationType == 2)
+                {
+                    if (ECdocumentDetails.Count > 0)
+                    {
                         if (DoesExist)
                         {
-                            registrationNumberPosition = ECdocumentDetails.FindIndex(doc => doc.DocSummary == ECREQUEST.RegistrationNoNumber);
+                            return Ok(new { success = false, message = "The Given EC number is invalid as the Given Registration Number Exists in EC" });
                         }
-                        else
+
+                        List<KaveriData.EcData> ECdocumentsOrdered = ECdocumentDetails.OrderByDescending(doc => doc.ExecutionDate).ToList();
+                        if (string.IsNullOrEmpty(ecRequest.RegisteredDateTime))
                         {
-                            registrationNumberPosition = -1;
+                            return Ok(new { success = false, message = $"RegisteredDateTime Does not Exist {ecRequest.RegisteredDateTime}" });
                         }
-                        DataSet KAVERIDOC_RESPONSE = obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(Convert.ToInt64(httpResponse.transactionId), APIResponseStatus,
-                               APIResponse, registrationNumberPosition, ECdocumentDetails.Count(), base64String1, Convert.ToInt64(ECREQUEST.PropertyCode), ECREQUEST.LoginId);
-                        DataTable dataTableByName = KAVERIDOC_RESPONSE.Tables["Table"];
-                        if (fromDate != "" && toDate != "" && DateTime.Parse(fromDate) < DateTime.Parse(Convert.ToString(ECREQUEST.RegsiteredDateTime)) && DateTime.Parse(toDate) >= dtECEndDateForValidate)
+                        List<KaveriData.EcData> ECdocumentsOrdered1 = ECdocumentsOrdered
+                         .Where(doc => DateTime.Parse(doc.ExecutionDate) > DateTime.Parse(ecRequest.RegisteredDateTime))
+                         .ToList();
+                        if (ECdocumentsOrdered1.Count > 1)
                         {
+                            foreach (KaveriData.EcData objECDocument in ECdocumentsOrdered)
+                            {
+                                string articleName = ReturnArticleName(objECDocument.DocumentValuation);
+                                foreach (DataRow dr in ArticleMaster.Rows)
+                                {
+                                    bool isArticleMatched = false;
+                                    if (articleName == "FAIL")
+                                    {
+                                        isArticleMatched = objECDocument.DocumentValuation.ToUpper().Contains(Convert.ToString(dr["ARTICLETYPE_KAVERI_DATA"]).ToUpper());
+                                    }
+                                    else
+                                    {
+                                        isArticleMatched = articleName.ToUpper().Trim() == Convert.ToString(dr["ARTICLETYPE_KAVERI_DATA"]).ToUpper().Trim();
+                                    }
+
+                                    if (isArticleMatched)
+                                    {
+                                        return Ok(new
+                                        {
+                                            success = false,
+                                            message = $"There shouldnt be any Sale/Transferred type of article in the EC submitted. But the article {Convert.ToString(dr["ARTICLETYPE_KAVERI_DATA"])} exists in the submitted EC"
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                        if (string.IsNullOrEmpty(fromDate) || string.IsNullOrEmpty(toDate))
+                        {
+                            return Ok(new { success = false, message = "From Date and To data Does not Exist from EC data.Please Contact Kaveri." });
+                        }
+
+                        DateTime fromDateTime1 = DateTime.Parse(fromDate);
+                        DateTime toDateTime1 = DateTime.Parse(toDate);
+
+
+                        if (fromDateTime1 >= dtECFromDateForValidate && toDateTime1 >= dtECEndDateForValidate && ecRequest.RegistrationType == 2)
+                        {
+                            var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
+                            var parsedData = ParseDescription(Dosc.Description);
                           
-                            if (dataTableByName.Rows.Count > 0)
-                            {
-                                // Access the first row and the first column value
-                                DataRow row = dataTableByName.Rows[0];
-                                KAVERIDOC_RESPONSE_ROWID = row[0].ToString();
-                            }
-                            if (DoesExist)
-                            {
+                                Int64 ReqId = obj.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(
+                                    Convert.ToInt64(ecRequest.PropertyCode),
+                                    ecRequest.ECNumber,
+                                    ecRequest.RegistrationNoNumber,
+                                    "Y",
+                                    Dosc.DocSummary,
+                                    parsedData.District,
+                                    parsedData.Taluka,
+                                    parsedData.Village,
+                                    parsedData.HobliOrTown,
+                                    "article",
+                                    Dosc.ExecutionDate,
+                                    Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                    ecRequest.LoginId
+                                );
 
-                                var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
-                                //var Dosc = ECdocumentDetails.First(x => x.DocSummary == "NMG-1-00071-2023-24");
-                                var parsedData = ParseDescription(Dosc.Description);
-
-
-
-                                if (Dosc.DocSummary == ECREQUEST.RegistrationNoNumber)
+                                if (Dosc.Executants.Count() > 0)
                                 {
-                                Int64 ReqId =    obj.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Convert.ToInt64(ECREQUEST.PropertyCode),
-                                    ECREQUEST.ECNumber, ECREQUEST.RegistrationNoNumber, "Y", Dosc.DocSummary, parsedData.District, parsedData.Taluka, parsedData.Village, parsedData.HobliOrTown, "article", Dosc.ExecutionDate, Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), ECREQUEST.LoginId);
-                                    if (Dosc.Executants.Count() > 0)
+                                    foreach (var i in Dosc.Executants)
                                     {
-                                        foreach (var i in Dosc.Executants)
-                                        {
-                                            obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(ReqId), Convert.ToInt64(ECREQUEST.PropertyCode),
-                                     ECREQUEST.RegistrationNoNumber, "Y", Dosc.DocSummary, i, "E", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, ECREQUEST.LoginId);
-                                        }
+                                        obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(
+                                            Convert.ToInt64(ReqId),
+                                            Convert.ToInt64(ecRequest.PropertyCode),
+                                            ecRequest.RegistrationNoNumber,
+                                            "Y",
+                                            Dosc.DocSummary,
+                                            i,
+                                            "E",
+                                            Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                            0,
+                                            "",
+                                            0,
+                                            ecRequest.LoginId
+                                        );
                                     }
-                                    if (Dosc.Claimants.Count() > 0)
-                                    {
-                                        int ownerNumber = 1;
-
-                                        foreach (var i in Dosc.Claimants)
-                                        {
-
-                                            obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(ReqId), Convert.ToInt64(ECREQUEST.PropertyCode),
-                         ECREQUEST.RegistrationNoNumber, "Y", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 1, "", 0, ECREQUEST.LoginId);
-
-                                        }
-                                    }
-                                   
-                                    return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist, RequestId = ReqId });
                                 }
-                                else
+
+                                if (Dosc.Claimants.Count() > 0)
                                 {
-                                    Int64 ReqId = obj.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP( Convert.ToInt64(ECREQUEST.PropertyCode),
-                                    ECREQUEST.ECNumber, ECREQUEST.RegistrationNoNumber, "N", Dosc.DocSummary, parsedData.District, parsedData.Taluka, parsedData.Village, parsedData.HobliOrTown, "article", Dosc.ExecutionDate, Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), ECREQUEST.LoginId);
-
-                                    if (Dosc.Executants.Count() > 0)
+                                    int ownerNumber = 1;
+                                    foreach (var i in Dosc.Claimants)
                                     {
-                                        foreach (var i in Dosc.Executants)
-                                        {
-                                            obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(ReqId), Convert.ToInt64(ECREQUEST.PropertyCode),
-                                     ECREQUEST.RegistrationNoNumber, "N", Dosc.DocSummary, i, "E", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, ECREQUEST.LoginId);
-                                        }
+                                        obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(
+                                            Convert.ToInt64(ReqId),
+                                            Convert.ToInt64(ecRequest.PropertyCode),
+                                            ecRequest.RegistrationNoNumber,
+                                            "Y",
+                                            Dosc.DocSummary,
+                                            i,
+                                            "C",
+                                            Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                            1,
+                                            "",
+                                            0,
+                                            ecRequest.LoginId
+                                        );
                                     }
-                                    if (Dosc.Claimants.Count() > 0)
-                                    {
-                                        foreach (var i in Dosc.Claimants)
-                                        {
-                                            obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(Convert.ToInt64(ReqId), Convert.ToInt64(ECREQUEST.PropertyCode),
-                                              ECREQUEST.RegistrationNoNumber, "N", Dosc.DocSummary, i, "C", Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID), 0, "", 0, ECREQUEST.LoginId);
-                                        }
-                                    }
-                                    return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist,RequestId = ReqId });
                                 }
-                            }
-                            else
-                            {
-                                return Ok(new { success = true, ECDataExists = DoesExist });
-                            }
+
+                                return Ok(new { success = true, data = Dosc, RequestId = ReqId });
+                            
+
+
                         }
-
                         else
                         {
-                            if (fromDate != "" && toDate != "")
+                            return Ok(new
                             {
-                                return Ok(new { success = false, message = "The EC number has expired. EC should be obtained from 01.04.2004 onwards only and EC should not be older than 7 days .Submitted EC Dates are from date-" + fromDate.Substring(0, 10) + ", to date-" + toDate.Substring(0, 10) });
-
-                            }
-                            else
-                            {
-                                return Ok(new { success = false, message = "The EC number has expired. EC should be obtained from 01.04.2004 onwards only and EC should not be older than 7 days.Submitted EC Dates are.Submitted EC Dates are from date-" + fromDate + ",to date-" + toDate });
-
-
-                            }
-
-
+                                success = false,
+                                message = $"The EC number has expired. EC should be obtained from date 01.04.2004 onwards only and EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}"
+                            });
                         }
                     }
                     else
                     {
-                        return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {responseMessage}" });
+                        if (string.IsNullOrEmpty(fromDate) || string.IsNullOrEmpty(toDate))
+                        {
+                            return Ok(new { success = false, message = "From date and To Date Does not exist in EC Data.Please Contact Kaveri." });
+                        }
 
+                        DateTime fromDateTime1 = DateTime.Parse(fromDate);
+                        DateTime toDateTime1 = DateTime.Parse(toDate);
+
+
+                        if (fromDateTime1 >= dtECFromDateForValidate && toDateTime1 >= dtECEndDateForValidate && ecRequest.RegistrationType == 2)
+                        {
+                          
+                            var Docs = new List<KaveriData.EcData>
+{
+    new KaveriData.EcData() 
+};
+
+                            // Safely set the DocSummary
+                            if (Docs.Count > 0)
+                            {
+                                Docs[0].DocSummary = "No EC Data Found. Please Proceed further and Submit the Application";
+                            }
+
+                            string ecNumber = Convert.ToString(ecRequest.ECNumber);
+                            Int64 ReqId = obj.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(
+                                ecRequest.PropertyCode,
+                                ecNumber,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                ecRequest.LoginId
+                            );
+
+                            // Correct the variable name from Dosc to Docs in the return statement
+                            return Ok(new { success = true, data = Docs, RequestId = ReqId });
+
+                        }
+                        else
+                        {
+
+                            return Ok(new { success = false, message = $"The EC number has expired. The EC FromDate should be between 01-04-2004 to EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}" });
+                        }
+                        }
+                }
+
+                // Common date validation for all registration types
+                if (string.IsNullOrEmpty(fromDate) || string.IsNullOrEmpty(toDate))
+                {
+                    return Ok(new { success = true, message = "FromDate and Todate Does not Exist in EC Data.Please Contact Kaveri." });
+                }
+                if (string.IsNullOrEmpty(ecRequest.RegisteredDateTime))
+                {
+                    return Ok(new { success = false, message = $"RegisteredDateTime Does not Exist {ecRequest.RegisteredDateTime}" });
+                }
+
+                DateTime fromDateTime = DateTime.Parse(fromDate);
+                DateTime toDateTime = DateTime.Parse(toDate);
+
+                DateTime? registeredDateTime = DateTime.Parse(ecRequest.RegisteredDateTime);
+                if ( fromDateTime < registeredDateTime && toDateTime >= dtECEndDateForValidate && ecRequest.RegistrationType == 1)
+                {
+                    if (base64String == "[]")
+                    {
+                        obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                 Convert.ToInt64(httpResponse.transactionId),
+                 APIResponseStatus,
+                 APIResponse,
+                 0,
+              0,
+                 base64String1,
+                 Convert.ToInt64(ecRequest.PropertyCode),
+                 ecRequest.LoginId
+             );
+                        return Ok(new
+                        {
+                            success = false,
+                            message = $"Unable to Fetch Data from Kaveri {base64String}"
+                        });
+                    }
+                    if (string.IsNullOrWhiteSpace(base64String))
+                    {
+                        obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                    Convert.ToInt64(httpResponse.transactionId),
+                    APIResponseStatus,
+                    APIResponse,
+                    0,
+                    0,
+                    base64String1,
+                    Convert.ToInt64(ecRequest.PropertyCode),
+                    ecRequest.LoginId
+                );
+                        return Ok(new
+                        {
+                            success = false,
+                            message = $"Unable to Fetch Data from Kaveri {base64String} .Please Contact Kaveri."
+                        });
+                    }
+                    try
+                    {
+                        ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
+                    }
+                    catch (JsonException ex)
+                    {
+                        // Handle JSON parsing specific errors
+                        obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                     Convert.ToInt64(httpResponse.transactionId),
+                     APIResponseStatus,
+                     APIResponse,
+                     0,
+                    0,
+                     base64String1,
+                     Convert.ToInt64(ecRequest.PropertyCode),
+                     ecRequest.LoginId
+                 );
+                        return Ok(new
+                        {
+                            success = false,
+                            message = $"Unable to Fetch Data from Kaveri {base64String}.Please Contact Kaveri."
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        // Catch any other unexpected errors
+                        obj.INS_WS_KAVERI_API_ECDOC_RESPONSE(
+                     Convert.ToInt64(httpResponse.transactionId),
+                     APIResponseStatus,
+                     APIResponse,
+                     0,
+                    0,
+                     base64String1,
+                     Convert.ToInt64(ecRequest.PropertyCode),
+                     ecRequest.LoginId
+                 );
+                        return Ok(new
+                        {
+                            success = false,
+                            message = $"Unable to Fetch Data from Kaveri {base64String}.Please Contact Kaveri."
+                        });
+                    }
+                    // Add this new code block
+                    if (dataTableByName.Rows.Count > 0)
+                    {
+                        DataRow row = dataTableByName.Rows[0];
+                        KAVERIDOC_RESPONSE_ROWID = row[0].ToString();
                     }
 
-                }
-                return Ok(new { success = false, message = $"Kaveri EC Details API returned bad response: {respStat}" });
+                    if (DoesExist)
+                    {
+                        List<KaveriData.EcData> ECdocumentsOrdered = ECdocumentDetails.OrderByDescending(doc => doc.ExecutionDate).ToList();
+                        List<KaveriData.EcData> ECdocumentsOrdered1 = ECdocumentsOrdered
+                           .Where(doc => DateTime.Parse(doc.ExecutionDate) > DateTime.Parse(ecRequest.RegisteredDateTime)) 
+                           .ToList();
+                        if (ECdocumentsOrdered1.Count > 1)
+                        {
+                            foreach (KaveriData.EcData objECDocument in ECdocumentsOrdered1)
+                            {
+                                string articleName = ReturnArticleName(objECDocument.DocumentValuation);
+                                foreach (DataRow dr in ArticleMaster.Rows)
+                                {
+                                    bool isArticleMatched = false;
+                                    if (articleName == "FAIL")
+                                    {
+                                        isArticleMatched = objECDocument.DocumentValuation.ToUpper().Contains(Convert.ToString(dr["ARTICLETYPE_KAVERI_DATA"]).ToUpper());
+                                    }
+                                    else
+                                    {
+                                        isArticleMatched = articleName.ToUpper().Trim() == Convert.ToString(dr["ARTICLETYPE_KAVERI_DATA"]).ToUpper().Trim();
+                                    }
 
+                                    if (isArticleMatched)
+                                    {
+                                        return Ok(new
+                                        {
+                                            success = false,
+                                            message = $"There shouldnt be any Sale/Transferred type of article in the EC submitted. But the article {Convert.ToString(dr["ARTICLETYPE_KAVERI_DATA"])} exists in the submitted EC"
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                        var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
+                        var parsedData = ParseDescription(Dosc.Description);
+
+                      
+                            Int64 ReqId = obj.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(
+                                Convert.ToInt64(ecRequest.PropertyCode),
+                                ecRequest.ECNumber,
+                                ecRequest.RegistrationNoNumber,
+                                "Y",
+                                Dosc.DocSummary,
+                                parsedData.District,
+                                parsedData.Taluka,
+                                parsedData.Village,
+                                parsedData.HobliOrTown,
+                                "article",
+                                Dosc.ExecutionDate,
+                                Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                ecRequest.LoginId
+                            );
+
+                            if (Dosc.Executants.Count() > 0)
+                            {
+                                foreach (var i in Dosc.Executants)
+                                {
+                                    obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(
+                                        Convert.ToInt64(ReqId),
+                                        Convert.ToInt64(ecRequest.PropertyCode),
+                                        ecRequest.RegistrationNoNumber,
+                                        "Y",
+                                        Dosc.DocSummary,
+                                        i,
+                                        "E",
+                                        Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                        0,
+                                        "",
+                                        0,
+                                        ecRequest.LoginId
+                                    );
+                                }
+                            }
+
+                            if (Dosc.Claimants.Count() > 0)
+                            {
+                                int ownerNumber = 1;
+                                foreach (var i in Dosc.Claimants)
+                                {
+                                    obj.INS_NPM_PROPERTY_KAVERIEC_OWNERS_DETAILS_TEMP(
+                                        Convert.ToInt64(ReqId),
+                                        Convert.ToInt64(ecRequest.PropertyCode),
+                                        ecRequest.RegistrationNoNumber,
+                                        "Y",
+                                        Dosc.DocSummary,
+                                        i,
+                                        "C",
+                                        Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
+                                        1,
+                                        "",
+                                        0,
+                                        ecRequest.LoginId
+                                    );
+                                }
+                            }
+
+                            return Ok(new { success = true, data = Dosc, ECDataExists = DoesExist, RequestId = ReqId });
+                        
+                    }
+                    else
+                    {
+                        return Ok(new { success = false, message ="Registration Deed Number Does not Exist in the EC Data ."});
+                    }
+                }
+
+                return Ok(new
+                {
+                    success = false,
+                    message = $"The EC number has expired. The Registation Date should be earlier than EC From date and EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}, Given Registation Date {ecRequest.RegisteredDateTime} Date"
+                });
             }
             catch (Exception ex)
             {
+                _errorLogService.LogError(ex, $"GetKaveriECData Date = {ecRequest.RegisteredDateTime}");
+                throw;
+            }
+         
+        }
 
-                _errorLogService.LogError(ex, "GetKaveriECData");
-                
-                throw (ex);
 
+
+
+
+
+
+        private string ReturnArticleName(string ArticleDetails)
+        {
+            try
+            {
+                //string ArticleDetails = "Article Name: Rectification\\Modification Deed; Market Value:null; Consideration Amount:0";
+                ArticleDetails = ArticleDetails.Contains(':') ? ArticleDetails.Substring(ArticleDetails.IndexOf(':') + 1, ArticleDetails.Length - ArticleDetails.IndexOf(':') - 1) : ArticleDetails;
+                ArticleDetails = ArticleDetails.Contains(';') ? ArticleDetails.Substring(0, ArticleDetails.IndexOf(';')) : ArticleDetails;
+                return ArticleDetails;
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "ReturnArticleName");
+                return "FAIL";
             }
         }
         private ECDataDescription ParseDescription(List<string> descriptions)
@@ -699,6 +1087,110 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("GetKav")]
+        public async Task<IActionResult> KaveriAPIRequestEC223(string urlKeyWord, string RegistrationNoECNumber, string PropertyCode, string LoginId,string registationDate,int registrationType)
+        {
+            _logger.LogInformation("GET request received at KaveriAPIRequest");
+            try
+            {
+                Int64 transactionNo = 0;
+                //   ViewState["Kaveri_TransactionNo"] = transactionNo;
+                string Json = "";
+                string rsaKeyDetails = "<RSAKeyValue><Modulus>" + Convert.ToString(_kaveriSettings.KaveriPublicKey) + " </Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
+                Uri requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
+
+                HttpClient client1 = new HttpClient();
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, error) => { return true; };
+
+              
+                    _logger.LogInformation("GET request received at  KaveriAPIRequest KaveriECDocAPI");
+                    requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
+                    Json = "{\r\n \"apikey\":\"" + Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
+                    //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
+                   
+               
+                // ViewState["Kaveri_TransactionNo"] = transactionNo;
+
+                var content2 = new StringContent(Json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage httpResponse = await client1.PostAsync(requestUri, content2); //Request for Deed download
+                TransactionDetails trc = new()
+                {
+                    httpResponseMessage = httpResponse,
+                    transactionId = transactionNo,
+
+                };
+             
+                var respornseContent = trc.httpResponseMessage.Content.ReadAsStringAsync().Result;
+               
+                string respStat = trc.httpResponseMessage.StatusCode.ToString();
+             
+                JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
+                string base64String = (string)Obj_Json.SelectToken("json");
+                List<KaveriData.EcData> ECdocumentDetails = new List<KaveriData.EcData>();
+                if (!string.IsNullOrWhiteSpace(base64String))
+                {
+                    if (IsValidJson(base64String))
+                    {
+                        ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
+                    }
+                    else if(base64String == "[]")
+                    {
+                        return Ok("Unable to Fetch Data From Kaveri");
+                    }
+                    else
+                    {
+                        return Ok("Unable to Fetch Data From Kaveri");
+                    }
+                }
+                
+                string responseRawContent = respornseContent.ToString();
+                string fromDate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
+                string toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
+                DateTime fromDateTime = DateTime.Parse(fromDate);
+                DateTime toDateTime = DateTime.Parse(toDate);
+
+               // DateTime? registeredDateTime = DateTime.Parse(registationDate);
+                DateTime dtECEndDateForValidate = new DateTime(2024, 10, 31);
+                DateTime dtECFromDateForValidate = new DateTime(2004, 04, 01);
+                //if (fromDateTime < registeredDateTime && toDateTime >= dtECEndDateForValidate && registrationType == 1)
+                //{
+                //     ECdocumentDetails[0].DocSummary = "Date is correct  for After 2004";
+                //    return ECdocumentDetails;
+                //}
+                //if (fromDateTime < registeredDateTime && toDateTime >= dtECEndDateForValidate && registrationType == 2)
+                //{
+                //    ECdocumentDetails[0].DocSummary = "Date is correct  for After 2004";
+                //    return ECdocumentDetails;
+                //}
+                return Ok(ECdocumentDetails);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "KaveriAPIRequest");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.KaveriAPIRequest");
+                throw;
+            }
+        }
+        bool IsValidJson(string input)
+        {
+            input = input.Trim();
+            if ((input.StartsWith("{") && input.EndsWith("}")) || (input.StartsWith("[") && input.EndsWith("]")))
+            {
+                try
+                {
+                    JToken.Parse(input);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
         public class ECDocumentSave
         {
             public long Propertycode { get; set; }
@@ -707,6 +1199,7 @@ namespace BBMPCITZAPI.Controllers
             public string? KaveriDocName { get; set; }
             public string LoginId { get; set; }
         }
-
+      
     }
+
 }

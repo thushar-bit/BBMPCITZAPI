@@ -1763,5 +1763,50 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public int INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Int64 propertyCode, string? ECNUMBER, string? REGISTRATIONNUMBER, string? IS_LATEST_REGISTRATIONNO, string? LATEST_REGISTRATIONNO, string? DISTRICTNAME, string? TALUKANAME, string? VILLAGENAME, string? HOBLINAME, string? ARTICLENAME, string? EXECUTIONDATE, Int64 KAVERIECDOC_RESPONSE_ROWID, string loginID)
+        {
+            string sp_name = "ECDOCUMENTUPLOAD.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64,ParameterDirection.Input),
+
+              new OracleParameter("P_ECNUMBER",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_REGISTRATIONNUMBER",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_IS_LATEST_REGISTRATIONNO",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_LATEST_REGISTRATIONNO",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_DISTRICTNAME",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_TALUKANAME",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_VILLAGENAME",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_HOBLINAME",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_ARTICLENAME",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_EXECUTIONDATE",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("P_KAVERIECDOC_RESPONSE_ROWID",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("C_RECORD",OracleDbType.RefCursor,ParameterDirection.Output)
+                    };
+
+            prm[0].Value = propertyCode;
+
+            prm[1].Value = ECNUMBER;
+            prm[2].Value = REGISTRATIONNUMBER;
+            prm[3].Value = IS_LATEST_REGISTRATIONNO;
+            prm[4].Value = LATEST_REGISTRATIONNO;
+            prm[5].Value = DISTRICTNAME;
+            prm[6].Value = TALUKANAME;
+            prm[7].Value = VILLAGENAME;
+            prm[8].Value = HOBLINAME;
+            prm[9].Value = ARTICLENAME;
+            prm[10].Value = EXECUTIONDATE;
+            prm[11].Value = KAVERIECDOC_RESPONSE_ROWID;
+            prm[12].Value = loginID;
+
+            try
+            {
+                return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
     }
 }
