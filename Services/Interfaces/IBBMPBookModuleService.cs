@@ -83,6 +83,7 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet Get_ESignPdf(Int64 propertycode, Int64 bookspropappno);
         public int Ins_PDF_Draft_Exception_log(string propertycode, string Propertyid, string status, string output);
         public DataSet GetEAASTHIStatus();
+        public DataSet GetEAASTHIDailyReport();
         public int INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Int64 propertyCode, string? ECNUMBER, string? REGISTRATIONNUMBER, string? IS_LATEST_REGISTRATIONNO, string? LATEST_REGISTRATIONNO, string? DISTRICTNAME, string? TALUKANAME, string? VILLAGENAME, string? HOBLINAME, string? ARTICLENAME, string? EXECUTIONDATE, Int64 KAVERIECDOC_RESPONSE_ROWID, string loginID);
     }
 }

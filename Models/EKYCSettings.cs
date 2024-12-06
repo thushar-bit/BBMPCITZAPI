@@ -53,6 +53,7 @@
         public string KaveriDocDetailsAPI { get; set; }
         public string KaveriECDocAPI { get; set; }
         public string ServerIP { get; set; }    
+        public string ApiToken { get; set; }
 
     }
 }

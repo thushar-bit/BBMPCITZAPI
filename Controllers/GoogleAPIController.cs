@@ -9,7 +9,7 @@ using Google.Apis.Auth.OAuth2;
 
 namespace BBMPCITZAPI.Controllers
 {
-    [Route("api/GoogleAPI")]
+    [Route("v1/GoogleAPI")]
     [ApiController]
     public class GoogleAPIController : ControllerBase
     {
@@ -24,13 +24,21 @@ namespace BBMPCITZAPI.Controllers
         private static readonly String TRANSLATE_API_URL =  "https://translation.googleapis.com/v3/projects/812417225443:translateText";
         private async Task<string> GetAccessTokenAsync()
         {
-            // Load the service account JSON key
-            using var stream = new FileStream("translation.json", FileMode.Open, FileAccess.Read);
-            var credential = GoogleCredential.FromStream(stream)
-                .CreateScoped("https://www.googleapis.com/auth/cloud-platform");
+            try
+            {
+                // Load the service account JSON key
+                using var stream = new FileStream("translation.json", FileMode.Open, FileAccess.Read);
+                var credential = GoogleCredential.FromStream(stream)
+                    .CreateScoped("https://www.googleapis.com/auth/cloud-platform");
 
-            var token = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
-            return token;
+                var token = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
+                return token;
+            }
+            catch(Exception ex)
+            {
+                _errorLogService.LogError(ex, "GoogleAPITransalation GetAccessTokenAsync");
+                throw;
+            }
         }
         [HttpPost("GetGoogleApiData")]
         public async Task<string> GoogleAPITransalation(string sourceLanguage, string targetLanguage, IEnumerable<string> contents)

@@ -1763,6 +1763,25 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public DataSet GetEAASTHIDailyReport()
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.GetEAASTHIDailyReport";
+                OracleParameter[] prm = new OracleParameter[] {
+                      new OracleParameter("C_RECORD",OracleDbType.RefCursor),
+            };
+
+                prm[0].Value = null;
+                prm[0].Direction = ParameterDirection.Output;
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.Get_EAASTHI_Status stored procedure.");
+                throw;
+            }
+        }
         public int INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Int64 propertyCode, string? ECNUMBER, string? REGISTRATIONNUMBER, string? IS_LATEST_REGISTRATIONNO, string? LATEST_REGISTRATIONNO, string? DISTRICTNAME, string? TALUKANAME, string? VILLAGENAME, string? HOBLINAME, string? ARTICLENAME, string? EXECUTIONDATE, Int64 KAVERIECDOC_RESPONSE_ROWID, string loginID)
         {
             string sp_name = "ECDOCUMENTUPLOAD.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP";

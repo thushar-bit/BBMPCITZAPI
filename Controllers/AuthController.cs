@@ -55,6 +55,7 @@ namespace BBMPCITZAPI.Controllers
             private readonly string _issuer;
             private readonly string _audience;
             private readonly string _ServerIP;
+          
 
             public TokenService(IConfiguration configuration)
             {
@@ -62,6 +63,8 @@ namespace BBMPCITZAPI.Controllers
                 _issuer = configuration["Jwt:Issuer"];
                 _audience = configuration["Jwt:Audience"];
                 _ServerIP = configuration["Jwt:ServerIP"];
+               
+
             }
 
             public string GenerateToken(string username)
@@ -124,6 +127,28 @@ namespace BBMPCITZAPI.Controllers
                 _errorLogService.LogError(ex, "CitizenLogin");
                 _logger.LogError(ex, "Error occurred while executing the login process.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error.");
+            }
+        }
+        [HttpPost("CitizenAuthorization")]
+        public IActionResult CitizenAuthorization(string tokens)
+        {
+            try
+            {
+                if (_kaveriSettings.ApiToken == tokens)
+                {
+                    var token = _tokenService.GenerateToken(tokens);
+                    return Ok(new { Token = token });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, "UnAuthorized");
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "CitizenAuthorization");
+                _logger.LogError(ex, "Error occurred while executing the login process.");
+                return StatusCode(StatusCodes.Status401Unauthorized, "UnAuthorized");
             }
         }
 
