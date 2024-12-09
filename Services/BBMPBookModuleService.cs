@@ -1782,6 +1782,33 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public DataSet GetEAASTHIDailyReportDetails(int wardNumber,string QueryName,int pageNo,int PageSize)
+        {
+            try
+            {
+                string sp_name = "OBJECTIONMODULE_REACT.Get_EAASTHI_Daily_Report_Details";
+                OracleParameter[] prm = new OracleParameter[] {
+                     new OracleParameter("P_WARDID",OracleDbType.Int16),
+                      new OracleParameter("P_QUERYNAME",OracleDbType.Varchar2),
+                     new OracleParameter("P_PAGE",OracleDbType.Int16),
+                     new OracleParameter("P_PAGESIZE",OracleDbType.Int16),
+                      new OracleParameter("C_RECORD",OracleDbType.RefCursor),
+            };
+
+                prm[0].Value = wardNumber;
+                prm[0].Direction = ParameterDirection.Input;
+                prm[1].Value = QueryName;
+                prm[1].Direction = ParameterDirection.Input;
+                prm[2].Value = null;
+                prm[2].Direction = ParameterDirection.Output;
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTIONMODULE.GetEAASTHIDailyReport stored procedure.");
+                throw;
+            }
+        }
         public int INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Int64 propertyCode, string? ECNUMBER, string? REGISTRATIONNUMBER, string? IS_LATEST_REGISTRATIONNO, string? LATEST_REGISTRATIONNO, string? DISTRICTNAME, string? TALUKANAME, string? VILLAGENAME, string? HOBLINAME, string? ARTICLENAME, string? EXECUTIONDATE, Int64 KAVERIECDOC_RESPONSE_ROWID, string loginID)
         {
             string sp_name = "ECDOCUMENTUPLOAD.INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP";
