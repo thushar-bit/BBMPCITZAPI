@@ -1566,8 +1566,9 @@ namespace BBMPCITZAPI.Controllers
 
         private async Task<string> GetDraftKhataDownloadURL(PropertyData propertyData)
         {
-            string url = "http://10.10.133.197/eaasthirestapi/api/eaasthidata/GetDraft";
-
+         //   string url = "http://10.10.133.197/dataapi/api/eaasthidata/GetDraft";
+            string url = _Esign.DraftURL;
+            _logger.LogError(url, "DraftURL");
             // Create an HTTP client to send the request
             using (var httpClient = new HttpClient())
             {
@@ -1595,7 +1596,7 @@ namespace BBMPCITZAPI.Controllers
                         // Read the response content
                         var responseContent = await response.Content.ReadAsStringAsync();
                         var responseObject = JsonConvert.DeserializeObject<ResponseModel>(responseContent);
-                        _BBMPBookService.Ins_PDF_Draft_Exception_log(propertyData.PropertyCode, propertyData.ProperytyId, responseObject?.status, responseObject?.outputDocument);
+                        _BBMPBookService.Ins_PDF_Draft_Exception_log(propertyData.PropertyCode, propertyData.ProperytyId, responseObject?.status, responseObject?.outputDocument,"SUCCESS");
                         // Check the status and return the outputDocument URL
                         if (responseObject?.status == "success")
                         {
@@ -1626,6 +1627,7 @@ namespace BBMPCITZAPI.Controllers
         {
             public string status { get; set; }
             public string outputDocument { get; set; }
+            public string response { get; set; }
         }
 
         [HttpPost("DownloadDraftPDF")]

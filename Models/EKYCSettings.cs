@@ -36,6 +36,7 @@
         public string ReturnURL_ctzEID { get; set; }
         public string ESignServicesURL_ctz { get; set; }
         public string TempURl_ctz { get; set; }
+        public string DraftURL { get; set; }
     }
     public class BescomSettings
     {

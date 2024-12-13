@@ -1711,7 +1711,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public int Ins_PDF_Draft_Exception_log(string propertycode,string Propertyid,string status,string output)
+        public int Ins_PDF_Draft_Exception_log(string propertycode,string Propertyid,string status,string output,string ExceptionMessage)
         {
             try
             {
@@ -1723,7 +1723,7 @@ namespace BBMPCITZAPI.Services
                      new OracleParameter("V_PROPERTYID",OracleDbType.Varchar2),
                       new OracleParameter("V_SUCCESSSTATUS",OracleDbType.Varchar2),
                       new OracleParameter("V_FILEPATH",OracleDbType.Varchar2),
-
+                      new OracleParameter("V_EXCEPTIONMESSAGE",OracleDbType.Varchar2)
 
             };
                 prm[0].Value = propertycode;
@@ -1734,6 +1734,8 @@ namespace BBMPCITZAPI.Services
                 prm[2].Direction = ParameterDirection.Input;
                 prm[3].Value = output;
                 prm[3].Direction = ParameterDirection.Input;
+                prm[4].Value = ExceptionMessage;
+                prm[4].Direction = ParameterDirection.Input;
 
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
