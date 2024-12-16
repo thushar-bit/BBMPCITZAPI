@@ -1768,6 +1768,82 @@ namespace BBMPCITZAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("GET_ARO_BY_ZONE")]
+        public ActionResult<DataSet> GET_ARO_BY_ZONE(int zoneid)
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GET_ARO_BY_ZONE(zoneid);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving Get_EAASTHI_Status");
+                _errorLogService.LogError(ex, "Get_EAASTHI_Status");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GET_WARD_BY_ARO")]
+        public ActionResult<DataSet> GET_WARD_BY_ARO(int AROID)
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GET_WARD_BY_ARO(AROID);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving Get_EAASTHI_Status");
+                _errorLogService.LogError(ex, "Get_EAASTHI_Status");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GET_PENDENCE_REPORT")]
+        public ActionResult<DataSet> GET_PENDENCE_REPORT(int ZoneId,int AROId,int WARDID,string SEARCHTYPE)
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GET_PENDENCE_REPORT(ZoneId, AROId, WARDID, SEARCHTYPE);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT");
+                _errorLogService.LogError(ex, "GET_PENDENCE_REPORT");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GET_PENDENCE_REPORT_DETAILS")]
+        public ActionResult<DataSet> GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID,int PAGENO,int PAGECOUNT)
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GET_PENDENCE_REPORT_DETAILS(WARDID, PROPERTYID, PAGENO, PAGECOUNT);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT_DETAILS");
+                _errorLogService.LogError(ex, "GET_PENDENCE_REPORT_DETAILS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
 

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUPMS_BA;
 using NUPMS_BO;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Data;
 using System.DirectoryServices.Protocols;
@@ -1087,8 +1088,8 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("GetKav")]
-        public async Task<IActionResult> KaveriAPIRequestEC223(string urlKeyWord, string RegistrationNoECNumber, string PropertyCode, string LoginId,string registationDate,int registrationType)
+        [HttpPost("GetKavJson")]
+        public async Task<IActionResult> KaveriAPIRequestEC223(string RegistrationNoECNumber)
         {
             _logger.LogInformation("GET request received at KaveriAPIRequest");
             try
@@ -1110,7 +1111,7 @@ namespace BBMPCITZAPI.Controllers
                     //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
                    
                
-                // ViewState["Kaveri_TransactionNo"] = transactionNo;
+               
 
                 var content2 = new StringContent(Json, Encoding.UTF8, "application/json");
 
@@ -1128,6 +1129,7 @@ namespace BBMPCITZAPI.Controllers
              
                 JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
                 string base64String = (string)Obj_Json.SelectToken("json");
+                byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
                 List<KaveriData.EcData> ECdocumentDetails = new List<KaveriData.EcData>();
                 if (!string.IsNullOrWhiteSpace(base64String))
                 {
@@ -1151,20 +1153,72 @@ namespace BBMPCITZAPI.Controllers
                 DateTime fromDateTime = DateTime.Parse(fromDate);
                 DateTime toDateTime = DateTime.Parse(toDate);
 
-               // DateTime? registeredDateTime = DateTime.Parse(registationDate);
+           
                 DateTime dtECEndDateForValidate = new DateTime(2024, 10, 31);
                 DateTime dtECFromDateForValidate = new DateTime(2004, 04, 01);
-                //if (fromDateTime < registeredDateTime && toDateTime >= dtECEndDateForValidate && registrationType == 1)
-                //{
-                //     ECdocumentDetails[0].DocSummary = "Date is correct  for After 2004";
-                //    return ECdocumentDetails;
-                //}
-                //if (fromDateTime < registeredDateTime && toDateTime >= dtECEndDateForValidate && registrationType == 2)
-                //{
-                //    ECdocumentDetails[0].DocSummary = "Date is correct  for After 2004";
-                //    return ECdocumentDetails;
-                //}
-                return Ok(ECdocumentDetails);
+               
+
+                return Ok(base64String1);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "KaveriAPIRequest");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.KaveriAPIRequest");
+                throw;
+            }
+        }
+        [HttpPost("GetKavBase64")]
+        public async Task<IActionResult> KaveriAPIRequestECBase64(string RegistrationNoECNumber)
+        {
+            _logger.LogInformation("GET request received at KaveriAPIRequest");
+            try
+            {
+                Int64 transactionNo = 0;
+                //   ViewState["Kaveri_TransactionNo"] = transactionNo;
+                string Json = "";
+                string rsaKeyDetails = "<RSAKeyValue><Modulus>" + Convert.ToString(_kaveriSettings.KaveriPublicKey) + " </Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
+                Uri requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
+
+                HttpClient client1 = new HttpClient();
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, error) => { return true; };
+
+
+                _logger.LogInformation("GET request received at  KaveriAPIRequest KaveriECDocAPI");
+                requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
+                Json = "{\r\n \"apikey\":\"" + Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
+                //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
+
+
+
+
+                var content2 = new StringContent(Json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage httpResponse = await client1.PostAsync(requestUri, content2); //Request for Deed download
+                TransactionDetails trc = new()
+                {
+                    httpResponseMessage = httpResponse,
+                    transactionId = transactionNo,
+
+                };
+
+                var respornseContent = trc.httpResponseMessage.Content.ReadAsStringAsync().Result;
+
+                string respStat = trc.httpResponseMessage.StatusCode.ToString();
+
+                JObject Obj_Json = JObject.Parse(respornseContent.Replace("],,", "],").Replace(",}", "}"));
+                string base64String = (string)Obj_Json.SelectToken("json");
+                byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
+
+
+               
+
+                // Define file name and MIME type
+                string fileName = "DownloadedFile.pdf"; // Adjust file name and extension as needed
+                string mimeType = "application/pdf"; // Adjust MIME type based on file type
+
+                // Return file as a download
+                return File(base64String1, mimeType, fileName);
             }
             catch (Exception ex)
             {

@@ -1856,5 +1856,98 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
+        public DataSet GET_ARO_BY_ZONE(int zoneid)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_ARO_BY_ZONE";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_ZONEID",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output)
+                    };
+
+            prm[0].Value = zoneid;
+
+           
+
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet GET_WARD_BY_ARO(int AROID)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_WARD_BY_ARO";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_AROID",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output)
+                    };
+
+            prm[0].Value = AROID;
+
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet GET_PENDENCE_REPORT(int ZoneId, int AROId, int WARDID, string SEARCHTYPE)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_PENDENCE_REPORT";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_ZONEID",OracleDbType.Int64,ParameterDirection.Input),
+                  new OracleParameter("P_AROID",OracleDbType.Int64,ParameterDirection.Input),
+                      new OracleParameter("P_WARDID",OracleDbType.Int64,ParameterDirection.Input),
+                          new OracleParameter("P_SEARCHTYPE",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output)
+                    };
+
+            prm[0].Value = ZoneId;
+
+            prm[1].Value = AROId;
+
+            prm[2].Value = WARDID;
+
+            prm[3].Value = SEARCHTYPE;
+
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, int PAGENO, int PAGECOUNT)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_PENDENCE_REPORT_DETAILS";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("P_AROID",OracleDbType.Int64,ParameterDirection.Input),
+               new OracleParameter("P_PROPERTYID",OracleDbType.Varchar2,ParameterDirection.Input),
+                new OracleParameter("P_PAGENO",OracleDbType.Int64,ParameterDirection.Input),
+                 new OracleParameter("P_PAGECOUNT",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output)
+                    };
+
+            prm[0].Value = WARDID;
+            prm[1].Value = PROPERTYID;
+            prm[2].Value = PAGENO;
+            prm[3].Value = PAGECOUNT;
+
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
     }
 }

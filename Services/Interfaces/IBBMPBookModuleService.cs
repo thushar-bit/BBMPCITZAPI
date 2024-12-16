@@ -86,5 +86,12 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet GetEAASTHIDailyReport();
         public DataSet GetEAASTHIDailyReportDetails(int wardNumber, string QueryName, int pageNo, int PageSize);
         public int INS_NPM_PROPERTY_KAVERIEC_PROPERTY_DETAILS_TEMP(Int64 propertyCode, string? ECNUMBER, string? REGISTRATIONNUMBER, string? IS_LATEST_REGISTRATIONNO, string? LATEST_REGISTRATIONNO, string? DISTRICTNAME, string? TALUKANAME, string? VILLAGENAME, string? HOBLINAME, string? ARTICLENAME, string? EXECUTIONDATE, Int64 KAVERIECDOC_RESPONSE_ROWID, string loginID);
+
+        public DataSet GET_ARO_BY_ZONE(int zoneid);
+        public DataSet GET_WARD_BY_ARO(int AROID);
+        public DataSet GET_PENDENCE_REPORT(int ZoneId, int AROId, int WARDID, string SEARCHTYPE);
+        public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, int PAGENO, int PAGECOUNT);
+
+
     }
 }
