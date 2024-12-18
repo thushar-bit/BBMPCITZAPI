@@ -91,6 +91,7 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet GET_WARD_BY_ARO(int AROID);
         public DataSet GET_PENDENCE_REPORT(int ZoneId, int AROId, int WARDID, string SEARCHTYPE);
         public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, int PAGENO, int PAGECOUNT);
+        public DataSet GetECDailyReport();
 
 
     }

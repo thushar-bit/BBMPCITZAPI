@@ -82,6 +82,7 @@ builder.Services.AddSingleton<TokenService>();
 //builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
 builder.Services.AddScoped<IObjectionService, ObjectionService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<INameMatchingService, NameMatchingService>();
 builder.Services.AddScoped<IErrorLogService, ErrorLoggingService>();
 Log.Logger = new LoggerConfiguration()

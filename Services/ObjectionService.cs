@@ -81,6 +81,24 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+        public DataSet INS_NCL_SEARCH_MAIN()
+        {
+            try
+            {
+                string sp_name = "SEARCHPROPERTYMODULE_REACT.INS_NCL_SEARCH_MAIN";
+                OracleParameter[] prm = new OracleParameter[]
+                {
+               new OracleParameter("C_MAIN", OracleDbType.RefCursor, ParameterDirection.Output),
+
+                };
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing SEARCHPROPERTYMODULE_REACT.INS_NCL_SEARCH_MAIN stored procedure.");
+                throw;
+            }
+        }
         public DataSet INS_NCL_PROPERTY_OBJECTOR_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string IdentifierName, string MOBILENUMBER, string MOBILEVERIFY, int NAMEMATCHSCORE,string EMAIL,string PROPERTYID, string loginId, EKYCDetailsBO objEKYCDetailsBO)
         {
             try

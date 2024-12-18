@@ -28,5 +28,28 @@
 
         }
 
+        public class INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT
+        {
+            public Int64 Search_Req_Id { get; set; }
+
+            public string? IsHaveAAdhaarNumber { get; set; }
+            public string? IsHaveSASNumber { get; set; }
+            public string? DoorNo { get; set; }
+            public string? BuildingName { get; set; }
+            public string? AreaOrLocality { get; set; }
+            public string? Pincode { get; set; }
+            public byte[]? IDDocument { get; set; }
+            public string? IDCardType { get; set; }
+            public string? IDCardNumber { get; set; }
+            public string? MobileNumber { get; set; }
+            public string? Mobiverify { get; set; }
+            public string? Email { get; set; }
+            public string? ZoneId { get; set; }
+            public string? WardId { get; set; }
+            public string? SearchName { get; set; }
+            public string? SASApplicationNumber { get; set; }
+            public string? LoginId { get; set; }
+        }
+
     }
 }

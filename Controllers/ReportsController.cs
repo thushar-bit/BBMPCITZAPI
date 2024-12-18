@@ -1844,6 +1844,25 @@ namespace BBMPCITZAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("GetECDailyReport")]
+        public ActionResult<DataSet> GetECDailyReport()
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GetECDailyReport();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT_DETAILS");
+                _errorLogService.LogError(ex, "GET_PENDENCE_REPORT_DETAILS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
 

@@ -638,7 +638,7 @@ namespace BBMPCITZAPI.Controllers
                         DateTime toDateTime1 = DateTime.Parse(toDate);
 
 
-                        if (fromDateTime1 >= dtECFromDateForValidate && toDateTime1 >= dtECEndDateForValidate && ecRequest.RegistrationType == 2)
+                        if (fromDateTime1 <= dtECFromDateForValidate && toDateTime1 >= dtECEndDateForValidate && ecRequest.RegistrationType == 2)
                         {
                             var Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
                             var parsedData = ParseDescription(Dosc.Description);
@@ -712,7 +712,7 @@ namespace BBMPCITZAPI.Controllers
                             return Ok(new
                             {
                                 success = false,
-                                message = $"The EC number has expired. EC should be obtained from date 01.04.2004 onwards only and EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}"
+                                message = $"The EC number has expired. EC should be obtained from date 01.04.2004 Before only and EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}"
                             });
                         }
                     }
@@ -727,7 +727,7 @@ namespace BBMPCITZAPI.Controllers
                         DateTime toDateTime1 = DateTime.Parse(toDate);
 
 
-                        if (fromDateTime1 >= dtECFromDateForValidate && toDateTime1 >= dtECEndDateForValidate && ecRequest.RegistrationType == 2)
+                        if (fromDateTime1 <= dtECFromDateForValidate && toDateTime1 >= dtECEndDateForValidate && ecRequest.RegistrationType == 2)
                         {
                           
                             var Docs = new List<KaveriData.EcData>
@@ -765,7 +765,7 @@ namespace BBMPCITZAPI.Controllers
                         else
                         {
 
-                            return Ok(new { success = false, message = $"The EC number has expired. The EC FromDate should be between 01-04-2004 to EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}" });
+                            return Ok(new { success = false, message = $"The EC number has expired. The EC FromDate should be Before 01-04-2004 to EC todate should be 31-10-2024 and after. Submitted EC Dates are from date-{fromDate.Substring(0, 10)}, to date-{toDate.Substring(0, 10)}" });
                         }
                         }
                 }
@@ -1158,7 +1158,7 @@ namespace BBMPCITZAPI.Controllers
                 DateTime dtECFromDateForValidate = new DateTime(2004, 04, 01);
                
 
-                return Ok(base64String1);
+                return Ok(new { EC = ECdocumentDetails,fromdate= fromDateTime, toDate= toDateTime });
             }
             catch (Exception ex)
             {

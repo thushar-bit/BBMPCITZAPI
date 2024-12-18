@@ -72,6 +72,35 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("INS_NCL_SEARCH_MAIN")]
+        public async Task<string> INS_NCL_SEARCH_MAIN()
+        {
+            _logger.LogInformation("GET request received at INS_NCL_SEARCH_MAIN");
+            try
+            {
+
+                var dataSet = _ObjectionService.INS_NCL_SEARCH_MAIN();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                long searchId = 0;
+
+                if (dataSet.Tables.Count > 0 &&
+                    dataSet.Tables[0].Rows.Count > 0 &&
+                    dataSet.Tables[0].Columns.Contains("SEARCH_REQ_ID") &&
+                    dataSet.Tables[0].Rows[0]["SEARCH_REQ_ID"] != DBNull.Value)
+                {
+                    searchId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["SEARCH_REQ_ID"]);
+                }
+
+                string json1 = await GetEKYCRequest(1, searchId, 10);
+                return json1;
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_SEARCH_MAIN");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_SEARCH_MAIN.");
+                throw;
+            }
+        }
         [HttpPost("RequestEKYC")]
         public async Task<string> GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
         {

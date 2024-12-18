@@ -1949,5 +1949,19 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
+        public DataSet GetECDailyReport()
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.Get_EC_DAILY_Report";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output) };
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
     }
 }
