@@ -62,7 +62,7 @@ namespace BBMPCITZAPI.Controllers
                     objid = Convert.ToInt64(dataSet.Tables[0].Rows[0]["OBJID"]);
                 }
 
-           string json1 = await GetEKYCRequest(1, objid, Propertycode);
+           string json1 = await GetEKYCRequest(1, objid, Propertycode,"Objection");
                 return json1;
             }
             catch (Exception ex)
@@ -91,7 +91,7 @@ namespace BBMPCITZAPI.Controllers
                     searchId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["SEARCH_REQ_ID"]);
                 }
 
-                string json1 = await GetEKYCRequest(1, searchId, 10);
+                string json1 = await GetEKYCRequest(1, searchId, 10,"Search");
                 return json1;
             }
             catch (Exception ex)
@@ -102,7 +102,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("RequestEKYC")]
-        public async Task<string> GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE)
+        public async Task<string> GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE,string Page)
         {
             try
             {
@@ -112,14 +112,23 @@ namespace BBMPCITZAPI.Controllers
                 string EKYCIntegrationKey = _ekycSettings.EKYCIntegrationKey!;
                 string EKYCIntegrationPassword = _ekycSettings.EKYCIntegrationPassword!;
                 string EKYCServiceCode = _ekycSettings.EKYCServiceCode!;
-                string EKYCResponseRedirectURL = _ekycSettings.EKYCResponseRedirectURL!;
+                string EKYCResponseRedirectURL = "";
                 string EKYCRequestURL = _ekycSettings.EKYCRequestURL!;
                 string EKYCApplnCode = _ekycSettings.EKYCApplnCode!;
                 string EKYCTokenRequest = "";
 
                 string transacDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 long transactionNo = 0;
+                if (Page == "Search")
+                {
+                    EKYCResponseRedirectURL = _ekycSettings.EKYCResponseSearchRedirectURL!;
+                }
+                else
+                {
+                    EKYCResponseRedirectURL = _ekycSettings.EKYCResponseObjectionRedirectURL!;
+                }
                 if (EKYCApplnCode == "81")
+
                 {
                     //live site
                     EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",ApplnCode:" + EKYCApplnCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
@@ -129,6 +138,7 @@ namespace BBMPCITZAPI.Controllers
                 {
                     EKYCTokenRequest = "{deptCode: " + EKYCDeptCode + ",integrationKey: \"" + EKYCIntegrationKey + "\",integrationPassword: \"" + EKYCIntegrationPassword + "\",txnNo:transactionNo,txnDateTime: " + transacDateTime + ",serviceCode: " + EKYCServiceCode + ",responseRedirectURL: \"" + EKYCResponseRedirectURL + "\"}";
                 }
+               
                   
                 
                 EKYCTokenRequest = EKYCTokenRequest.Replace("\"", "'");

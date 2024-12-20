@@ -7,9 +7,11 @@
         public string? EKYCIntegrationKey { get; set; }
         public string? EKYCIntegrationPassword { get; set; }
         public string? EKYCServiceCode { get; set; }
-        public string? EKYCResponseRedirectURL { get; set; }
+        public string? EKYCResponseObjectionRedirectURL { get; set; }
+        public string? EKYCResponseSearchRedirectURL { get; set; }
         public string? EKYCRequestURL { get; set; }
         public string? EKYCApplnCode { get; set; }
+        public string? EKYCType { get; set; }
     }
     public class BBMPSMSSETTINGS
     {

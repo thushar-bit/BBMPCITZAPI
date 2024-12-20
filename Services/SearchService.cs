@@ -21,7 +21,7 @@ namespace BBMPCITZAPI.Services
             _configuration = configuration;
             _databaseService = databaseService;
         }
-        public DataSet INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string IdentifierName, string MOBILENUMBER, string MOBILEVERIFY, int NAMEMATCHSCORE, string EMAIL,  string loginId, EKYCDetailsBO objEKYCDetailsBO)
+        public DataSet INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA( string MOBILENUMBER, string MOBILEVERIFY,  string EMAIL,  string loginId, EKYCDetailsBO objEKYCDetailsBO)
         {
             try
             {
@@ -31,18 +31,15 @@ namespace BBMPCITZAPI.Services
                   new OracleParameter("P_TRANSACTIONNO",OracleDbType.Int64,ParameterDirection.Input),
               new OracleParameter("P_OWNERNAME",OracleDbType.NVarchar2,ParameterDirection.Input),
               new OracleParameter("P_OWNERNAME_EN",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_IDENTIFIERNAME",OracleDbType.NVarchar2,ParameterDirection.Input),
-              new OracleParameter("P_IDENTIFIERNAME_EN",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_OWNERADDRESS",OracleDbType.NVarchar2,ParameterDirection.Input),
               new OracleParameter("P_OWNERADDRESS_EN",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_OWNERPHOTO",OracleDbType.Blob,ParameterDirection.Input),
               new OracleParameter("P_MaskedAadhaar",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_OwnerGender",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_DATEOFBIRTH",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_IDENTIFIERTYPE",OracleDbType.Int32,ParameterDirection.Input),
+             
               new OracleParameter("P_MOBILENUMBER",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_MOBILEVERIFY",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_NAMEMATCHSCORE",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_VAULTREFNUMBER",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_AADHAARHASH",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_LOGINID",OracleDbType.Varchar2,ParameterDirection.Input),
@@ -55,22 +52,22 @@ namespace BBMPCITZAPI.Services
                 prm[0].Value = objEKYCDetailsBO.TxnNo;
                 prm[1].Value = objEKYCDetailsBO.OwnerNameKnd;
                 prm[2].Value = objEKYCDetailsBO.OwnerNameEng;
-                prm[3].Value = IdentifierName;
-                prm[4].Value = objEKYCDetailsBO.IdentifierNameEng;
-                prm[5].Value = objEKYCDetailsBO.AddressKnd;
-                prm[6].Value = objEKYCDetailsBO.AddressEng;
-                prm[7].Value = objEKYCDetailsBO.photoBytes;
-                prm[8].Value = objEKYCDetailsBO.maskedAadhaar;
-                prm[9].Value = objEKYCDetailsBO.Gender;
-                prm[10].Value = objEKYCDetailsBO.DateOfBirth;
-                prm[11].Value = IDENTIFIERTYPE;
-                prm[12].Value = MOBILENUMBER;
-                prm[13].Value = MOBILEVERIFY;
-                prm[14].Value = NAMEMATCHSCORE;
-                prm[15].Value = objEKYCDetailsBO.VaultRefNumber;
-                prm[16].Value = objEKYCDetailsBO.AadhaarHash;
-                prm[17].Value = loginId;
-                prm[18].Value = EMAIL;
+          
+              
+                prm[3].Value = objEKYCDetailsBO.AddressKnd;
+                prm[4].Value = objEKYCDetailsBO.AddressEng;
+                prm[5].Value = objEKYCDetailsBO.photoBytes;
+                prm[6].Value = objEKYCDetailsBO.maskedAadhaar;
+                prm[7].Value = objEKYCDetailsBO.Gender;
+                prm[8].Value = objEKYCDetailsBO.DateOfBirth;
+            
+                prm[9].Value = MOBILENUMBER;
+                prm[10].Value = MOBILEVERIFY;
+            
+                prm[11].Value = objEKYCDetailsBO.VaultRefNumber;
+                prm[12].Value = objEKYCDetailsBO.AadhaarHash;
+                prm[13].Value = loginId;
+                prm[14].Value = EMAIL;
                
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -100,12 +97,12 @@ namespace BBMPCITZAPI.Services
                  new OracleParameter("P_MobileNumber", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_Mobiverify", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_Email", OracleDbType.Varchar2, ParameterDirection.Input),
-                new OracleParameter("P_ZoneId", OracleDbType.Varchar2, ParameterDirection.Input),
-                new OracleParameter("P_WardId", OracleDbType.Varchar2, ParameterDirection.Input),
+                new OracleParameter("P_ZoneId", OracleDbType.Int16, ParameterDirection.Input),
+                new OracleParameter("P_WardId", OracleDbType.Int16, ParameterDirection.Input),
                 new OracleParameter("P_SEARCHNAME", OracleDbType.Varchar2, ParameterDirection.Input),
                  new OracleParameter("P_SASAPPLICATIONNUMBER", OracleDbType.Varchar2, ParameterDirection.Input),
                     new OracleParameter("P_LOGINID", OracleDbType.Varchar2, ParameterDirection.Input),
-
+                         new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
                 };
                 prm[0].Value = final.Search_Req_Id;
              
@@ -132,6 +129,30 @@ namespace BBMPCITZAPI.Services
                 prm[15].Value = final.SearchName;
                 prm[16].Value = final.SASApplicationNumber;
                 prm[17].Value = final.LoginId;
+
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTORSMODULE_REACT.INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT stored procedure.");
+                throw;
+            }
+        }
+        public DataSet SEL_CitzeSearchAck(int searchReqId)
+        {
+            try
+            {
+                string sp_name = "SEARCHPROPERTYMODULE_REACT.SEL_CitzSearchAcknowledgement";
+                OracleParameter[] prm = new OracleParameter[]
+                {
+                new OracleParameter("P_Search_Req_Id", OracleDbType.Int64, ParameterDirection.Input),
+                new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
+
+                };
+                prm[0].Value = searchReqId;
+
+                
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);

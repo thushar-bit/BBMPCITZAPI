@@ -1244,6 +1244,35 @@ namespace BBMPCITZAPI.Controllers
             }
             return false;
         }
+        [HttpPost("GetKavBase641")]
+        public async Task<IActionResult> RED(int RegistrationNoECNumber)
+        {
+            _logger.LogInformation("GET request received at KaveriAPIRequest");
+            try
+            {
+                string objid = "";
+                DataSet red = obj.GET_EC_DOCUMENT_AFTER_2004(RegistrationNoECNumber);
+                if (red.Tables.Count > 0 &&
+                   red.Tables[0].Rows.Count > 0 &&
+                   red.Tables[0].Columns.Contains("KAVERIDOCRESPONSE") &&
+                   red.Tables[0].Rows[0]["KAVERIDOCRESPONSE"] != DBNull.Value)
+                {
+                    objid = Convert.ToString(red.Tables[0].Rows[0]["KAVERIDOCRESPONSE"]);
+                }
+                JObject Obj_Json = JObject.Parse(objid.Replace("],,", "],").Replace(",}", "}"));
+                byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64");
+                string fileName = "DownloadedFile.pdf"; 
+                string mimeType = "application/pdf"; 
+
+                return File(base64String1, mimeType, fileName);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "KaveriAPIRequest");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.KaveriAPIRequest");
+                throw;
+            }
+        }
 
         public class ECDocumentSave
         {

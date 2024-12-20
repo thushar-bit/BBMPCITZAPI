@@ -16,7 +16,7 @@ using static BBMPCITZAPI.Models.ObjectionModels;
 
 namespace BBMPCITZAPI.Controllers
 {
-    [Route("v1/ObjectionAPI")]
+    [Route("v1/SearchAPI")]
     [ApiController]
 
     public class SearchController : ControllerBase
@@ -42,13 +42,13 @@ namespace BBMPCITZAPI.Controllers
 
 
         [HttpPost("INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA")]
-        public ActionResult<DataSet> INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA(int IDENTIFIERTYPE, string IdentifierName, string MOBILENUMBER, string MOBILEVERIFY, int NAMEMATCHSCORE, string loginId, string EMAIL,  EKYCDetailsBO objEKYCDetailsBO)
+        public ActionResult<DataSet> INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA( string MOBILENUMBER, string MOBILEVERIFY,  string loginId, string EMAIL,  EKYCDetailsBO objEKYCDetailsBO)
         {
             _logger.LogInformation("GET request received at GET_WARD_BY_WARDNUMBER");
             try
             {
 
-                var dataSet = _SearchService.INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA(IDENTIFIERTYPE, IdentifierName, MOBILENUMBER, MOBILEVERIFY, NAMEMATCHSCORE, EMAIL,  loginId, objEKYCDetailsBO);
+                var dataSet = _SearchService.INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA( MOBILENUMBER, MOBILEVERIFY,  EMAIL,  loginId, objEKYCDetailsBO);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

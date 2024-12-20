@@ -44,8 +44,8 @@
             public string? MobileNumber { get; set; }
             public string? Mobiverify { get; set; }
             public string? Email { get; set; }
-            public string? ZoneId { get; set; }
-            public string? WardId { get; set; }
+            public int? ZoneId { get; set; }
+            public int? WardId { get; set; }
             public string? SearchName { get; set; }
             public string? SASApplicationNumber { get; set; }
             public string? LoginId { get; set; }

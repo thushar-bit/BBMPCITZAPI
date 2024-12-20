@@ -1502,6 +1502,7 @@ namespace BBMPCITZAPI.Services
                   new OracleParameter("P_APPLICATIONNO",OracleDbType.Varchar2),
                        new OracleParameter("P_LOGINID",OracleDbType.Varchar2),
                    new OracleParameter("CUR_TAXDATA",OracleDbType.RefCursor),
+                   new OracleParameter("C_NPM_RECORD",OracleDbType.RefCursor)
                  
             };
                 prm[0].Value = propertycode;
@@ -1514,6 +1515,8 @@ namespace BBMPCITZAPI.Services
                 prm[3].Direction = ParameterDirection.Input;
                 prm[4].Value = null;
                 prm[4].Direction = ParameterDirection.Output;
+                prm[5].Value = null;
+                prm[5].Direction = ParameterDirection.Output;
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)

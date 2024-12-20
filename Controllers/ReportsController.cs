@@ -36,10 +36,11 @@ namespace BBMPCITZAPI.Controllers
         private readonly ESignSettings _Esign;
         private readonly INameMatchingService _NameMatchService;
         private readonly IBBMPBookModuleService _BBMPBookService;
+        private readonly ISearchService _SearchService;
         private readonly IObjectionService _ObjectionService;
         private readonly IErrorLogService _errorLogService;
         public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService,
-           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService)
+           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService,ISearchService searchService)
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
@@ -47,6 +48,7 @@ namespace BBMPCITZAPI.Controllers
             _errorLogService = errorLogService;
             _BBMPBookService = BBMPBookService;
             _ObjectionService = objectionService;
+            _SearchService = searchService;
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
@@ -1861,6 +1863,91 @@ namespace BBMPCITZAPI.Controllers
                 _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT_DETAILS");
                 _errorLogService.LogError(ex, "GET_PENDENCE_REPORT_DETAILS");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GetFinalSearchAcknowledgementReport")]
+        public IActionResult GetFinalSearchAcknowledgementReport( int SearchReqID)
+        {
+            try
+            {
+                string Date = DateTime.Now.ToShortDateString();
+
+                DataSet dsReportData = _SearchService.SEL_CitzeSearchAck(Convert.ToInt32(SearchReqID));
+                LocalReport report = new LocalReport
+                {
+                    EnableExternalImages = true,
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzSearchPropertyAck.rdlc")
+                };
+
+
+                report.DataSources.Clear();
+
+                string SASNO = "";
+                if (Convert.ToString(dsReportData.Tables[0].Rows[0]["IS_SAS_APPLICATIONO"]) == "Y"){
+                    SASNO = "No SAS Number Available";
+                }
+                else
+                {
+                    SASNO = Convert.ToString(dsReportData.Tables[0].Rows[0]["SASAPPLICATIONNO"]);
+                }
+                // Set up parameters
+               
+                ReportParameter[] param = new ReportParameter[7];
+           
+                param[0] = new ReportParameter("P_BOOKS_PROP_APPNO", "S-" + Convert.ToString(SearchReqID));
+                param[1] = new ReportParameter("P_Hname", "Property Search Request");
+                param[2] = new ReportParameter("P_LANGUAGE", "0"); 
+                param[3] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"])); 
+                param[4] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"])); 
+                param[5] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SEARCHNAME"])); 
+                param[6] = new ReportParameter("P_SASAPPLICATIONNUMBER", SASNO); 
+              
+
+
+                DataTable ds = new DataTable();
+                report.DataSources.Add(new ReportDataSource("DataSet1", ds));
+                report.DataSources.Add(new ReportDataSource("PropSite", ds));
+                report.DataSources.Add(new ReportDataSource("PropPhoto", ds));
+                report.DataSources.Add(new ReportDataSource("PropDimention", ds));
+                report.DataSources.Add(new ReportDataSource("PropCoordinates", ds));
+                report.DataSources.Add(new ReportDataSource("OwnerDet", ds));
+                report.DataSources.Add(new ReportDataSource("Rights", ds));
+                report.DataSources.Add(new ReportDataSource("DocsToUpl", ds));
+                report.DataSources.Add(new ReportDataSource("Apartment", ds));
+                report.DataSources.Add(new ReportDataSource("Kattada", ds));
+                report.DataSources.Add(new ReportDataSource("PropSurvey", ds));
+                report.DataSources.Add(new ReportDataSource("Liabilities", ds));
+                report.DataSources.Add(new ReportDataSource("MOBuilding", ds));
+                report.SetParameters(param);
+                report.Refresh();
+                string reportType = "PDF";
+                string mimeType;
+                string encoding;
+                string deviceInfo = "<DeviceInfo>" +
+                   "  <OutputFormat>PDF</OutputFormat>" +
+                   "  <PageWidth>8.90in</PageWidth>" +
+                   "  <PageHeight>10.69in</PageHeight>" +
+                   "  <MarginTop>0.2in</MarginTop>" +
+                   "  <MarginLeft>0.2in</MarginLeft>" +
+                   "  <MarginRight>0.2in</MarginRight>" +
+                   "  <MarginBottom>0.2in</MarginBottom>" +
+                   "</DeviceInfo>";
+
+                Warning[] warnings;
+                string[] streamIds;
+                string extension = string.Empty;
+                byte[] bytes = report.Render(reportType, deviceInfo, out mimeType, out encoding, out extension, out streamIds, out warnings);
+                string fileName = String.Empty;
+                fileName = "Search Request Acknowledgement";
+                return File(bytes, mimeType, "Search Request Acknowledgement.pdf");
+                // return bytes;
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "ObjectorsAcknowledgement");
+                _logger.LogError(ex, "Error ObjectorsAcknowledgement function the report.");
+                throw;
             }
         }
     }
