@@ -49,6 +49,8 @@
             public string? SearchName { get; set; }
             public string? SASApplicationNumber { get; set; }
             public string? LoginId { get; set; }
+            public string? IsHaveOldEkhata { get; set; }
+            public byte[]? OldEkhataDocument { get; set; }
         }
 
     }

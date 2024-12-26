@@ -1927,21 +1927,25 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
-        public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, int PAGENO, int PAGECOUNT)
+        public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID,string TYPEOFROLE, int PAGENO, int PAGECOUNT)
         {
             string sp_name = "OBJECTIONMODULE_REACT.GET_PENDENCE_REPORT_DETAILS";
             OracleParameter[] prm = new OracleParameter[] {
-              new OracleParameter("P_AROID",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("P_WARDID",OracleDbType.Int64,ParameterDirection.Input),
+                      new OracleParameter("P_TYPEOFROLE",OracleDbType.Varchar2,ParameterDirection.Input),
                new OracleParameter("P_PROPERTYID",OracleDbType.Varchar2,ParameterDirection.Input),
                 new OracleParameter("P_PAGENO",OracleDbType.Int64,ParameterDirection.Input),
                  new OracleParameter("P_PAGECOUNT",OracleDbType.Int64,ParameterDirection.Input),
-              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output)
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output),
+                new OracleParameter("C_LOGIN_DETAILS",OracleDbType.RefCursor,ParameterDirection.Output)
+
                     };
 
             prm[0].Value = WARDID;
-            prm[1].Value = PROPERTYID;
-            prm[2].Value = PAGENO;
-            prm[3].Value = PAGECOUNT;
+            prm[1].Value = TYPEOFROLE;
+            prm[2].Value = PROPERTYID;
+            prm[3].Value = PAGENO;
+            prm[4].Value = PAGECOUNT;
 
             try
             {
@@ -1957,6 +1961,41 @@ namespace BBMPCITZAPI.Services
             string sp_name = "OBJECTIONMODULE_REACT.Get_EC_DAILY_Report";
             OracleParameter[] prm = new OracleParameter[] {
               new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output) };
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet GetMutationDailyReport()
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.Get_Mutation_DAILY_Report";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("C_OUT",OracleDbType.RefCursor,ParameterDirection.Output) };
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet MUTATION_NOTICES(int ulbCode, int PAGENO, int PAGECOUNT)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_MUT_NOTICES";
+            OracleParameter[] prm = new OracleParameter[] {
+                  new OracleParameter("P_ULBCODE",OracleDbType.Int16,ParameterDirection.Input),
+                    new OracleParameter("P_PAGENO",OracleDbType.Int16,ParameterDirection.Input),
+                      new OracleParameter("P_PAGECOUNT",OracleDbType.Int16,ParameterDirection.Input),
+              new OracleParameter("P_OUT",OracleDbType.RefCursor,ParameterDirection.Output)
+            };
+            prm[0].Value = ulbCode;
+            prm[1].Value = PAGENO;
+            prm[2].Value = PAGECOUNT;
             try
             {
                 return _databaseService.ExecuteDataset(sp_name, prm);

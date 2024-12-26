@@ -102,6 +102,8 @@ namespace BBMPCITZAPI.Services
                 new OracleParameter("P_SEARCHNAME", OracleDbType.Varchar2, ParameterDirection.Input),
                  new OracleParameter("P_SASAPPLICATIONNUMBER", OracleDbType.Varchar2, ParameterDirection.Input),
                     new OracleParameter("P_LOGINID", OracleDbType.Varchar2, ParameterDirection.Input),
+                      new OracleParameter("P_ISHAVEOLDEKHATA", OracleDbType.Varchar2, ParameterDirection.Input),
+                        new OracleParameter("P_OLDEKHATADOCUMENT", OracleDbType.Blob, ParameterDirection.Input),
                          new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
                 };
                 prm[0].Value = final.Search_Req_Id;
@@ -129,6 +131,8 @@ namespace BBMPCITZAPI.Services
                 prm[15].Value = final.SearchName;
                 prm[16].Value = final.SASApplicationNumber;
                 prm[17].Value = final.LoginId;
+                prm[18].Value = final.IsHaveOldEkhata;
+                prm[19].Value = final.OldEkhataDocument;
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
@@ -153,6 +157,30 @@ namespace BBMPCITZAPI.Services
                 prm[0].Value = searchReqId;
 
                 
+
+
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing OBJECTORSMODULE_REACT.INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT stored procedure.");
+                throw;
+            }
+        }
+        public DataSet SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH(string ApplicationNo)
+        {
+            try
+            {
+                string sp_name = "SEARCHPROPERTYMODULE_REACT.SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH";
+                OracleParameter[] prm = new OracleParameter[]
+                {
+                new OracleParameter("P_APPLICATIONNO", OracleDbType.Varchar2, ParameterDirection.Input),
+                new OracleParameter("CUR_TAXDATA", OracleDbType.RefCursor, ParameterDirection.Output),
+
+                };
+                prm[0].Value = ApplicationNo;
+
+
 
 
                 return _databaseService.ExecuteDataset(sp_name, prm);

@@ -81,6 +81,24 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
+        [HttpGet("SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH")]
+        public ActionResult<DataSet> SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH(string ApplicationNo)
+        {
+            _logger.LogInformation("GET request received at SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH");
+            try
+            {
 
+                var dataSet = _SearchService.SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH(ApplicationNo);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH");
+                _logger.LogError(ex, "Error occurred while executing stored procedure SEL_OFFLINE_PTAX_BY_APPLICATION_SEARCH.");
+                throw;
+            }
+        }
     }
 }

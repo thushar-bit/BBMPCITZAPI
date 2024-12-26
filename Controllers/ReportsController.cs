@@ -52,7 +52,9 @@ namespace BBMPCITZAPI.Controllers
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
+        NUPMS_BA.PROPERYID_BA propertyda = new NUPMS_BA.PROPERYID_BA();
         NUPMS_BA.BBD_BA objBbd = new NUPMS_BA.BBD_BA();
+        NUPMS_BA.WFTask WF = new NUPMS_BA.WFTask();
 
         private string FinalSubmitValidations(DataSet dsNCLTablesData)
         {
@@ -1828,11 +1830,11 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GET_PENDENCE_REPORT_DETAILS")]
-        public ActionResult<DataSet> GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID,int PAGENO,int PAGECOUNT)
+        public ActionResult<DataSet> GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, string TYPEOFROLE, int PAGENO, int PAGECOUNT)
         {
             try
             {
-                DataSet dataSet = _BBMPBookService.GET_PENDENCE_REPORT_DETAILS(WARDID, PROPERTYID, PAGENO, PAGECOUNT);
+                DataSet dataSet = _BBMPBookService.GET_PENDENCE_REPORT_DETAILS(WARDID, PROPERTYID,  TYPEOFROLE, PAGENO, PAGECOUNT);
                 string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
                 return Ok(json);
             }
@@ -1862,6 +1864,74 @@ namespace BBMPCITZAPI.Controllers
 
                 _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT_DETAILS");
                 _errorLogService.LogError(ex, "GET_PENDENCE_REPORT_DETAILS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GetMutationDailyReport")]
+        public ActionResult<DataSet> GetMutationDailyReport()
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GetMutationDailyReport();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT_DETAILS");
+                _errorLogService.LogError(ex, "GET_PENDENCE_REPORT_DETAILS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GetPublicNoticesReport")]
+        public ActionResult<DataSet> GetPublicNoticesReport(int PAGENO,int PAGECOUNT)
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.MUTATION_NOTICES(555, PAGENO, PAGECOUNT);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_PENDENCE_REPORT_DETAILS");
+                _errorLogService.LogError(ex, "GET_PENDENCE_REPORT_DETAILS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("DownloadNoticePDF")]
+        public async Task<IActionResult> DownloadNoticePDF(int MutApplId, int Propcode)
+        {
+
+            _logger.LogInformation("url coming from GetPageDocumentDownload" + "bookno:" + MutApplId, "pageno:" + Propcode);
+           
+            DataSet dsPageData = WF.GetNoticeImage(MutApplId, Propcode);
+            try
+            {
+                if (dsPageData != null && dsPageData.Tables.Count > 0 && dsPageData.Tables[0].Rows.Count > 0)
+                {
+                    byte[] pdfBytes = (byte[])dsPageData.Tables[0].Rows[0]["PDFNOTICE"];
+                    string filename = MutApplId + "SavedPropNotice" + Propcode + ".pdf";
+                    return File(pdfBytes, "application/pdf", filename);
+                }
+                else
+                {
+                    return BadRequest("Failed to download the PDF.");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving DownloadDraftPDF");
+                _errorLogService.LogError(ex, "DownloadDraftPDF");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

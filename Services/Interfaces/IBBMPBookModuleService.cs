@@ -90,8 +90,10 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet GET_ARO_BY_ZONE(int zoneid);
         public DataSet GET_WARD_BY_ARO(int AROID);
         public DataSet GET_PENDENCE_REPORT(int ZoneId, int AROId, int WARDID, string SEARCHTYPE);
-        public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, int PAGENO, int PAGECOUNT);
+        public DataSet GET_PENDENCE_REPORT_DETAILS(int WARDID, string PROPERTYID, string TYPEOFROLE, int PAGENO, int PAGECOUNT);
         public DataSet GetECDailyReport();
+        public DataSet GetMutationDailyReport();
+        public DataSet MUTATION_NOTICES(int ulbCode ,int PAGENO, int PAGECOUNT);
 
 
     }
