@@ -16,12 +16,14 @@ namespace BBMPCITZAPI.Services
         private readonly ILogger<BBMPCITZController> _logger;
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
+        private readonly IBBMPBookModuleService _BBMPBook;
 
-        public ObjectionService(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService)
+        public ObjectionService(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IBBMPBookModuleService Auth)
         {
             _logger = logger;
             _configuration = configuration;
             _databaseService = databaseService;
+            _BBMPBook = Auth;
         }
         public DataSet GET_PROPERTY_OBJECTORS_CITZ_NCLTEMP(int ULBCODE, long Propertycode,long objectionid)
         {
@@ -66,6 +68,7 @@ namespace BBMPCITZAPI.Services
                 new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64, ParameterDirection.Input),
                 new OracleParameter("P_ULBCODE", OracleDbType.Int32, ParameterDirection.Input),
                  new OracleParameter("P_PropertyEID", OracleDbType.Int64, ParameterDirection.Input),
+                   new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                new OracleParameter("C_MAIN", OracleDbType.RefCursor, ParameterDirection.Output),
 
                 };
@@ -73,6 +76,7 @@ namespace BBMPCITZAPI.Services
                 prm[0].Value = Propertycode;
                 prm[1].Value = ULBCODE;
                 prm[2].Value = PropertyEID;
+                prm[3].Value = _BBMPBook.GetIPAddress();
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
@@ -126,6 +130,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_LOGINID",OracleDbType.Varchar2,ParameterDirection.Input),
                 new OracleParameter("P_EMAIL",OracleDbType.Varchar2,ParameterDirection.Input),
                    new OracleParameter("P_PROPERTYID",OracleDbType.Varchar2,ParameterDirection.Input),
+                    new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("C_OWNERRECORD",OracleDbType.RefCursor,ParameterDirection.Output),
            
                     };
@@ -150,6 +155,7 @@ namespace BBMPCITZAPI.Services
                 prm[17].Value = loginId;
                 prm[18].Value = EMAIL;
                 prm[19].Value = PROPERTYID;
+                prm[20].Value = _BBMPBook.GetIPAddress();
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
@@ -177,6 +183,7 @@ namespace BBMPCITZAPI.Services
                 new OracleParameter("P_ULBCODE", OracleDbType.Int64, ParameterDirection.Input),
                 new OracleParameter("P_ORDERDATE", OracleDbType.Date, ParameterDirection.Input),
                 new OracleParameter("P_OBJECTIONID", OracleDbType.Int64, ParameterDirection.Input),
+                 new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                 new OracleParameter("cur_user", OracleDbType.RefCursor, ParameterDirection.Output)
                 };
                 prm[0].Value = NCLPropID.ORDERNUMBER;
@@ -201,8 +208,10 @@ namespace BBMPCITZAPI.Services
                 prm[8].Value = NCLPropID.ORDERDATE;
                 prm[9].Direction = ParameterDirection.Input;
                 prm[9].Value = NCLPropID.ObjectionId;
-                prm[10].Direction = ParameterDirection.Output;
-                prm[10].Value = null;
+                prm[10].Direction = ParameterDirection.Input;
+                prm[10].Value = _BBMPBook.GetIPAddress();
+                prm[11].Direction = ParameterDirection.Output;
+                prm[11].Value = null;
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -238,6 +247,7 @@ namespace BBMPCITZAPI.Services
                
                 new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2, ParameterDirection.Input),
                  new OracleParameter("P_TYPEOFDOCUMENT", OracleDbType.Varchar2, ParameterDirection.Input),
+                  new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                 };
                 prm[0].Value = final.OBJECTIONID;
                 prm[1].Value = final.PROPERTYCODE;
@@ -262,7 +272,7 @@ namespace BBMPCITZAPI.Services
                 prm[14].Value = final.PINCODE;
                 prm[15].Value = final.CREATEDBY;
                 prm[16].Value = final.TYPEOFDOCUMENT;
-
+                prm[17].Value = _BBMPBook.GetIPAddress();
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
@@ -283,7 +293,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_REGISTRATIONDATETIME",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_KAVERIDOC_RESPONSE_ROWID",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-             
+              new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input)
                     };
 
             prm[0].Value = objectionid;
@@ -294,7 +304,7 @@ namespace BBMPCITZAPI.Services
             prm[5].Value = REGISTRATIONDATETIME;
             prm[6].Value = KAVERIDOC_RESPONSE_ROWID;
             prm[7].Value = loginId;
-
+            prm[8].Value = _BBMPBook.GetIPAddress();
             try
             {
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -324,7 +334,8 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_EKYC_OWNERNO",OracleDbType.Int32,ParameterDirection.Input),
               new OracleParameter("P_EKYC_OWNERNAME",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_NAMEMATCH_SCORE",OracleDbType.Int32,ParameterDirection.Input)
+              new OracleParameter("P_NAMEMATCH_SCORE",OracleDbType.Int32,ParameterDirection.Input),
+               new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                     };
 
                 prm[0].Value = objectionid;
@@ -341,7 +352,7 @@ namespace BBMPCITZAPI.Services
                 prm[11].Value = EKYC_OWNERNO;
                 prm[12].Value = EKYC_OWNERNAME;
                 prm[13].Value = NAMEMATCH_SCORE;
-
+                prm[14].Value = _BBMPBook.GetIPAddress();
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
             catch (Exception ex)
@@ -365,7 +376,8 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_ZONENAME",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_TOTALAREA", OracleDbType.Double,ParameterDirection.Input),
               new OracleParameter("P_KAVERIDOC_RESPONSE_ROWID",OracleDbType.Varchar2,ParameterDirection.Input),
-              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input)
+              new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
+               new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                     };
 
             prm[0].Value = propertyCode;
@@ -380,7 +392,7 @@ namespace BBMPCITZAPI.Services
             prm[9].Value = TotalArea;
             prm[10].Value = KAVERIDOC_RESPONSE_ROWID;
             prm[11].Value = loginId;
-
+            prm[12].Value = _BBMPBook.GetIPAddress();
             try
             {
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
@@ -437,7 +449,7 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
-
+       
 
 
     }

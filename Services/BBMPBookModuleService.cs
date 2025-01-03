@@ -16,7 +16,6 @@ using NUPMS_DA;
 using iTextSharp.text.pdf;
 using NUPMS_BA;
 
-
 namespace BBMPCITZAPI.Services
 {
     public class BBMPBookModuleService : IBBMPBookModuleService
@@ -25,12 +24,14 @@ namespace BBMPCITZAPI.Services
         private readonly ILogger<BBMPCITZController> _logger;
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BBMPBookModuleService(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService)
+        public BBMPBookModuleService(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _configuration = configuration;
             _databaseService = databaseService;
+            _httpContextAccessor = httpContextAccessor;
         }
         #region Initial
         public DataSet GET_PROPERTY_PENDING_CITZ_BBD_DRAFT(int ULBCODE, int Propertycode)
@@ -2003,6 +2004,31 @@ namespace BBMPCITZAPI.Services
             catch (OracleException Ex)
             {
                 throw Ex;
+            }
+        }
+        public string GetIPAddress()
+        {
+            try
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+
+                if (httpContext == null)
+                {
+                    return "Unable to retrieve HttpContext";
+                }
+
+                var clientIpAddress = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+
+                if (string.IsNullOrEmpty(clientIpAddress))
+                {
+                    clientIpAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+                }
+
+                return clientIpAddress;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

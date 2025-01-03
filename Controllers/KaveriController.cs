@@ -38,14 +38,16 @@ namespace BBMPCITZAPI.Controllers
         private readonly INameMatchingService _nameMatchingService;
         private readonly IBBMPBookModuleService _IBBMPBOOKMODULE;
         private readonly IErrorLogService _errorLogService;
+        private readonly IBBMPBookModuleService _auth;
         public KaveriController(ILogger<EKYCController> logger, IOptions<KaveriSettings> kaveriSettings,
-            INameMatchingService NameMatching, IBBMPBookModuleService IBBMPBOOKMODULE, IErrorLogService errorLogService)
+            INameMatchingService NameMatching, IBBMPBookModuleService IBBMPBOOKMODULE, IErrorLogService errorLogService, IBBMPBookModuleService Auth)
         {
             _logger = logger;
             _kaveriSettings = kaveriSettings.Value;
             _nameMatchingService = NameMatching;
             _IBBMPBOOKMODULE = IBBMPBOOKMODULE;
             _errorLogService = errorLogService;
+            _auth = Auth;
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
       
@@ -656,7 +658,8 @@ namespace BBMPCITZAPI.Controllers
                                     "article",
                                     Dosc.ExecutionDate,
                                     Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
-                                    ecRequest.LoginId
+                                    ecRequest.LoginId,
+                                    _auth.GetIPAddress()
                                 );
 
                                 if (Dosc.Executants.Count() > 0)
@@ -676,6 +679,8 @@ namespace BBMPCITZAPI.Controllers
                                             "",
                                             0,
                                             ecRequest.LoginId
+                                            ,
+                                    _auth.GetIPAddress()
                                         );
                                     }
                                 }
@@ -697,7 +702,8 @@ namespace BBMPCITZAPI.Controllers
                                             1,
                                             "",
                                             0,
-                                            ecRequest.LoginId
+                                            ecRequest.LoginId,
+                                    _auth.GetIPAddress()
                                         );
                                     }
                                 }
@@ -755,7 +761,8 @@ namespace BBMPCITZAPI.Controllers
                                 null,
                                 null,
                                 Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
-                                ecRequest.LoginId
+                                ecRequest.LoginId,
+                                    _auth.GetIPAddress()
                             );
 
                             // Correct the variable name from Dosc to Docs in the return statement
@@ -922,7 +929,8 @@ namespace BBMPCITZAPI.Controllers
                                 "article",
                                 Dosc.ExecutionDate,
                                 Convert.ToInt64(KAVERIDOC_RESPONSE_ROWID),
-                                ecRequest.LoginId
+                                ecRequest.LoginId,
+                                    _auth.GetIPAddress()
                             );
 
                             if (Dosc.Executants.Count() > 0)
@@ -941,7 +949,8 @@ namespace BBMPCITZAPI.Controllers
                                         0,
                                         "",
                                         0,
-                                        ecRequest.LoginId
+                                        ecRequest.LoginId,
+                                    _auth.GetIPAddress()
                                     );
                                 }
                             }
@@ -963,7 +972,8 @@ namespace BBMPCITZAPI.Controllers
                                         1,
                                         "",
                                         0,
-                                        ecRequest.LoginId
+                                        ecRequest.LoginId,
+                                    _auth.GetIPAddress()
                                     );
                                 }
                             }
@@ -1077,7 +1087,8 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at INS_KAVERI_API_ECDOC_SUBMIT");
             try
             {
-                var dataSet = obj.INS_KAVERI_API_ECDOC_SUBMIT(ecDcoument.Propertycode, ecDcoument.ReqId, ecDcoument.KaveriECDoc , ecDcoument.LoginId, ecDcoument.KaveriDocName);
+                var dataSet = obj.INS_KAVERI_API_ECDOC_SUBMIT(ecDcoument.Propertycode, ecDcoument.ReqId, ecDcoument.KaveriECDoc , ecDcoument.LoginId, ecDcoument.KaveriDocName,
+                                    _auth.GetIPAddress());
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
                 return Ok(json);
             }

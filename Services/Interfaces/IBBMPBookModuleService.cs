@@ -95,6 +95,6 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet GetMutationDailyReport();
         public DataSet MUTATION_NOTICES(int ulbCode ,int PAGENO, int PAGECOUNT);
 
-
+        public string GetIPAddress();
     }
 }

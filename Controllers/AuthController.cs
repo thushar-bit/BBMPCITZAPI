@@ -486,27 +486,8 @@ namespace BBMPCITZAPI.Controllers
                         throw;
             }
         }
-        [HttpGet("GetIPAddress")]
-        public IActionResult GetIPAddress()
-        {
-            try
-            {
-                var clientIpAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-
-                if (string.IsNullOrEmpty(clientIpAddress))
-                {
-                    // Fallback to the remote IP address
-                    clientIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                }
-
-                // Return the client IP
-                return Ok(clientIpAddress);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = ex.Message });
-            }
-        }
+      
+      
 
 
 

@@ -14,12 +14,14 @@ namespace BBMPCITZAPI.Services
         private readonly ILogger<BBMPCITZController> _logger;
         private readonly IConfiguration _configuration;
         private readonly DatabaseService _databaseService;
+        private readonly IBBMPBookModuleService _auth;
 
-        public SearchService(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService)
+        public SearchService(ILogger<BBMPCITZController> logger, IConfiguration configuration, DatabaseService databaseService , IBBMPBookModuleService Auth)
         {
             _logger = logger;
             _configuration = configuration;
             _databaseService = databaseService;
+            _auth = Auth;
         }
         public DataSet INS_NCL_PROPERTY_SEARCH_TEMP_WITH_EKYCDATA( string MOBILENUMBER, string MOBILEVERIFY,  string EMAIL,  string loginId, EKYCDetailsBO objEKYCDetailsBO)
         {
@@ -44,7 +46,7 @@ namespace BBMPCITZAPI.Services
               new OracleParameter("P_AADHAARHASH",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_LOGINID",OracleDbType.Varchar2,ParameterDirection.Input),
                 new OracleParameter("P_EMAIL",OracleDbType.Varchar2,ParameterDirection.Input),
-                 
+                    new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("C_OWNERRECORD",OracleDbType.RefCursor,ParameterDirection.Output),
 
                     };
@@ -68,7 +70,7 @@ namespace BBMPCITZAPI.Services
                 prm[12].Value = objEKYCDetailsBO.AadhaarHash;
                 prm[13].Value = loginId;
                 prm[14].Value = EMAIL;
-               
+                prm[15].Value = _auth.GetIPAddress();
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
@@ -104,6 +106,7 @@ namespace BBMPCITZAPI.Services
                     new OracleParameter("P_LOGINID", OracleDbType.Varchar2, ParameterDirection.Input),
                       new OracleParameter("P_ISHAVEOLDEKHATA", OracleDbType.Varchar2, ParameterDirection.Input),
                         new OracleParameter("P_OLDEKHATADOCUMENT", OracleDbType.Blob, ParameterDirection.Input),
+                           new OracleParameter("P_CREATEDIP",OracleDbType.Varchar2,ParameterDirection.Input),
                          new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
                 };
                 prm[0].Value = final.Search_Req_Id;
@@ -133,7 +136,7 @@ namespace BBMPCITZAPI.Services
                 prm[17].Value = final.LoginId;
                 prm[18].Value = final.IsHaveOldEkhata;
                 prm[19].Value = final.OldEkhataDocument;
-
+                prm[20].Value = _auth.GetIPAddress();
 
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
@@ -191,5 +194,6 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
+
     }
 }
