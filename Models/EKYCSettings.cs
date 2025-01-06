@@ -8,6 +8,7 @@
         public string? EKYCIntegrationPassword { get; set; }
         public string? EKYCServiceCode { get; set; }
         public string? EKYCResponseObjectionRedirectURL { get; set; }
+        public string? EKYCResponseMutationObjectionRedirectURL { get; set; }
         public string? EKYCResponseSearchRedirectURL { get; set; }
         public string? EKYCRequestURL { get; set; }
         public string? EKYCApplnCode { get; set; }

@@ -84,6 +84,7 @@ builder.Services.AddScoped<IBBMPBookModuleService, BBMPBookModuleService>();
 builder.Services.AddScoped<IObjectionService, ObjectionService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<INameMatchingService, NameMatchingService>();
+builder.Services.AddScoped<IMutationObjectionService, MutationObjectionService>();
 builder.Services.AddScoped<IErrorLogService, ErrorLoggingService>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // Read configuration from appsettings.json

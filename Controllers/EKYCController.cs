@@ -31,15 +31,17 @@ namespace BBMPCITZAPI.Controllers
         private readonly BBMPSMSSETTINGS _BBMPSMSSETTINGS;
         private readonly IErrorLogService _errorLogService;
         private readonly IObjectionService _ObjectionService;
+        private readonly IMutationObjectionService _MutationService;
 
         public EKYCController(ILogger<EKYCController> logger,  IOptions<EKYCSettings> ekycSettings, IErrorLogService errorLogService,
-            IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS, IObjectionService ObjectionService)
+            IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS, IObjectionService ObjectionService,IMutationObjectionService mutationObjection)
         {
             _logger = logger;
             _ekycSettings = ekycSettings.Value;
             _BBMPSMSSETTINGS = BBMPSMSSETTINGS.Value;
             _errorLogService = errorLogService;
             _ObjectionService = ObjectionService;
+            _MutationService = mutationObjection;
         }
 
         //[Authorize]
@@ -101,6 +103,36 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("INS_NCL_MUTATION_OBJECTION_MAIN")]
+        public async Task<string> INS_NCL_MUTATION_OBJECTION_MAIN()
+        {
+            _logger.LogInformation("GET request received at INS_NCL_MUTATION_OBJECTION_MAIN");
+            try
+            {
+
+                var dataSet = _MutationService.INS_NCL_MUTATION_OBJECTION_MAIN();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                long ObjectionMutationId = 0;
+
+                if (dataSet.Tables.Count > 0 &&
+                    dataSet.Tables[0].Rows.Count > 0 &&
+                    dataSet.Tables[0].Columns.Contains("MUTATION_OBJECTION_REQ_ID") &&
+                    dataSet.Tables[0].Rows[0]["MUTATION_OBJECTION_REQ_ID"] != DBNull.Value)
+                {
+                    ObjectionMutationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTATION_OBJECTION_REQ_ID"]);
+                }
+
+                string json1 = await GetEKYCRequest(1, ObjectionMutationId, 10, "Objection_Mutation");
+                return json1;
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_MUTATION_OBJECTION_MAIN");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_MUTATION_OBJECTION_MAIN.");
+                throw;
+            }
+        }
+
         [HttpPost("RequestEKYC")]
         public async Task<string> GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE,string Page)
         {
@@ -123,9 +155,13 @@ namespace BBMPCITZAPI.Controllers
                 {
                     EKYCResponseRedirectURL = _ekycSettings.EKYCResponseSearchRedirectURL!;
                 }
-                else
+                else if(Page == "Objection")
                 {
                     EKYCResponseRedirectURL = _ekycSettings.EKYCResponseObjectionRedirectURL!;
+                }
+                else if(Page == "Objection_Mutation")
+                {
+                    EKYCResponseRedirectURL = _ekycSettings.EKYCResponseMutationObjectionRedirectURL!;
                 }
                 if (EKYCApplnCode == "81")
 

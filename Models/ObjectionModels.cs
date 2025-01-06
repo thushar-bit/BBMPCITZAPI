@@ -52,6 +52,21 @@
             public string? IsHaveOldEkhata { get; set; }
             public byte[]? OldEkhataDocument { get; set; }
         }
+        public class INS_NCL_PROPERTY_MUTATION_OBJECTION_FINAL_SUBMIT
+        {
+            public Int64 Mutatation_Req_Id { get; set; }
+
+            public string? ObjectionDocumentName{ get; set; }
+            public byte[]? ObjectionDocument { get; set; }
+            public string? REASONDETAILS { get; set; }
+         
+            public string? MobileNumber { get; set; }
+            public string? Mobiverify { get; set; }
+            public string? Email { get; set; }
+           
+            public string? LoginId { get; set; }
+       
+        }
 
     }
 }

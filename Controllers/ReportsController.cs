@@ -2020,6 +2020,85 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("GetFinalMutationAcknowledgementReport")]
+        public IActionResult GetFinalMutationAcknowledgementReport(int propertycode)
+        {
+            try
+            {
+                string Date = DateTime.Now.ToShortDateString();
+
+              //  DataSet dsReportData = _SearchService.SEL_CitzeSearchAck(Convert.ToInt32(propertycode));
+                LocalReport report = new LocalReport
+                {
+                    EnableExternalImages = true,
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzSearchPropertyAck.rdlc")
+                };
+
+
+                report.DataSources.Clear();
+
+                string SASNO = "";
+              
+                // Set up parameters
+
+                ReportParameter[] param = new ReportParameter[7];
+
+                param[0] = new ReportParameter("P_BOOKS_PROP_APPNO", "M-" + Convert.ToString(propertycode));
+                param[1] = new ReportParameter("P_Hname", "Property Search Request");
+                param[2] = new ReportParameter("P_LANGUAGE", "0");
+                param[3] = new ReportParameter("P_ZONENAME", "thushar");
+                param[4] = new ReportParameter("P_WARD_NAME", "the great");
+                param[5] = new ReportParameter("P_APPLICANTNAME", "gras");
+                param[6] = new ReportParameter("P_SASAPPLICATIONNUMBER", "2323");
+
+
+
+                DataTable ds = new DataTable();
+                report.DataSources.Add(new ReportDataSource("DataSet1", ds));
+                report.DataSources.Add(new ReportDataSource("PropSite", ds));
+                report.DataSources.Add(new ReportDataSource("PropPhoto", ds));
+                report.DataSources.Add(new ReportDataSource("PropDimention", ds));
+                report.DataSources.Add(new ReportDataSource("PropCoordinates", ds));
+                report.DataSources.Add(new ReportDataSource("OwnerDet", ds));
+                report.DataSources.Add(new ReportDataSource("Rights", ds));
+                report.DataSources.Add(new ReportDataSource("DocsToUpl", ds));
+                report.DataSources.Add(new ReportDataSource("Apartment", ds));
+                report.DataSources.Add(new ReportDataSource("Kattada", ds));
+                report.DataSources.Add(new ReportDataSource("PropSurvey", ds));
+                report.DataSources.Add(new ReportDataSource("Liabilities", ds));
+                report.DataSources.Add(new ReportDataSource("MOBuilding", ds));
+                report.SetParameters(param);
+                report.Refresh();
+                string reportType = "PDF";
+                string mimeType;
+                string encoding;
+                string deviceInfo = "<DeviceInfo>" +
+                   "  <OutputFormat>PDF</OutputFormat>" +
+                   "  <PageWidth>8.90in</PageWidth>" +
+                   "  <PageHeight>10.69in</PageHeight>" +
+                   "  <MarginTop>0.2in</MarginTop>" +
+                   "  <MarginLeft>0.2in</MarginLeft>" +
+                   "  <MarginRight>0.2in</MarginRight>" +
+                   "  <MarginBottom>0.2in</MarginBottom>" +
+                   "</DeviceInfo>";
+
+                Warning[] warnings;
+                string[] streamIds;
+                string extension = string.Empty;
+                byte[] bytes = report.Render(reportType, deviceInfo, out mimeType, out encoding, out extension, out streamIds, out warnings);
+                string fileName = String.Empty;
+                fileName = "Mutation Objection Acknowledgement";
+                return File(bytes, mimeType, "Mutation Objection Acknowledgement.pdf");
+                // return bytes;
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "Mutation Objection");
+                _logger.LogError(ex, "Error Mutation Objection function the report.");
+                throw;
+            }
+        }
     }
 }
 
