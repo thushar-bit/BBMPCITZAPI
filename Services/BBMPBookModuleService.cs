@@ -1985,6 +1985,20 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
+        public DataSet GetDraftDownloaded()
+        {
+            string sp_name = "MUTATIONOBJECTIONMODULE_REACT.Get_Draft_Downloaded_Details";
+            OracleParameter[] prm = new OracleParameter[] {
+              new OracleParameter("C_RECORD",OracleDbType.RefCursor,ParameterDirection.Output) };
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
         public DataSet MUTATION_NOTICES(int ulbCode, int PAGENO, int PAGECOUNT)
         {
             string sp_name = "OBJECTIONMODULE_REACT.GET_MUT_NOTICES";

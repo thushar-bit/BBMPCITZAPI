@@ -95,7 +95,7 @@ namespace BBMPCITZAPI.Services
                 new OracleParameter("P_Email", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_LOGINID", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_CREATEDIP", OracleDbType.Varchar2, ParameterDirection.Input),
-               
+                 new OracleParameter("P_PropertyEPID", OracleDbType.Varchar2, ParameterDirection.Input),
                          new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
                 };
                 prm[0].Value = final.Mutatation_Req_Id;
@@ -107,7 +107,7 @@ namespace BBMPCITZAPI.Services
                 prm[6].Value = final.Email;
                 prm[7].Value = final.LoginId;
                 prm[8].Value = _auth.GetIPAddress();
-
+                prm[9].Value = final.PropertyEpid;
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
@@ -134,14 +134,14 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet SEL_CitzeSearchAck(int searchReqId)
+        public DataSet SEL_Citz_Mutation_Objection_Acknowledgement(int searchReqId)
         {
             try
             {
-                string sp_name = "SEARCHPROPERTYMODULE_REACT.SEL_CitzSearchAcknowledgement";
+                string sp_name = "MUTATIONOBJECTIONMODULE_REACT.SEL_Citz_Mutation_Objection_Acknowledgement";
                 OracleParameter[] prm = new OracleParameter[]
                 {
-                new OracleParameter("P_Search_Req_Id", OracleDbType.Int64, ParameterDirection.Input),
+                new OracleParameter("P_MUTATION_OBJECTION_REQ_ID", OracleDbType.Int64, ParameterDirection.Input),
                 new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
 
                 };
@@ -158,7 +158,30 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-       
+        public DataSet Get_Pending_Mutation_Details(string TypeOfSearch, int PageNo, int PageCount)
+        {
+            try
+            {
+                string sp_name = "MUTATIONOBJECTIONMODULE_REACT.Get_Pending_Mutation_Details";
+                OracleParameter[] prm = new OracleParameter[]
+                {
+                new OracleParameter("P_Type_Of_Search", OracleDbType.Varchar2, ParameterDirection.Input),
+                  new OracleParameter("P_PageNo", OracleDbType.Int32, ParameterDirection.Input),
+                    new OracleParameter("P_PageCount", OracleDbType.Int32, ParameterDirection.Input),
+                new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
+
+                };
+                prm[0].Value = TypeOfSearch;
+                prm[1].Value = PageNo;
+                prm[2].Value = PageCount;
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing MUTATIONOBJECTIONMODULE_REACT.INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT stored procedure.");
+                throw;
+            }
+        }
 
     }
 }

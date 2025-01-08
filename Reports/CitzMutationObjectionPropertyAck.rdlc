@@ -1,0 +1,1131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition">
+  <DataSources>
+    <DataSource Name="PROP">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>b1b1c1c8-2475-4f6d-b6d6-516de57c1c41</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Fields>
+        <Field Name="PROPERTYCODE">
+          <DataField>PROPERTYCODE</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYID">
+          <DataField>PROPERTYID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MUNICIPALOLDNUMBER">
+          <DataField>MUNICIPALOLDNUMBER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ASSESMENTNUMBER">
+          <DataField>ASSESMENTNUMBER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ADDRESS">
+          <DataField>ADDRESS</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYSTATUS">
+          <DataField>PROPERTYSTATUS</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CHECKBANDI_NORTH">
+          <DataField>CHECKBANDI_NORTH</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CHECKBANDI_SOUTH">
+          <DataField>CHECKBANDI_SOUTH</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CHECKBANDI_EAST">
+          <DataField>CHECKBANDI_EAST</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CHECKBANDI_WEST">
+          <DataField>CHECKBANDI_WEST</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ID_BASIC_PROPERTY">
+          <DataField>ID_BASIC_PROPERTY</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CORNERSITE">
+          <DataField>CORNERSITE</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MRNUMBER">
+          <DataField>MRNUMBER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="STREETID">
+          <DataField>STREETID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SOURCEID">
+          <DataField>SOURCEID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UGD">
+          <DataField>UGD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="APARTMENTLANDPID">
+          <DataField>APARTMENTLANDPID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PUID">
+          <DataField>PUID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DISTRICTNAME">
+          <DataField>DISTRICTNAME</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYCLASSIFICATION">
+          <DataField>PROPERTYCLASSIFICATION</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYTYPE">
+          <DataField>PROPERTYTYPE</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYCATEGORY">
+          <DataField>PROPERTYCATEGORY</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ULBNAME">
+          <DataField>ULBNAME</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BLOCKID">
+          <DataField>BLOCKID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WARDID">
+          <DataField>WARDID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WARDNUMBER">
+          <DataField>WARDNUMBER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WARDNAME">
+          <DataField>WARDNAME</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BLOCKNUMBER">
+          <DataField>BLOCKNUMBER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BLOCKNAME">
+          <DataField>BLOCKNAME</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="STREETNUMBER">
+          <DataField>STREETNUMBER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="STREETNAME">
+          <DataField>STREETNAME</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYCLASSIFICATIONID">
+          <DataField>PROPERTYCLASSIFICATIONID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYTYPEID">
+          <DataField>PROPERTYTYPEID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYCATEGORYID">
+          <DataField>PROPERTYCATEGORYID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BUILDINGLANDPID">
+          <DataField>BUILDINGLANDPID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PROPERTYCATEGORY_EN">
+          <DataField>PROPERTYCATEGORY_EN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DISTRICTNAME_EN">
+          <DataField>DISTRICTNAME_EN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ULBNAME_EN">
+          <DataField>ULBNAME_EN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WARDNAME_EN">
+          <DataField>WARDNAME_EN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BLOCKNAME_EN">
+          <DataField>BLOCKNAME_EN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="STREETNAME_EN">
+          <DataField>STREETNAME_EN</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>PROP</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PROP</rd:DataSetName>
+        <rd:SchemaPath>F:\TEST_FINAL_CITIZEN - Copy (2)\NUPMS_MAIN\NUPMS\TestRDLC\PROP.xsd</rd:SchemaPath>
+        <rd:TableName>DataTable1</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <Body>
+    <ReportItems>
+      <Rectangle Name="Rectangle1">
+        <ReportItems>
+          <Rectangle Name="Logo">
+            <KeepTogether>true</KeepTogether>
+            <Top>0.12383cm</Top>
+            <Left>0.37025cm</Left>
+            <Height>2.50572cm</Height>
+            <Width>2.58958cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundImage>
+                <Source>Embedded</Source>
+                <Value>BBMP_NewLOGO</Value>
+              </BackgroundImage>
+            </Style>
+          </Rectangle>
+          <Textbox Name="Textbox86">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Dear Applicant,</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>             Your request for Objection in Mutation has been received and request ID is </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!P_BOOKS_PROP_APPNO.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>.  </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>             It is forwarded to ARO as per details below.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>YOU DO NOT HAVE TO MEET ANYONE</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>.Kindly,wait for about </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value xml:space="preserve">             </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>7</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>-days by which time you will get response by your mobile number and email.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>             Reason Details : </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!P_REASONDETAILS.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>ARO Office to whom sent :</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceBefore>3pt</SpaceBefore>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>BBMP Zone: </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!P_ZONENAME.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>, BBMP Ward </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!P_WARD_NAME.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>                                                                                                                                                                            BBMP Revenue Dept</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value> To</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value> Applicant Name:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!P_APPLICANTNAME.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Calibri</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>This is digitally created Acknowledgment and manual signatures are not required.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox22</rd:DefaultName>
+            <Top>3.98262cm</Top>
+            <Left>0.007in</Left>
+            <Height>10.03248cm</Height>
+            <Width>7.78667in</Width>
+            <ZIndex>1</ZIndex>
+            <Visibility>
+              <Hidden>=IIF(Parameters!P_LANGUAGE.Value = 1, True,False)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Color>White</Color>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox111">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> Mutation Objection Ref No:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!P_BOOKS_PROP_APPNO.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">                                                        </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Arial Unicode MS</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox111</rd:DefaultName>
+            <Top>3.10068cm</Top>
+            <Height>0.93963cm</Height>
+            <Width>19.79573cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>Solid</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox194">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!P_Hname.Value</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>18pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Acknowledgement</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>18pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox193</rd:DefaultName>
+            <Top>0.51527cm</Top>
+            <Left>5.1246cm</Left>
+            <Height>2.11428cm</Height>
+            <Width>10.8873cm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <KeepTogether>true</KeepTogether>
+        <Height>14.22677cm</Height>
+        <Width>19.81357cm</Width>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Rectangle>
+      <Textbox Name="Textbox52">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Application Received Date:</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=Format(Now,"dd-MM-yyyy")</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">  </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Arial Unicode MS</FontFamily>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox33</rd:DefaultName>
+        <Top>3.22892cm</Top>
+        <Left>10.42979cm</Left>
+        <Height>0.70556cm</Height>
+        <Width>9.36607cm</Width>
+        <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <Height>5.66359in</Height>
+    <Style>
+      <BackgroundImage>
+        <Source>Embedded</Source>
+        <Value>Draftcopy</Value>
+      </BackgroundImage>
+    </Style>
+  </Body>
+  <ReportParameters>
+    <ReportParameter Name="P_LANGUAGE">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_Hname">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_ZONENAME">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_WARD_NAME">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_APPLICANTNAME">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_REASONDETAILS">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="P_BOOKS_PROP_APPNO">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <Width>7.8076in</Width>
+  <Page>
+    <PageFooter>
+      <Height>2.89071cm</Height>
+      <PrintOnFirstPage>true</PrintOnFirstPage>
+      <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="Textbox75">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>ಸೂಚನೆ : ಈ ಮೇಲ್ಕಂಡಂತೆ ಸಲ್ಲಿಸಿರುವ ದಾಖಲೆಗಳನ್ನು ಸಂಬಂಧಪಟ್ಟ ಸಹಾಯಕ ಕಂದಾಯ ಅಧಿಕಾರಿಗಳು ಪರಿಶೀಲಿಸಿದ ನಂತರ ಸರಿ ಇದ್ದ ಪಕ್ಷದಲ್ಲಿ ಆಸ್ತಿ ವಿವರಗಳ ಅನುಮೋದನೆಯ ನಂತರ ನಮೂನೆ ಎ/ಬಿ ಯನ್ನು ಪಡೆಯಲು (ಡೌನ್‌ಲೋಡ್) ನಾಗರಿಕರಿಗೆ ಅನುಮತಿಸಲಾಗುತ್ತದೆ, ಇಲ್ಲದಿದ್ದಲ್ಲಿ ಅರ್ಜಿಯನ್ನು ತಿರಸ್ಕರಿಸಲಾಗುತ್ತದೆ.</Value>
+                  <Style>
+                    <FontFamily>Arial Unicode MS</FontFamily>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <SpaceBefore>3pt</SpaceBefore>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox22</rd:DefaultName>
+          <Top>0.06944in</Top>
+          <Left>0.01789cm</Left>
+          <Height>1.03187cm</Height>
+          <Width>7.7866in</Width>
+          <Visibility>
+            <Hidden>=IIF(Parameters!P_LANGUAGE.Value = 1, False,True)</Hidden>
+          </Visibility>
+          <Style>
+            <Border>
+              <Color>White</Color>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox78">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Note: The above submitted data will be verified by concerned ARO officials. </Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <SpaceBefore>3pt</SpaceBefore>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox22</rd:DefaultName>
+          <Top>1.34937cm</Top>
+          <Left>0.03554cm</Left>
+          <Height>0.70997cm</Height>
+          <Width>7.7866in</Width>
+          <ZIndex>1</ZIndex>
+          <Visibility>
+            <Hidden>=IIF(Parameters!P_LANGUAGE.Value = 1, True,False)</Hidden>
+          </Visibility>
+          <Style>
+            <Border>
+              <Color>White</Color>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox193">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Globals.PageNumber &amp; " of " &amp; Globals.TotalPages</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox193</rd:DefaultName>
+          <Top>2.16517cm</Top>
+          <Left>9.03171cm</Left>
+          <Height>0.60207cm</Height>
+          <Width>1.78563cm</Width>
+          <ZIndex>2</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+      </ReportItems>
+      <Style>
+        <Border>
+          <Style>None</Style>
+        </Border>
+      </Style>
+    </PageFooter>
+    <PageHeight>29.7cm</PageHeight>
+    <PageWidth>21cm</PageWidth>
+    <LeftMargin>2cm</LeftMargin>
+    <RightMargin>2cm</RightMargin>
+    <TopMargin>2cm</TopMargin>
+    <BottomMargin>2cm</BottomMargin>
+    <ColumnSpacing>0.13cm</ColumnSpacing>
+    <Style>
+      <BackgroundImage>
+        <Source>Embedded</Source>
+        <Value>Draftcopy</Value>
+      </BackgroundImage>
+    </Style>
+  </Page>
+  <EmbeddedImages>
+    <EmbeddedImage Name="BBMP_NewLOGO">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+    <EmbeddedImage Name="Draftcopy">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>iVBORw0KGgoAAAANSUhEUgAAAxYAAACkCAYAAAAKVLhEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANMSURBVHhe7dcxAQAADMOg+TfdicgLLrgBAABEYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRi
+AQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAGRiAQAAZGIBAABkYgEAAETbA8ES7cFujCdOAAAAAElFTkSuQmCC</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportID>1f16cda8-54cb-4b5a-88b5-03962ed1df21</rd:ReportID>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+</Report>

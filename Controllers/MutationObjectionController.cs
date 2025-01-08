@@ -80,6 +80,25 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("Get_Pending_Mutation_Details")]
+        public ActionResult<DataSet> Get_Pending_Mutation_Details(string TypeOfSearch,int PageNo,int PageCount)
+        {
+            _logger.LogInformation("GET request received at INS_NCL_MUTATION_OBJECTION_FINAL_SUBMIT");
+            try
+            {
+
+                var dataSet = _MutationObjectionService.Get_Pending_Mutation_Details(TypeOfSearch,  PageNo,  PageCount);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT.");
+                throw;
+            }
+        }
 
     }
 }

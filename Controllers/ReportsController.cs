@@ -38,9 +38,10 @@ namespace BBMPCITZAPI.Controllers
         private readonly IBBMPBookModuleService _BBMPBookService;
         private readonly ISearchService _SearchService;
         private readonly IObjectionService _ObjectionService;
+        private readonly IMutationObjectionService _MutationService;
         private readonly IErrorLogService _errorLogService;
         public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService,
-           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService,ISearchService searchService)
+           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService,ISearchService searchService, IMutationObjectionService mutationObjection)
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
@@ -49,6 +50,7 @@ namespace BBMPCITZAPI.Controllers
             _BBMPBookService = BBMPBookService;
             _ObjectionService = objectionService;
             _SearchService = searchService;
+            _MutationService = mutationObjection;
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
@@ -1905,6 +1907,25 @@ namespace BBMPCITZAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("GetDraftDownloaded")]
+        public ActionResult<DataSet> GetDraftDownloaded()
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GetDraftDownloaded();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GetDraftDownloaded");
+                _errorLogService.LogError(ex, "GetDraftDownloaded");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
         [HttpPost("DownloadNoticePDF")]
         public async Task<IActionResult> DownloadNoticePDF(int MutApplId, int Propcode)
         {
@@ -2021,17 +2042,17 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("GetFinalMutationAcknowledgementReport")]
-        public IActionResult GetFinalMutationAcknowledgementReport(int propertycode)
+        public IActionResult GetFinalMutationAcknowledgementReport(int mutationRequestId)
         {
             try
             {
                 string Date = DateTime.Now.ToShortDateString();
 
-              //  DataSet dsReportData = _SearchService.SEL_CitzeSearchAck(Convert.ToInt32(propertycode));
+                DataSet dsReportData = _MutationService.SEL_Citz_Mutation_Objection_Acknowledgement(Convert.ToInt32(mutationRequestId));
                 LocalReport report = new LocalReport
                 {
                     EnableExternalImages = true,
-                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzSearchPropertyAck.rdlc")
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzMutationObjectionPropertyAck.rdlc")
                 };
 
 
@@ -2043,13 +2064,13 @@ namespace BBMPCITZAPI.Controllers
 
                 ReportParameter[] param = new ReportParameter[7];
 
-                param[0] = new ReportParameter("P_BOOKS_PROP_APPNO", "M-" + Convert.ToString(propertycode));
-                param[1] = new ReportParameter("P_Hname", "Property Search Request");
+                param[0] = new ReportParameter("P_BOOKS_PROP_APPNO", "M-" + Convert.ToString(mutationRequestId));
+                param[1] = new ReportParameter("P_Hname", "Mutation Objection Request");
                 param[2] = new ReportParameter("P_LANGUAGE", "0");
                 param[3] = new ReportParameter("P_ZONENAME", "thushar");
                 param[4] = new ReportParameter("P_WARD_NAME", "the great");
-                param[5] = new ReportParameter("P_APPLICANTNAME", "gras");
-                param[6] = new ReportParameter("P_SASAPPLICATIONNUMBER", "2323");
+                param[5] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["MUT_OBJECTOR_NAME_EN"]));
+                param[6] = new ReportParameter("P_REASONDETAILS", Convert.ToString(dsReportData.Tables[0].Rows[0]["REASONDETAILS"]));
 
 
 
