@@ -10,7 +10,7 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet INS_NCL_MUTATION_OBJECTION_FINAL_SUBMIT(INS_NCL_PROPERTY_MUTATION_OBJECTION_FINAL_SUBMIT final);
         public DataSet SEL_Citz_Mutation_Objection_Acknowledgement(int searchReqId);
         public DataSet INS_NCL_MUTATION_OBJECTION_MAIN();
-        public DataSet Get_Pending_Mutation_Details(string TypeOfSearch, int PageNo, int PageCount);
+        public DataSet Get_Pending_Mutation_Details(string TypeOfSearch, string PropertyEPID, int PageNo, int PageCount);
 
     }
 }

@@ -89,25 +89,24 @@ namespace BBMPCITZAPI.Services
                 new OracleParameter("P_MUTATION_OBJECTION_REQ_ID", OracleDbType.Int64, ParameterDirection.Input),
                 new OracleParameter("P_IDDocument", OracleDbType.Blob, ParameterDirection.Input),
                 new OracleParameter("P_IDCardNumber", OracleDbType.Varchar2, ParameterDirection.Input),
-                new OracleParameter("P_MobileNumber", OracleDbType.Varchar2, ParameterDirection.Input),
+                new OracleParameter("P_MutationApplId", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_REASONDETAILS", OracleDbType.Varchar2, ParameterDirection.Input),
-                new OracleParameter("P_Mobiverify", OracleDbType.Varchar2, ParameterDirection.Input),
-                new OracleParameter("P_Email", OracleDbType.Varchar2, ParameterDirection.Input),
+                new OracleParameter("P_PropertyCode", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_LOGINID", OracleDbType.Varchar2, ParameterDirection.Input),
                 new OracleParameter("P_CREATEDIP", OracleDbType.Varchar2, ParameterDirection.Input),
                  new OracleParameter("P_PropertyEPID", OracleDbType.Varchar2, ParameterDirection.Input),
                          new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
+                           new OracleParameter("C_RECORD1", OracleDbType.RefCursor, ParameterDirection.Output),
                 };
                 prm[0].Value = final.Mutatation_Req_Id;
                 prm[1].Value = final.ObjectionDocument;
                 prm[2].Value = final.ObjectionDocumentName;
-                prm[3].Value = final.MobileNumber;
+                prm[3].Value = final.MutationApplId;
                 prm[4].Value = final.REASONDETAILS;
-                prm[5].Value = final.Mobiverify;
-                prm[6].Value = final.Email;
-                prm[7].Value = final.LoginId;
-                prm[8].Value = _auth.GetIPAddress();
-                prm[9].Value = final.PropertyEpid;
+                prm[5].Value = final.Propertycode;
+                prm[6].Value = final.LoginId;
+                prm[7].Value = _auth.GetIPAddress();
+                prm[8].Value = final.PropertyEpid;
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)
@@ -158,7 +157,7 @@ namespace BBMPCITZAPI.Services
                 throw;
             }
         }
-        public DataSet Get_Pending_Mutation_Details(string TypeOfSearch, int PageNo, int PageCount)
+        public DataSet Get_Pending_Mutation_Details(string TypeOfSearch, string PropertyEPID, int PageNo, int PageCount)
         {
             try
             {
@@ -166,14 +165,16 @@ namespace BBMPCITZAPI.Services
                 OracleParameter[] prm = new OracleParameter[]
                 {
                 new OracleParameter("P_Type_Of_Search", OracleDbType.Varchar2, ParameterDirection.Input),
+                  new OracleParameter("P_PROPERTYID", OracleDbType.Varchar2, ParameterDirection.Input),
                   new OracleParameter("P_PageNo", OracleDbType.Int32, ParameterDirection.Input),
                     new OracleParameter("P_PageCount", OracleDbType.Int32, ParameterDirection.Input),
                 new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
 
                 };
                 prm[0].Value = TypeOfSearch;
-                prm[1].Value = PageNo;
-                prm[2].Value = PageCount;
+                prm[1].Value = PropertyEPID;
+                prm[2].Value = PageNo;
+                prm[3].Value = PageCount;
                 return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (Exception ex)

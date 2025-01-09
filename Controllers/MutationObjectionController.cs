@@ -81,13 +81,13 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpGet("Get_Pending_Mutation_Details")]
-        public ActionResult<DataSet> Get_Pending_Mutation_Details(string TypeOfSearch,int PageNo,int PageCount)
+        public ActionResult<DataSet> Get_Pending_Mutation_Details(string TypeOfSearch,string PropertyEPID,int PageNo,int PageCount)
         {
             _logger.LogInformation("GET request received at INS_NCL_MUTATION_OBJECTION_FINAL_SUBMIT");
             try
             {
 
-                var dataSet = _MutationObjectionService.Get_Pending_Mutation_Details(TypeOfSearch,  PageNo,  PageCount);
+                var dataSet = _MutationObjectionService.Get_Pending_Mutation_Details(TypeOfSearch, PropertyEPID, PageNo,  PageCount);
                 string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
 
                 return Ok(json);

@@ -61,9 +61,9 @@
             public byte[]? ObjectionDocument { get; set; }
             public string? REASONDETAILS { get; set; }
          
-            public string? MobileNumber { get; set; }
-            public string? Mobiverify { get; set; }
-            public string? Email { get; set; }
+            public int? Propertycode { get; set; }
+            public int? MutationApplId { get; set; }
+           
            
             public string? LoginId { get; set; }
        
