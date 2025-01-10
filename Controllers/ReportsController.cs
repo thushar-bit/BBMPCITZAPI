@@ -2120,6 +2120,25 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("GET_Final_eKhatha_Status_Based_on_ePID")]
+        public ActionResult<DataSet> GET_Final_eKhatha_Status_Based_on_ePID(string PropertyEpid )
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GET_Final_eKhatha_Status_Based_on_ePID(PropertyEpid);
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_Final_eKhatha_Status_Based_on_ePID");
+                _errorLogService.LogError(ex, "GET_Final_eKhatha_Status_Based_on_ePID");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
 

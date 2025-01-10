@@ -97,5 +97,6 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet GetDraftDownloaded();
 
         public string GetIPAddress();
+        public DataSet GET_Final_eKhatha_Status_Based_on_ePID(string PropertyEpid);
     }
 }

@@ -2045,5 +2045,21 @@ namespace BBMPCITZAPI.Services
                 throw ex;
             }
         }
+      public  DataSet GET_Final_eKhatha_Status_Based_on_ePID(string PropertyEpid)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_Final_eKhatha_Status_Based_on_ePID";
+            OracleParameter[] prm = new OracleParameter[] {
+                  new OracleParameter("P_PROPERTYEPID",OracleDbType.Varchar2,ParameterDirection.Input),
+              new OracleParameter("C_RECORD",OracleDbType.RefCursor,ParameterDirection.Output) };
+            prm[0].Value = PropertyEpid;
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
     }
 }
