@@ -4,12 +4,14 @@ using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUPMS_BA;
 using NUPMS_BO;
+using Oracle.ManagedDataAccess.Client;
 using System.Data;
 using static BBMPCITZAPI.Models.KaveriData;
 
@@ -253,6 +255,149 @@ namespace BBMPCITZAPI.Controllers
             {
                 _errorLogService.LogError(ex, "Get_React_UserFlow");
                 _logger.LogError(ex, "Error occurred while executing stored procedure.Get_React_UserFlow");
+                throw;
+            }
+        }
+        [HttpPost("TESTNEWKHATA")]
+        public string GetTESTNEWKHATA(string filename)
+        {
+            try
+            {
+
+
+
+              //  var ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "New_Khata", isconnected);
+                var folderPath = @"D:\BBMPAPI\New_Khata\12312";
+                var ReportPath = Path.Combine(folderPath, filename);
+                if (!System.IO.File.Exists(ReportPath))
+                {
+
+                   // throw new FileNotFoundException("JSON file not found at the specified path.");
+                    return "JSON file not found at the specified path.";
+                }
+                string jsonString = System.IO.File.ReadAllText(ReportPath);
+                newkhatadetails newkhatajson = new newkhatadetails();
+                try
+                {
+                    newkhatajson = JsonConvert.DeserializeObject<newkhatadetails>(jsonString);
+                }
+                catch(Exception ex)
+                {
+                    _errorLogService.LogError(ex, "GetTESTNEWKHATA");
+                    _logger.LogError(ex, "Error occurred while executing stored procedure.GetTESTNEWKHATA");
+                    var faileddestinationFolder = @"D:\BBMPAPI\New_Khata\Failed";
+
+                    // Ensure the destination folder exists
+                    if (!Directory.Exists(faileddestinationFolder))
+                    {
+                        Directory.CreateDirectory(faileddestinationFolder);
+                    }
+
+                    // Define the destination path
+                    var faileddestinationPath = Path.Combine(faileddestinationFolder, filename);
+
+                    // Move the file to the destination folder
+                    System.IO.File.Move(ReportPath, faileddestinationPath);
+                    return "Unable to Deserialize json .Please send correct json";
+                }
+                JObject Obj_Json = JObject.Parse(newkhatajson.KaveriECInformation.KaveriECInfoRawAPIResponseJSON.Replace("],,", "],").Replace(",}", "}"));
+                string responseCode = (string)Obj_Json.SelectToken("responseCode")!;
+              
+                string KAVERIDOC_RESPONSE_ROWID = "";
+                string fromdate = "";
+                string toDate = "";
+               
+                string responseMessage = (string)Obj_Json.SelectToken("responseMessage")!;
+                List<KaveriData.EcData> ECdocumentDetails = new List<KaveriData.EcData>();
+                KaveriData.EcData Dosc = new KaveriData.EcData();
+                if (responseMessage == "Sucess")
+                {
+                    string base64String = (string)Obj_Json.SelectToken("json")!;
+                    byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64")!;
+                     ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String)!;
+                     Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
+                    string responseRawContent = newkhatajson.KaveriECInformation.KaveriECInfoRawAPIResponseJSON.ToString();
+                    fromdate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
+                     toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
+                }
+                var response = JsonConvert.DeserializeObject<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>(newkhatajson.KaveriDeedInformation.KaveriDeedInfoRawAPIResponseJSON);
+                var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
+                DataSet ids = _IBBMPBOOKMODULE.GENERATE_NEW_KHATA_PROPERTYCODE();
+                if (ids != null && ids.Tables.Count > 0 && ids.Tables[0].Rows.Count > 0)
+                {
+                    Int64 pr = Convert.ToInt64(ids.Tables[0].Rows[0]["PROPERTYCODE"]);
+                    Int64 bk = Convert.ToInt64(ids.Tables[0].Rows[0]["BOOKS_PROP_APPNO"]);
+                    var mainParameters = new List<EKYCDetailsBO>();
+                    foreach (var kycdetails in newkhatajson.OwnerData)
+                    {
+                        EKYCDetailsBO objEKYCDetailsBO = obj.ParseEKYCResponse(kycdetails.EKYCJSON);
+                        mainParameters.Add(objEKYCDetailsBO);
+                    }
+                  
+                    
+                    int dataSet = _IBBMPBOOKMODULE.Insert_New_khata_details(newkhatajson, pr, bk, mainParameters, documentDetails, Dosc, fromdate,toDate);
+                    if(dataSet == 1)
+                    {
+                        var successdestinationFolder = @"D:\BBMPAPI\New_Khata\Read";
+
+                        // Ensure the destination folder exists
+                        if (!Directory.Exists(successdestinationFolder))
+                        {
+                            Directory.CreateDirectory(successdestinationFolder);
+                        }
+
+                        // Define the destination path
+                        var successdestinationPath = Path.Combine(successdestinationFolder, filename);
+
+                        // Move the file to the destination folder
+                        System.IO.File.Move(ReportPath, successdestinationPath);
+                        return "Data Saved Successfully";
+                    }
+                    else if(dataSet == 0)
+                    {
+                        var faileddestinationFolder = @"D:\BBMPAPI\New_Khata\Failed";
+
+                        // Ensure the destination folder exists
+                        if (!Directory.Exists(faileddestinationFolder))
+                        {
+                            Directory.CreateDirectory(faileddestinationFolder);
+                        }
+
+                        // Define the destination path
+                        var faileddestinationPath = Path.Combine(faileddestinationFolder, filename);
+
+                        // Move the file to the destination folder
+                        System.IO.File.Move(ReportPath, faileddestinationPath);
+                        return "Something Went Wrong while Saving in SP.Please check the Table";
+                    }
+                    else
+                    {
+                        var faileddestinationFolder = @"D:\BBMPAPI\New_Khata\Failed";
+
+                        // Ensure the destination folder exists
+                        if (!Directory.Exists(faileddestinationFolder))
+                        {
+                            Directory.CreateDirectory(faileddestinationFolder);
+                        }
+
+                        // Define the destination path
+                        var faileddestinationPath = Path.Combine(faileddestinationFolder, filename);
+
+                        // Move the file to the destination folder
+                        System.IO.File.Move(ReportPath, faileddestinationPath);
+                        return "Something Went Wrong while Saving in SP.Please check the Logs";
+                    }
+                   
+                }
+                else
+                {
+                    return "Something Went Wrong While Generating PropertyCode and Book App NO";
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "GetTESTNEWKHATA");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.GetTESTNEWKHATA");
                 throw;
             }
         }

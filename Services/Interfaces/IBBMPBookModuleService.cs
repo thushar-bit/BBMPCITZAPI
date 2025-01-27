@@ -98,5 +98,7 @@ namespace BBMPCITZAPI.Services.Interfaces
 
         public string GetIPAddress();
         public DataSet GET_Final_eKhatha_Status_Based_on_ePID(string PropertyEpid);
+        public DataSet GENERATE_NEW_KHATA_PROPERTYCODE();
+        public int Insert_New_khata_details(newkhatadetails newkhata,Int64 propertycode,Int64 books_app_no, List<NUPMS_BO.EKYCDetailsBO> mainParameters, KaveriData.DocumentDetails documentDetails, KaveriData.EcData ECdocumentDetails,string fromdate, string todate);
     }
 }
