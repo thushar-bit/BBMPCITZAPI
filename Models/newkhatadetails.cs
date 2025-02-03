@@ -134,6 +134,9 @@
         public double PropAreaSqMt { get; set; }
         public double BuildingAreaSqft { get; set; }
         public double BuildingAreaSqMT { get; set; }
+         public int PreferenceID { get; set; }
+        public string PerferenceDesc { get; set; }
+         public double PreferenceValue { get; set; }
         public string KaveriDeedInfoRawAPIResponseJSON { get; set; }
         public string KaveriDeedDocumentbase64 { get; set; }
     }

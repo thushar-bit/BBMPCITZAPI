@@ -2139,6 +2139,237 @@ namespace BBMPCITZAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("GetNEwFinalBBMPReport")]
+        public IActionResult GetNEwFinalBBMPReport(int propertycode, int BOOKS_PROP_APPNO, string LoginId)
+        {
+            try
+            {
+                string Date = DateTime.Now.ToShortDateString();
+                DataSet dsNCLTablesData = objModule.GET_PROPERTY_PENDING_NEW_CITZ_NCLTEMP(555, BOOKS_PROP_APPNO, propertycode); // Data from NCL temp tables  
+                DataSet dsNCLTablesDataDummy = objModule.GET_PROPERTY_PENDING_CITZ_NCLTEMPDUMMY(propertycode);
+
+                LocalReport report = new LocalReport
+                {
+                    EnableExternalImages = true,
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzRegistration_BBMP3.rdlc")
+                };
+
+
+                report.DataSources.Clear();
+
+                int rcount = 0;
+                // Set up parameters
+              //  DataSet dsReportData = objModule.SEL_NEWCitzeKhataAcknowledgement(Convert.ToInt32(BOOKS_PROP_APPNO), Convert.ToInt32(propertycode), Convert.ToString(LoginId));
+                ReportParameter[] param = new ReportParameter[20];
+
+                //param[7] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]));
+                //param[8] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["SUB_DIVISION_NAME"]));
+                //param[9] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"]));
+                //param[10] = new ReportParameter("P_DOORSITENO", Convert.ToString(dsReportData.Tables[0].Rows[0]["DOORNO"]));
+                //param[11] = new ReportParameter("P_BUIDINGNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["BUILDINGNAME"]));
+                //param[12] = new ReportParameter("P_STREETNAME1", Convert.ToString(dsReportData.Tables[0].Rows[0]["STREETNAME"]));
+                //param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]));
+                //param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTPOSTALADDRESS"]));
+                //param[15] = new ReportParameter("P_BOOKS_PROP_APPNO", "K-" + Convert.ToString(BOOKS_PROP_APPNO));
+
+                //param[6] = new ReportParameter("P_Hname", Convert.ToString(dsReportData.Tables[0].Rows[0]["ULB_DISPLAYNAME"]));
+                //param[3] = new ReportParameter("P_USERTYPE", "CITIZEN");
+                //param[3] = new ReportParameter("P_USERTYPE", "NA");
+                //param[0] = new ReportParameter("P_OPRNAME", "NA");
+                //param[1] = new ReportParameter("P_CENTERNAME", "NA");
+                //param[2] = new ReportParameter("P_PROPERTYCATEGORYID", Convert.ToString(dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]));
+                //param[4] = new ReportParameter("P_LANGUAGE", "0"); //English
+
+                /////////////------------------------------------------------///////////
+                param[7] = new ReportParameter("P_ZONENAME", Convert.ToString("bangalore"));
+                param[8] = new ReportParameter("SUB_DIVISION_NAME", Convert.ToString("bangalore"));
+                param[9] = new ReportParameter("P_WARD_NAME", Convert.ToString("bangalore"));
+                param[10] = new ReportParameter("P_DOORSITENO", Convert.ToString("bangalore"));
+                param[11] = new ReportParameter("P_BUIDINGNAME1", Convert.ToString("bangalore"));
+                param[12] = new ReportParameter("P_STREETNAME1", Convert.ToString("bangalore"));
+                param[13] = new ReportParameter("P_APPLICANTNAME", Convert.ToString("bangalore"));
+                param[14] = new ReportParameter("P_APPLICANTPOSTALADDRESS", Convert.ToString("bangalore"));
+                param[15] = new ReportParameter("P_BOOKS_PROP_APPNO", "K-" + Convert.ToString(BOOKS_PROP_APPNO));
+
+                param[6] = new ReportParameter("P_Hname", Convert.ToString("BBMP"));
+                param[3] = new ReportParameter("P_USERTYPE", "CITIZEN");
+                param[3] = new ReportParameter("P_USERTYPE", "NA");
+                param[0] = new ReportParameter("P_OPRNAME", "NA");
+                param[1] = new ReportParameter("P_CENTERNAME", "NA");
+                param[2] = new ReportParameter("P_PROPERTYCATEGORYID", Convert.ToString(dsNCLTablesData.Tables[1].Rows[0]["PROPERTYCATEGORYID"]));
+                param[4] = new ReportParameter("P_LANGUAGE", "0"); //English
+
+
+                //   param[4] = new ReportParameter("P_LANGUAGE", "1"); //Kannada
+                //  if (mode == "final")
+                // {
+                param[16] = new ReportParameter("P_ACK_DRAFT", "N");//Final
+                //}
+                //else
+                //{
+                //    param[16] = new ReportParameter("P_ACK_DRAFT", "Y");//Draft       
+                //}
+
+                param[17] = new ReportParameter("ARO_ADDRESS", Convert.ToString("bangalore"));
+                param[18] = new ReportParameter("P_REASON", Convert.ToString("bangalore"));
+                param[19] = new ReportParameter("P_ARO_MOBILE", Convert.ToString("bangalore"));
+
+                //param[17] = new ReportParameter("ARO_ADDRESS", Convert.ToString(dsReportData.Tables[0].Rows[0]["ARO_ADDRESS"]));
+                //param[18] = new ReportParameter("P_REASON", Convert.ToString(dsReportData.Tables[0].Rows[0]["REASON"]));
+                //param[19] = new ReportParameter("P_ARO_MOBILE", Convert.ToString(dsReportData.Tables[0].Rows[0]["ARO_MOBILE"]));
+
+
+
+                foreach (DataRow row in dsNCLTablesData.Tables[5].Rows)
+                {
+                    if (row["OWNERIDENTITYSLNO"] != DBNull.Value)
+                    {
+                        string ownerMobileNo = MaskMobileNo(dsNCLTablesData.Tables[5].Rows[rcount]["MOBILENUMBER"].ToString());
+                        row["MOBILENUMBER"] = ownerMobileNo;
+                        //if (ownerMobileNo == "")
+                        //{
+                        //    return;
+                        //}
+                    }
+                    rcount++;
+                }
+
+                foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
+                {
+                    if (row["APARTMENTLANDPID"] == DBNull.Value)
+                    {
+                        row["APARTMENTLANDPID"] = "N.A.";
+                    }
+                }
+                foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
+                {
+                    if (row["MUNICIPALOLDNUMBER"] == DBNull.Value)
+                    {
+                        row["MUNICIPALOLDNUMBER"] = "N.A.";
+                    }
+                }
+                foreach (DataRow row in dsNCLTablesData.Tables[1].Rows)
+                {
+                    if (row["ASSESMENTNUMBER"] == DBNull.Value)
+                    {
+                        row["ASSESMENTNUMBER"] = "N.A.";
+                    }
+                }
+                foreach (DataRow row in dsNCLTablesDataDummy.Tables[0].Rows)
+                {
+                    if (row["surveyno"] == DBNull.Value)
+                    {
+                        row["surveyno"] = "N.A.";
+                    }
+                }
+                foreach (DataRow row in dsNCLTablesData.Tables[4].Rows)
+                {
+                    if (row["longitude"] == DBNull.Value)
+                    {
+                        row["longitude"] = "N.A.";
+                    }
+                    if (row["latitude"] == DBNull.Value)
+                    {
+                        row["latitude"] = "N.A.";
+                    }
+                }
+
+                foreach (DataRow row in dsNCLTablesData.Tables[5].Rows)
+                {
+                    if (row["ISCOMPANY"] != DBNull.Value)
+                    {
+                        if (row["ISCOMPANY"].ToString() == "N")
+                        {
+                            param[5] = new ReportParameter("P_ISCOMPANY", "N");
+                        }
+                        else
+                        {
+                            param[5] = new ReportParameter("P_ISCOMPANY", "Y");
+                        }
+                    }
+                    else
+                    {
+                        param[5] = new ReportParameter("P_ISCOMPANY", "N");
+                    }
+
+                }
+
+                foreach (DataRow row in dsNCLTablesData.Tables[9].Rows)
+                {
+                    if (row["DOCUMENTDETAILS"] == DBNull.Value)
+                    {
+                        row["DOCUMENTDETAILS"] = "N.A.";
+                    }
+                }
+
+
+                DataTable ds = new DataTable();
+
+                report.DataSources.Add(new ReportDataSource("DataSet1", dsNCLTablesData.Tables[1]));
+                report.DataSources.Add(new ReportDataSource("PropSite", dsNCLTablesData.Tables[2]));
+                report.DataSources.Add(new ReportDataSource("PropPhoto", dsNCLTablesData.Tables[11]));
+                report.DataSources.Add(new ReportDataSource("PropDimention", dsNCLTablesData.Tables[3]));
+                report.DataSources.Add(new ReportDataSource("PropCoordinates", dsNCLTablesData.Tables[4]));
+                report.DataSources.Add(new ReportDataSource("OwnerDet", dsNCLTablesData.Tables[5]));
+                //report.DataSources.Add(new ReportDataSource("Rights", dsNCLTablesData.Tables[10]));
+                report.DataSources.Add(new ReportDataSource("DocsToUpl", dsNCLTablesData.Tables[8]));
+                report.DataSources.Add(new ReportDataSource("Apartment", dsNCLTablesData.Tables[6]));
+                report.DataSources.Add(new ReportDataSource("Kattada", ds));
+
+                report.DataSources.Add(new ReportDataSource("PropSurvey", ds));
+                //report.DataSources.Add(new ReportDataSource("Liabilities", dsNCLTablesData.Tables[1]));
+                //report.DataSources.Add(new ReportDataSource("MOBuilding", dsNCLTablesData.Tables[2]));
+
+                report.DataSources.Add(new ReportDataSource("ClassificationDocs", ds));
+                report.DataSources.Add(new ReportDataSource("AddressDet", dsNCLTablesData.Tables[10]));
+                report.DataSources.Add(new ReportDataSource("SAS", dsNCLTablesData.Tables[11]));
+                report.DataSources.Add(new ReportDataSource("KaveriDoc", dsNCLTablesData.Tables[12]));
+                report.DataSources.Add(new ReportDataSource("KaveriPropDet", dsNCLTablesData.Tables[13]));
+                report.DataSources.Add(new ReportDataSource("KaveriPartyDet", dsNCLTablesData.Tables[14]));
+                report.DataSources.Add(new ReportDataSource("BESCOM", dsNCLTablesData.Tables[17]));
+                report.DataSources.Add(new ReportDataSource("CompareMatrix", dsNCLTablesData.Tables[18]));
+                report.DataSources.Add(new ReportDataSource("BookData", ds));
+                report.DataSources.Add(new ReportDataSource("BookOwnerDet", ds));
+                report.DataSources.Add(new ReportDataSource("BookDimension", ds));
+                report.DataSources.Add(new ReportDataSource("BookArea", ds));
+                report.DataSources.Add(new ReportDataSource("BookPropCategory", ds));
+                report.DataSources.Add(new ReportDataSource("OddSiteSide", dsNCLTablesData.Tables[21]));
+                report.DataSources.Add(new ReportDataSource("BWSSB", dsNCLTablesData.Tables[22]));
+                report.DataSources.Add(new ReportDataSource("KaveriDet", dsNCLTablesData.Tables[23]));
+                report.DataSources.Add(new ReportDataSource("KaveriECDet", dsNCLTablesData.Tables[15]));
+
+                report.SetParameters(param);
+                report.Refresh();
+                string reportType = "PDF";
+                string mimeType;
+                string encoding;
+                string deviceInfo = "<DeviceInfo>" +
+                   "  <OutputFormat>PDF</OutputFormat>" +
+                   "  <PageWidth>10in</PageWidth>" +
+                   "  <PageHeight>11.69in</PageHeight>" +
+                   "  <MarginTop>0.2in</MarginTop>" +
+                   "  <MarginLeft>0.2in</MarginLeft>" +
+                   "  <MarginRight>0.2in</MarginRight>" +
+                   "  <MarginBottom>0.2in</MarginBottom>" +
+                   "</DeviceInfo>";
+
+                Warning[] warnings;
+                string[] streamIds;
+                string extension = string.Empty;
+                byte[] bytes = report.Render(reportType, deviceInfo, out mimeType, out encoding, out extension, out streamIds, out warnings);
+                string fileName = String.Empty;
+                fileName = Guid.NewGuid().ToString() + ".pdf";
+                return File(bytes, mimeType, "FinalReport.pdf");
+                // return bytes;
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "GetFinalBBMPReport");
+                _logger.LogError(ex, "Error GetFinalBBMPReport function the report.");
+                throw;
+            }
+        }
     }
 }
 
