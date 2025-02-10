@@ -8,7 +8,14 @@
             public string SASNo { get; set; }
             public string EPID { get; set; }
             public string KhataType { get; set; }
-            public int KhataTypeId { get; set; }
+            public string KhataTypeId { get; set; }
+           public int HasPropertyTaxPaidButNoKhata { get; set; }
+
+            public string ApplicationType { get; set; }
+
+            public string PropertyTypeGovtOrPrivate { get; set; }
+            public string DimensionType { get; set; }
+
             public string SourceOfAPP { get; set; }
             public LoginInformation LoginInformation { get; set; }
             public PropertyDetails1 PropertyDetails { get; set; }
@@ -34,8 +41,8 @@
 
     public class PropertyDetails1
     {
-        public int MasterPropertyTypeId { get; set; }
-        public string MasterPropertyTypeName { get; set; }
+        public int MasterPropertyCategoryId { get; set; }
+        public string MasterPropertyCategoryName { get; set; }
         public string PropertyUseTypeName { get; set; }
         public string PropertyUseTypeId { get; set; }
         public string BDAPropertyExist { get; set; }
@@ -118,6 +125,7 @@
     }
     public class KaveriDeedInformation
     {
+        public bool IsDeedBefore01042004 { get; set; }
         public string DeedNumber { get; set; }
         public string MainDeedNumber { get; set; }
         public string PropertyDoorSiteNo { get; set; }
@@ -134,18 +142,27 @@
         public double PropAreaSqMt { get; set; }
         public double BuildingAreaSqft { get; set; }
         public double BuildingAreaSqMT { get; set; }
-         public int PreferenceID { get; set; }
+        public int PreferenceID { get; set; }
         public string PerferenceDesc { get; set; }
-         public double PreferenceValue { get; set; }
+        public string PreferencePropAreaValueInSqFt { get; set; }
+        public string PreferencePropAreaValueInSqMt { get; set; }
         public string KaveriDeedInfoRawAPIResponseJSON { get; set; }
         public string KaveriDeedDocumentbase64 { get; set; }
+        public byte[]  KaveriDocuemntBase64Before01042004 {get;set;}
     }
 
     public class KaveriECInformation
     {
+        public string EncumbranceCertificateBefore01042004 { get; set; }
+
         public string EncumbranceCertificate { get; set; }
         public string DeedNumber { get; set; }
+        public string   EncumbranceCertificateDocuemntURLBefore01042004 { get; set; }
+        public string  EncumbranceCertificateDocuemntURLAfter01042004 { get; set; }
+        public byte[] EncumbranceCertificateDocuemntBase64Before01042004 { get; set; }
+        public byte[] EncumbranceCertificateDocuemntBase64After01042004 { get; set; }
         public string KaveriECInfoRawAPIResponseJSON { get; set; }
+        public string MainDeedNumber { get; set; }
     }
 
     public class BescomDetails
@@ -164,6 +181,8 @@
     public class UploadedDocument
     {
         public int MasterDocumentId { get; set; }
+        public int EasthiDocumentId { get; set; }
+        public int EasthiMasterSubDocumentId { get; set; }
         public string MasterDocumentText { get; set; }
         public int MasterSubDocumentId { get; set; }
         public string MasterSubDocumentText { get; set; }

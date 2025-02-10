@@ -261,15 +261,15 @@ namespace BBMPCITZAPI.Controllers
         [HttpGet("NEW_KHATA_DETAILS")]
         public void GetTESTNEWKHATA()
         {
-          
+
             PropertyMatrixCalculation propertyMatrix = new PropertyMatrixCalculation();
             var folderPath = @"E:\NewKhathaFiles\Inbox";
 
             var jsonFiles = Directory.GetFiles(folderPath, "*.json");
             if (jsonFiles.Length == 0)
             {
-
-                _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "N", "N", "No JSON FILES", "Not an exception", "Not an exception","NO FILE NAME");
+                Console.WriteLine("No json files");
+                _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "N", "N", "No JSON FILES", "Not an exception", "Not an exception", "NO FILE NAME");
                 return;
             }
             foreach (var filePath in jsonFiles)
@@ -277,65 +277,74 @@ namespace BBMPCITZAPI.Controllers
                 try
                 {
                     if (!System.IO.File.Exists(filePath))
-                {
-                    _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "N", "N", "JSON file not found at the specified path.", "Not an exception", "Not an exception", "NO FILE NAME");
+                    {
+                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "N", "N", "JSON file not found at the specified path.", "Not an exception", "Not an exception", "NO FILE NAME");
 
 
-                }
+                    }
                     string fileName = Path.GetFileName(filePath);
                     string jsonString = System.IO.File.ReadAllText(filePath);
-                newkhatadetails newkhatajson = new newkhatadetails();
-                try
-                {
-                    newkhatajson = JsonConvert.DeserializeObject<newkhatadetails>(jsonString);
-                }
-                catch (Exception ex)
-                {
-                    _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "Y", "N", $"Something Went Wrong when Deserializing + {filePath}", ex.Message,ex.StackTrace, fileName);
-                    _errorLogService.LogError(ex, "GetTESTNEWKHATA");
-                    _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
-                    var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
-
-                    if (!Directory.Exists(faileddestinationFolder))
-                    {
-                        Directory.CreateDirectory(faileddestinationFolder);
-                    }
-                    var faileddestinationPath = Path.Combine(faileddestinationFolder, filePath);
-                    System.IO.File.Move(filePath, faileddestinationPath);
-                        continue;
-                }
-                _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Recieved", "N", "N", $"{filePath}", "No exception", "Not an exception", fileName);
-                List<KaveriData.EcData> ECdocumentDetails = new List<KaveriData.EcData>();
-                KaveriData.EcData Dosc = new KaveriData.EcData();
-                KaveriData.DocumentDetails documentDetails = new KaveriData.DocumentDetails();
-                string KAVERIDOC_RESPONSE_ROWID = "";
-                string fromdate = "";
-                string toDate = "";
+                    newkhatadetails newkhatajson = new newkhatadetails();
                     try
                     {
-                        JObject Obj_Json = JObject.Parse(newkhatajson.KaveriECInformation.KaveriECInfoRawAPIResponseJSON.Replace("],,", "],").Replace(",}", "}"));
-                        string responseCode = (string)Obj_Json.SelectToken("responseCode")!;
-
-
-
-                        string responseMessage = (string)Obj_Json.SelectToken("responseMessage")!;
-
-                        if (responseMessage == "Sucess")
-                        {
-                            string base64String = (string)Obj_Json.SelectToken("json")!;
-                            byte[] base64String1 = (byte[])Obj_Json.SelectToken("base64")!;
-                            ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String)!;
-                            Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
-                            string responseRawContent = newkhatajson.KaveriECInformation.KaveriECInfoRawAPIResponseJSON.ToString();
-                            fromdate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
-                            toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
-                        }
-                        var response = JsonConvert.DeserializeObject<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>(newkhatajson.KaveriDeedInformation.KaveriDeedInfoRawAPIResponseJSON);
-                        documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
+                        newkhatajson = JsonConvert.DeserializeObject<newkhatadetails>(jsonString);
                     }
                     catch (Exception ex)
                     {
-                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize Kaveri json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
+                        Console.WriteLine("File Processed failed", fileName);
+                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "Y", "N", $"Something Went Wrong when Deserializing + {filePath}", ex.Message, ex.StackTrace, fileName);
+                        _errorLogService.LogError(ex, "GetTESTNEWKHATA");
+                        _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
+                        var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+
+                        if (!Directory.Exists(faileddestinationFolder))
+                        {
+                            Directory.CreateDirectory(faileddestinationFolder);
+                        }
+                        var faileddestinationPath = Path.Combine(faileddestinationFolder, filePath);
+                        System.IO.File.Move(filePath, faileddestinationPath);
+                        continue;
+                    }
+                    _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Recieved", "N", "N", $"{filePath}", "No exception", "Not an exception", fileName);
+                    List<KaveriData.EcData> ECdocumentDetails = new List<KaveriData.EcData>();
+                    KaveriData.EcData Dosc = new KaveriData.EcData();
+                    KaveriData.DocumentDetails documentDetails = new KaveriData.DocumentDetails();
+                    KaveriData.KaveriDocBase64 kaveriDocBase64 = new KaveriData.KaveriDocBase64();
+                    string KAVERIDOC_RESPONSE_ROWID = "";
+                    string fromdate = "";
+                    string toDate = "";
+                    byte[] ECbase64String1 = [];
+                    try
+                    {
+                        
+                        if (newkhatajson.KaveriDeedInformation.IsDeedBefore01042004 == false)
+                        {
+
+
+                            JObject Obj_Json = JObject.Parse(newkhatajson.KaveriECInformation.KaveriECInfoRawAPIResponseJSON.Replace("],,", "],").Replace(",}", "}"));
+                            string responseCode = (string)Obj_Json.SelectToken("responseCode")!;
+
+
+
+                            string responseMessage = (string)Obj_Json.SelectToken("responseMessage")!;
+
+                            if (responseMessage == "Sucess")
+                            {
+                                string base64String = (string)Obj_Json.SelectToken("json")!;
+                                 ECbase64String1 = (byte[])Obj_Json.SelectToken("base64")!;
+                                ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String)!;
+                                Dosc = ECdocumentDetails.OrderByDescending(x => x.ExecutionDate).FirstOrDefault();
+                                string responseRawContent = newkhatajson.KaveriECInformation.KaveriECInfoRawAPIResponseJSON.ToString();
+                                fromdate = responseRawContent.Substring(responseRawContent.IndexOf("fromDate", 0) + 11, 19);
+                                toDate = responseRawContent.Substring(responseRawContent.IndexOf("toDate", 0) + 9, 19);
+                            }
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("File Processed failed", fileName);
+                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize Kaveri EC json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
                         _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                         _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
                         var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
@@ -353,6 +362,39 @@ namespace BBMPCITZAPI.Controllers
                         System.IO.File.Move(filePath, faileddestinationPath);
                         continue;
                     }
+                    if (newkhatajson.KaveriDeedInformation.IsDeedBefore01042004 == false)
+                    {
+                        try
+                        {
+
+                            var response = JsonConvert.DeserializeObject<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>(newkhatajson.KaveriDeedInformation.KaveriDeedInfoRawAPIResponseJSON);
+                            documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
+                            kaveriDocBase64 = JsonConvert.DeserializeObject<KaveriData.KaveriDocBase64>(newkhatajson.KaveriDeedInformation.KaveriDeedDocumentbase64);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("File Processed failed", fileName);
+                            _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize Kaveri Deed json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
+                            _errorLogService.LogError(ex, "GetTESTNEWKHATA");
+                            _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
+                            var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+
+
+                            if (!Directory.Exists(faileddestinationFolder))
+                            {
+                                Directory.CreateDirectory(faileddestinationFolder);
+                            }
+
+
+                            var faileddestinationPath = Path.Combine(faileddestinationFolder, fileName);
+
+
+                            System.IO.File.Move(filePath, faileddestinationPath);
+                            continue;
+                        }
+                    }
+
                     var mainParameters = new List<EKYCDetailsBO>();
                     try
                     {
@@ -364,6 +406,7 @@ namespace BBMPCITZAPI.Controllers
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine("File Processed failed", fileName);
                         _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize EKYC json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
                         _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                         _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
@@ -383,143 +426,128 @@ namespace BBMPCITZAPI.Controllers
                         continue;
                     }
                     DataSet ids = _IBBMPBOOKMODULE.GENERATE_NEW_KHATA_PROPERTYCODE();
-                if (ids != null && ids.Tables.Count > 0 && ids.Tables[0].Rows.Count > 0)
-                {
-                    Int64 pr = Convert.ToInt64(ids.Tables[0].Rows[0]["PROPERTYCODE"]);
-                    Int64 bk = Convert.ToInt64(ids.Tables[0].Rows[0]["BOOKS_PROP_APPNO"]);
-                   
-
-
-
-
-
-                    int dataSet = _IBBMPBOOKMODULE.Insert_New_khata_details(newkhatajson, pr, bk, null, null, null, fromdate, toDate);
-                    if (dataSet == 1)
+                    if (ids != null && ids.Tables.Count > 0 && ids.Tables[0].Rows.Count > 0)
                     {
-                            _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber);
-                        var successdestinationFolder = @"E:\NewKhathaFiles\Successful";
-                        //if (newkhatajson.SASNo != "")
-                        //{
-                        //    bool istrue = obj.callAutoApproval(pr, newkhatajson.SASNo, newkhatajson.KRSId);
-                        //    string CertPath = @"D:\File\jcrevenue.pfx";
-                        //    string Password = "10031970";
-                        //    string signatureString = "";
-                        //    string subject = "";
-                        //    string CertExp = "";
-                        //    bool isExecutedWithOutError = false;
-                        //    PropertyDataXML prop = new PropertyDataXML();
-                        //    string proXML = prop.GetForm3XML(Convert.ToInt32(pr));
-                        //    DigitalSign(proXML, CertPath, Password, out signatureString, out subject, out CertExp);
-                        //    if (signatureString != "" && subject != "")
-                        //    {
-                        //        var bytes = Encoding.UTF8.GetBytes(proXML);
-                        //        var base64 = Convert.ToBase64String(bytes);
-                        //        string xml = Convert.ToString(base64);
+                        Int64 pr = Convert.ToInt64(ids.Tables[0].Rows[0]["PROPERTYCODE"]);
+                        Int64 bk = Convert.ToInt64(ids.Tables[0].Rows[0]["BOOKS_PROP_APPNO"]);
 
 
-                        //        // New Property Creation
-                        //          //    int apx = prop.ApproveProperty(pr.ToString(), "555", Convert.ToString(xml), signatureString, "", subject, "", newkhatajson.KRSId, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 
-                        //        //Re-Approval
-                        //        //int apx = obj.ReApproveNpmProperty(rowProp["PROPERTYCODE"].ToString(), "555", Convert.ToString(xml), signatureString, "", subject, "", "",
-                        //        //  "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-                        //        //   string bbmptaxXml = prop.GetBbmpTax(Convert.ToInt32(pr), CertPath, Password, "AutoApprooval");
-                        //        //  DigitalSign(bbmptaxXml, CertPath, Password, out signatureString, out subject, out CertExp);
-                        //        //BbmpTaxData obj = new BbmpTaxData();
-                        //        //NMT_BA objNmtBA = new NMT_BA();
-                        //        //NCL_BA objBA = new NCL_BA();
-                        //        //if (signatureString != "" && subject != "")
-                        //        //{
-                        //        //    var bytes1 = Encoding.UTF8.GetBytes(bbmptaxXml);
-                        //        //    var base641 = Convert.ToBase64String(bytes1);
-                        //        //    string xml1 = Convert.ToString(base641);
 
-                        //        //    obj.SIGNEDDATA = xml1;
-                        //        //    obj.SIGNATURE = signatureString;
-                        //        //    obj.SIGNEDBY = subject;
 
-                        //        //    objNmtBA.InsertNmtTax(obj);
 
-                        //        //}
-                        //        //else
-                        //        //{
-                        //        //    if (CertExp == "Y")
-                        //        //    {
-                        //        //        objBA.WS_CAL_INS(newkhatajson.EPID, "555", "AutoApprooval", "certificate expired");
-                        //        //    }
-                        //        //    else
-                        //        //    {
-                        //        //        objBA.WS_CAL_INS(newkhatajson.EPID, "555", "AutoApprooval", "signature not generated");
-                        //        //    }
-                        //        //}
-                        //       // GetBbmpTax(Convert.ToInt32(pr), CertPath, Password, "AutoApprooval",newkhatajson.EPID);
-                        //        isExecutedWithOutError = true;
-                        //    }
-                        //    if (isExecutedWithOutError == true)
-                        //    {
-                        //        propertyMatrix.MatrixCalculation("MAINTABLE", pr, bk);
-                        //    }
-                        // }
-                        if (!Directory.Exists(successdestinationFolder))
+                        int dataSet = _IBBMPBOOKMODULE.Insert_New_khata_details(newkhatajson, pr, bk, mainParameters, documentDetails, Dosc, fromdate, toDate,
+                            kaveriDocBase64.base64, ECbase64String1);
+
+
+
+
+                            
+                        if (dataSet == 1)
                         {
-                            Directory.CreateDirectory(successdestinationFolder);
-                        }
+                            Console.WriteLine("File Processed Sucessfully", fileName);
+                            if (newkhatajson.OverallRecommendation.StatusId == 8)
+                            {
+                                DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber, "N");
+                            }
 
-                          
-                          
+                            if (newkhatajson.SASNo != "" && newkhatajson.OverallRecommendation.StatusId == 10)
+                            {
+                                Console.WriteLine("Auto Approve Initiatied");
+                                DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber, "Y");
+                                bool istrue = obj.callAutoApproval(pr, newkhatajson.SASNo, Convert.ToInt64(workFlowId.Tables[0].Rows[0]["WORKFLOWID"])); //taskid
+                                string CertPath = @"E:\File\jcrevenue.pfx";
+                                string Password = "10031970";
+                                string signatureString = "";
+                                string subject = "";
+                                string CertExp = "";
+
+                                PropertyDataXML prop = new PropertyDataXML();
+                                string proXML = prop.GetForm3XML(Convert.ToInt32(pr));
+                                DigitalSign(proXML, CertPath, Password, out signatureString, out subject, out CertExp);
+                                if (signatureString != "" && subject != "")
+                                {
+                                    var bytes = Encoding.UTF8.GetBytes(proXML);
+                                    var base64 = Convert.ToBase64String(bytes);
+                                    string xml = Convert.ToString(base64);
+
+
+                                    // New Property Creation
+                                    int apx = prop.ApproveProperty(pr.ToString(), "555", Convert.ToString(xml), signatureString, "", subject, "", Convert.ToInt64(workFlowId.Tables[0].Rows[0]["WORKFLOWID"]), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+
+                                    GetBbmpTax(Convert.ToInt32(pr), CertPath, Password, "AutoApprooval", newkhatajson.EPID);
+                                    Console.WriteLine("Auto Approve Successfull", fileName);
+                                }
+                                //      if (isExecutedWithOutError == true)
+                                //      {
+                                //    propertyMatrix.MatrixCalculation("MAINTABLE", pr, bk);
+                                //    }
+                            }
+                            var successdestinationFolder = @"E:\NewKhathaFiles\Successful";
+                            if (!Directory.Exists(successdestinationFolder))
+                            {
+                                Directory.CreateDirectory(successdestinationFolder);
+                            }
+
+
+
                             var successdestinationPath = Path.Combine(successdestinationFolder, fileName);
 
 
-                        System.IO.File.Move(filePath, successdestinationPath);
-                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Success", "N", "N", $"Data Saved Successfully + {filePath}", "No Exception", "Not an exception", fileName);
+                            System.IO.File.Move(filePath, successdestinationPath);
+                            _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Success", "N", "N", $"Data Saved Successfully + {filePath}", "No Exception", "Not an exception", fileName);
                             continue;
                             //     return "Data Saved Successfully";
                         }
-                    else if (dataSet == 0)
-                    {
-                        //  var faileddestinationFolder = @"E:\New_Khata\Failed";
-                        var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
-                        // Ensure the destination folder exists
-                        if (!Directory.Exists(faileddestinationFolder))
+                        else if (dataSet == 0)
                         {
-                            Directory.CreateDirectory(faileddestinationFolder);
-                        }
-                    
+                            Console.WriteLine("File Processed failed", fileName);
+                            //  var faileddestinationFolder = @"E:\New_Khata\Failed";
+                            var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                            // Ensure the destination folder exists
+                            if (!Directory.Exists(faileddestinationFolder))
+                            {
+                                Directory.CreateDirectory(faileddestinationFolder);
+                            }
+
                             var faileddestinationPath = Path.Combine(faileddestinationFolder, fileName);
 
                             // Move the file to the destination folder
                             System.IO.File.Move(filePath, faileddestinationPath);
-                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "N", "Y", $"Something Went Wrong while Saving in SP.Please check the Table + {filePath}", "No Exception", "Not an exception", fileName);
+                            _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "N", "Y", $"Something Went Wrong while Saving in SP.Please check the Table + {filePath}", "No Exception", "Not an exception", fileName);
                             continue;
                             //   return "Something Went Wrong while Saving in SP.Please check the Table";
                         }
-                    else
-                    {
-                        //var faileddestinationFolder = @"E:\New_Khata\Failed";
-                        var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
-
-                        if (!Directory.Exists(faileddestinationFolder))
+                        else
                         {
-                            Directory.CreateDirectory(faileddestinationFolder);
-                        }
+                            Console.WriteLine("File Processed failed", fileName);
+                            //var faileddestinationFolder = @"E:\New_Khata\Failed";
+                            var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
 
-                          
+                            if (!Directory.Exists(faileddestinationFolder))
+                            {
+                                Directory.CreateDirectory(faileddestinationFolder);
+                            }
+
+
                             var faileddestinationPath = Path.Combine(faileddestinationFolder, fileName);
 
 
-                        System.IO.File.Move(filePath, faileddestinationPath);
-                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "N", "Y", $"Something Went Wrong while Saving in SP.Please check the Logs + {filePath}", "No Exception", "Not an exception", fileName);
+                            System.IO.File.Move(filePath, faileddestinationPath);
+                            _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "N", "Y", $"Something Went Wrong while Saving in SP.Please check the Logs + {filePath}", "No Exception", "Not an exception", fileName);
                             continue;
                             //    return "Something Went Wrong while Saving in SP.Please check the Logs";
                         }
 
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something Went Wrong While Generating PropertyCode and Book App NO ", fileName);
+                        _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "N", "Y", $"Something Went Wrong While Generating PropertyCode and Book App NO + {filePath}", "Something Went Wrong While Generating PropertyCode and Book App NO", "Not an exception", fileName);
+                        return;
+                    }
+
                 }
-                else
-                {
-                    _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "N", "Y", $"Something Went Wrong While Generating PropertyCode and Book App NO + {filePath}", "Something Went Wrong While Generating PropertyCode and Book App NO", "Not an exception", fileName);
-                    //   return "Something Went Wrong While Generating PropertyCode and Book App NO";
-                }
-            }
                 catch (Exception ex)
                 {
 
@@ -527,7 +555,7 @@ namespace BBMPCITZAPI.Controllers
                     _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
                     string fileName = Path.GetFileName(filePath);
                     var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
-
+                    Console.WriteLine("File Processed failed", fileName);
                     if (!Directory.Exists(faileddestinationFolder))
                     {
                         Directory.CreateDirectory(faileddestinationFolder);
@@ -538,18 +566,72 @@ namespace BBMPCITZAPI.Controllers
 
 
                     System.IO.File.Move(filePath, faileddestinationPath);
-                    _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("NO EPID", "Failed", "Y", "N", $"Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API  + {filePath}", ex.Message,ex.StackTrace, fileName);
+                    _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("NO EPID", "Failed", "Y", "N", $"Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API  + {filePath}", ex.Message, ex.StackTrace, fileName);
                     continue;
 
                 }
+
             }
-        
+            Console.WriteLine("All FILES PROCESSED!!");
             //  return "All Files Processed .No More Files";
 
-            
-}
 
-              public static void DigitalSign(string dataToSign, string certificatePath, string certificatePassword, out string signatureString, out string subject, out string CertExp)
+        }
+
+
+
+        [HttpGet("NEW_TO_APPROVE_DETAILS")]
+        public string GetTOAPPROVEDETAILS(string fileName, Int64 pr, string MobileNumber, string sasNo, string EPID,Int64 WorkFlowId)
+        {
+            try
+            {
+
+              //  DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, MobileNumber, "Y");
+                bool istrue = obj.callAutoApproval(pr, sasNo, WorkFlowId); //taskid
+                string CertPath = @"E:\File\jcrevenue.pfx";
+                string Password = "10031970";
+                string signatureString = "";
+                string subject = "";
+                string CertExp = "";
+
+                PropertyDataXML prop = new PropertyDataXML();
+                string proXML = prop.GetForm3XML(Convert.ToInt32(pr));
+                DigitalSign(proXML, CertPath, Password, out signatureString, out subject, out CertExp);
+                if (signatureString != "" && subject != "")
+                {
+                    var bytes = Encoding.UTF8.GetBytes(proXML);
+                    var base64 = Convert.ToBase64String(bytes);
+                    string xml = Convert.ToString(base64);
+
+
+                    // New Property Creation
+                    int apx = prop.ApproveProperty(pr.ToString(), "555", Convert.ToString(xml), signatureString, "", subject, "", WorkFlowId, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+
+                    GetBbmpTax(Convert.ToInt32(pr), CertPath, Password, "AutoApprooval", EPID);
+
+                }
+                _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(EPID, "Success", "N", "N", $"Data Approved Successfully ", "No Exception", "Not an exception", fileName);
+                return "File Approved Successfully";
+            }
+            catch (Exception ex)
+            {
+                _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(EPID, "Failed", "Y", "N", $"Error occurred while executing new khata react Approved stored procedure", ex.Message, ex.StackTrace, fileName);
+                _errorLogService.LogError(ex, "NEW_TO_APPROVE_DETAILS");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.NEW_TO_APPROVE_DETAILS");
+                throw ex;
+                //    return "Something Went Wrong while Saving in SP.Please check the Logs";
+            }
+        }
+
+
+    
+        
+        
+
+
+        
+
+        public static void DigitalSign(string dataToSign, string certificatePath, string certificatePassword, out string signatureString, out string subject, out string CertExp)
         {
 
             byte[] signature;

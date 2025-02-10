@@ -126,6 +126,12 @@
             public string responseMessage { get; set; }
             public string json { get; set; }
         }
+        public class KaveriDocBase64
+        {
+            public string responseCode { get; set; }
+            public string responseMessage { get; set; }
+            public byte[] base64 { get; set; }
+        }
 
         public class DocumentDetails
         {
