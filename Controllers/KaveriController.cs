@@ -603,7 +603,7 @@ namespace BBMPCITZAPI.Controllers
                         List<KaveriData.EcData> ECdocumentsOrdered1 = ECdocumentsOrdered
                          .Where(doc => DateTime.Parse(doc.ExecutionDate) > DateTime.Parse(ecRequest.RegisteredDateTime))
                          .ToList();
-                        if (ECdocumentsOrdered1.Count > 1)
+                        if (ECdocumentsOrdered1.Count > 0)
                         {
                             foreach (KaveriData.EcData objECDocument in ECdocumentsOrdered)
                             {
@@ -884,7 +884,7 @@ namespace BBMPCITZAPI.Controllers
                         List<KaveriData.EcData> ECdocumentsOrdered1 = ECdocumentsOrdered
                            .Where(doc => DateTime.Parse(doc.ExecutionDate) > DateTime.Parse(ecRequest.RegisteredDateTime)) 
                            .ToList();
-                        if (ECdocumentsOrdered1.Count > 1)
+                        if (ECdocumentsOrdered1.Count > 0)
                         {
                             foreach (KaveriData.EcData objECDocument in ECdocumentsOrdered1)
                             {

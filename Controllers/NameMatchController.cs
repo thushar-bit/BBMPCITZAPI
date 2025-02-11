@@ -263,8 +263,8 @@ namespace BBMPCITZAPI.Controllers
         {
 
             PropertyMatrixCalculation propertyMatrix = new PropertyMatrixCalculation();
-            var folderPath = @"E:\NewKhathaFiles\Inbox";
-
+         //   var folderPath = @"E:\NewKhathaFiles\Inbox";
+            var folderPath = _PropertyDetails.NewKhataReadingFiles;
             var jsonFiles = Directory.GetFiles(folderPath, "*.json");
             if (jsonFiles.Length == 0)
             {
@@ -295,7 +295,7 @@ namespace BBMPCITZAPI.Controllers
                         _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS("No EPID", "Failed", "Y", "N", $"Something Went Wrong when Deserializing + {filePath}", ex.Message, ex.StackTrace, fileName);
                         _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                         _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
-                        var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                        var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
 
                         if (!Directory.Exists(faileddestinationFolder))
                         {
@@ -347,7 +347,7 @@ namespace BBMPCITZAPI.Controllers
                         _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize Kaveri EC json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
                         _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                         _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
-                        var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                        var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
 
 
                         if (!Directory.Exists(faileddestinationFolder))
@@ -378,7 +378,7 @@ namespace BBMPCITZAPI.Controllers
                             _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize Kaveri Deed json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
                             _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                             _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
-                            var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                            var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
 
 
                             if (!Directory.Exists(faileddestinationFolder))
@@ -410,7 +410,7 @@ namespace BBMPCITZAPI.Controllers
                         _IBBMPBOOKMODULE.INS_NEW_KHATA_PROPERTY_API_STATUS(newkhatajson.EPID, "Failed", "Y", "N", $"Unable to Deserialize EKYC json .Please send correct json + {filePath}", ex.Message, ex.StackTrace, fileName);
                         _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                         _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
-                        var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                        var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
 
 
                         if (!Directory.Exists(faileddestinationFolder))
@@ -483,7 +483,7 @@ namespace BBMPCITZAPI.Controllers
                                 //    propertyMatrix.MatrixCalculation("MAINTABLE", pr, bk);
                                 //    }
                             }
-                            var successdestinationFolder = @"E:\NewKhathaFiles\Successful";
+                            var successdestinationFolder = _PropertyDetails.NewKhataSucessFilesPath;
                             if (!Directory.Exists(successdestinationFolder))
                             {
                                 Directory.CreateDirectory(successdestinationFolder);
@@ -503,7 +503,7 @@ namespace BBMPCITZAPI.Controllers
                         {
                             Console.WriteLine("File Processed failed", fileName);
                             //  var faileddestinationFolder = @"E:\New_Khata\Failed";
-                            var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                            var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
                             // Ensure the destination folder exists
                             if (!Directory.Exists(faileddestinationFolder))
                             {
@@ -522,7 +522,7 @@ namespace BBMPCITZAPI.Controllers
                         {
                             Console.WriteLine("File Processed failed", fileName);
                             //var faileddestinationFolder = @"E:\New_Khata\Failed";
-                            var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                            var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
 
                             if (!Directory.Exists(faileddestinationFolder))
                             {
@@ -554,7 +554,7 @@ namespace BBMPCITZAPI.Controllers
                     _errorLogService.LogError(ex, "GetTESTNEWKHATA");
                     _logger.LogError(ex, "Error occurred while executing stored procedure.GET_NEW_KHATA_DETAILS_REACT_API");
                     string fileName = Path.GetFileName(filePath);
-                    var faileddestinationFolder = @"E:\NewKhathaFiles\Failed";
+                    var faileddestinationFolder = _PropertyDetails.NewKhataFailedFiles;
                     Console.WriteLine("File Processed failed", fileName);
                     if (!Directory.Exists(faileddestinationFolder))
                     {

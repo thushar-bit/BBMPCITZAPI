@@ -32,6 +32,9 @@
         public string PROPERTYCODE { get; set; }
         public string PROPERTYID { get; set; }
         public string NameMatchURL { get; set; }    
+        public string   NewKhataReadingFiles {get; set; }
+        public string NewKhataSucessFilesPath { get; set; }
+        public string NewKhataFailedFiles { get; set; }
     }
     public class ESignSettings
     {
