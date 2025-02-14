@@ -2191,6 +2191,7 @@ namespace BBMPCITZAPI.Services
              new OracleParameter("eaasthiWardId", OracleDbType.Varchar2) { Value = newkhata.PropertyDetails.EaasthiWardId },
               new OracleParameter("eaasthiStreetId", OracleDbType.Varchar2) { Value = newkhata.PropertyDetails.EaasthiStreetId },
                 new OracleParameter("P_SASNO", OracleDbType.Varchar2) { Value = newkhata.SASNo },
+                new OracleParameter("P_ASSESMENTNO",OracleDbType.Varchar2) {Value = newkhata.PropertyAddress.DoorOrPlotNo}
         }
     };
             parametersMap.Add(procedures[0], mainParameters);

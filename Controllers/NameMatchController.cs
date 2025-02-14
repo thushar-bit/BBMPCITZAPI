@@ -368,7 +368,7 @@ namespace BBMPCITZAPI.Controllers
                         {
 
                             var response = JsonConvert.DeserializeObject<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>(newkhatajson.KaveriDeedInformation.KaveriDeedInfoRawAPIResponseJSON);
-                            documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
+                            documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json == "null" ? "Deed JSON is NULL" : response.json);
                             kaveriDocBase64 = JsonConvert.DeserializeObject<KaveriData.KaveriDocBase64>(newkhatajson.KaveriDeedInformation.KaveriDeedDocumentbase64);
 
                         }
@@ -393,6 +393,7 @@ namespace BBMPCITZAPI.Controllers
                             System.IO.File.Move(filePath, faileddestinationPath);
                             continue;
                         }
+
                     }
 
                     var mainParameters = new List<EKYCDetailsBO>();

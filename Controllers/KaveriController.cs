@@ -173,7 +173,7 @@ namespace BBMPCITZAPI.Controllers
             }
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpPost("GetKaveriDocData")]
         public async Task<IActionResult> GetKaveriDocData( string RegistrationNoNumber, string BOOKS_APP_NO, string PropertyCode, string LoginId)
         {
