@@ -77,9 +77,10 @@ namespace BBMPCITZAPI.Controllers
                     {
                 new Claim(ClaimTypes.Name, username)
                     }),
-                    Expires = DateTime.UtcNow.AddHours(1),
+                    Expires = DateTime.UtcNow.AddSeconds(45),
                     Issuer = _issuer,
                     Audience = _audience,
+                    
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -90,22 +91,23 @@ namespace BBMPCITZAPI.Controllers
 
 
         [HttpPost("CitizenLogin")]
-        public IActionResult CitizenLogin(string userId, string password, bool isOtpGenerated)
+        public async Task<IActionResult> CitizenLogin(string userId, string password, bool isOtpGenerated)
         {
             try
             {
                 if (isOtpGenerated)
                 {
-                    var dsUserDetails = Citz.getUserdata(userId);
-                    if (dsUserDetails != null && dsUserDetails.Tables.Count > 0 && dsUserDetails.Tables[0].Rows.Count > 0)
-                    {
-                        var token = _tokenService.GenerateToken(userId);
+                    //var dsUserDetails = Citz.getUserdata(userId);
+                    //if (dsUserDetails != null && dsUserDetails.Tables.Count > 0 && dsUserDetails.Tables[0].Rows.Count > 0)
+                    //{
+
+                        var token = _tokenService.GenerateToken(password);
                         return Ok(new { Token = token });
-                    }
-                    else
-                    {
-                        return Ok(false);
-                    }
+                   // }
+                  //  else
+                  //  {
+                  //      return Ok(false);
+                  //  }
                 }
                 else
                 {

@@ -27,9 +27,10 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.Zero,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
     };
 });
 // Add services to the container.
@@ -55,6 +56,7 @@ builder.Services.AddSwaggerGen(options =>
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
         Description = "Enter your valid token in the text input below.\r\n\r\nExample: \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+        
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -85,6 +87,8 @@ builder.Services.AddScoped<IObjectionService, ObjectionService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<INameMatchingService, NameMatchingService>();
 builder.Services.AddScoped<IMutationObjectionService, MutationObjectionService>();
+builder.Services.AddScoped<IAmalgamationService, AmalgamationService>();
+
 builder.Services.AddScoped<IErrorLogService, ErrorLoggingService>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // Read configuration from appsettings.json

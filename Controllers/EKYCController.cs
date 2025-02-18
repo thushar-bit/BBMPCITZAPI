@@ -32,9 +32,10 @@ namespace BBMPCITZAPI.Controllers
         private readonly IErrorLogService _errorLogService;
         private readonly IObjectionService _ObjectionService;
         private readonly IMutationObjectionService _MutationService;
+        private readonly IAmalgamationService _amalgamationService;
 
         public EKYCController(ILogger<EKYCController> logger,  IOptions<EKYCSettings> ekycSettings, IErrorLogService errorLogService,
-            IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS, IObjectionService ObjectionService,IMutationObjectionService mutationObjection)
+            IOptions<BBMPSMSSETTINGS> BBMPSMSSETTINGS, IObjectionService ObjectionService,IMutationObjectionService mutationObjection,IAmalgamationService amalgamationService)
         {
             _logger = logger;
             _ekycSettings = ekycSettings.Value;
@@ -42,6 +43,7 @@ namespace BBMPCITZAPI.Controllers
             _errorLogService = errorLogService;
             _ObjectionService = ObjectionService;
             _MutationService = mutationObjection;
+            _amalgamationService = amalgamationService;
         }
 
         //[Authorize]
@@ -132,6 +134,35 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("INS_NCL_MUTATION_AMALGAMATION_MAIN")]
+        public async Task<string> INS_NCL_MUTATION_AMALGAMATION_MAIN()
+        {
+            _logger.LogInformation("GET request received at INS_NCL_MUTATION_AMALGAMATION_MAIN");
+            try
+            {
+
+                var dataSet = _amalgamationService.INS_NCL_MUTATION_AMALGAMATION_MAIN();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                long AmalgamationMutationId = 0;
+
+                if (dataSet.Tables.Count > 0 &&
+                    dataSet.Tables[0].Rows.Count > 0 &&
+                    dataSet.Tables[0].Columns.Contains("AMAL_APPL_ID") &&
+                    dataSet.Tables[0].Rows[0]["AMAL_APPL_ID"] != DBNull.Value)
+                {
+                    AmalgamationMutationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["AMAL_APPL_ID"]);
+                }
+
+                string json1 = await GetEKYCRequest(1, AmalgamationMutationId, 10, "Amalgamation");
+                return json1;
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_NCL_MUTATION_AMALGAMATION_MAIN");
+                _logger.LogError(ex, "Error occurred while executing stored procedure INS_NCL_MUTATION_AMALGAMATION_MAIN.");
+                throw;
+            }
+        }
 
         [HttpPost("RequestEKYC")]
         public async Task<string> GetEKYCRequest(int OwnerNumber,long BOOK_APP_NO,long PROPERTY_CODE,string Page)
@@ -162,6 +193,10 @@ namespace BBMPCITZAPI.Controllers
                 else if(Page == "Objection_Mutation")
                 {
                     EKYCResponseRedirectURL = _ekycSettings.EKYCResponseMutationObjectionRedirectURL!;
+                }
+                else if(Page == "Amalgamation")
+                {
+                    EKYCResponseRedirectURL = _ekycSettings.EKYCResponseAmalgamationRedirectURL!;
                 }
                 if (EKYCApplnCode == "81")
 

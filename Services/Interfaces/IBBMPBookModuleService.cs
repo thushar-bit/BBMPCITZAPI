@@ -99,6 +99,7 @@ namespace BBMPCITZAPI.Services.Interfaces
         public string GetIPAddress();
         public DataSet GET_Final_eKhatha_Status_Based_on_ePID(string PropertyEpid);
         public DataSet GENERATE_NEW_KHATA_PROPERTYCODE();
+        public DataSet GET_NEW_KHATA_REPORT();
         public DataSet GenarateWORKFLOWID(Int64 propertyepid,string createdby, string isAutoWorkflow);
 
         public int INS_NEW_KHATA_PROPERTY_API_STATUS(string propetyId, string status, string isException, string isSp_error, string failedReason, string exceptionMessage,string ExceptionStackTrace, string fileName);

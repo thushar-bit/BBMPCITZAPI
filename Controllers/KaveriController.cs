@@ -27,6 +27,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BBMPCITZAPI.Controllers
 {
+    [Authorize]
     [Route("v1/KaveriAPI")]
     [ApiController]
    

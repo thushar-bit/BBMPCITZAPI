@@ -1,6 +1,7 @@
 ﻿using BBMPCITZAPI.Models;
 using BBMPCITZAPI.Services;
 using BBMPCITZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,7 @@ namespace BBMPCITZAPI.Controllers
 {
     [Route("v1/SearchAPI")]
     [ApiController]
-
+    [Authorize]
     public class SearchController : ControllerBase
     {
 

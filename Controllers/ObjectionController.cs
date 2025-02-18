@@ -25,7 +25,7 @@ namespace BBMPCITZAPI.Controllers
 {
     [Route("v1/ObjectionAPI")]
     [ApiController]
-
+    [Authorize]
     public class ObjectionController : ControllerBase
     {
 

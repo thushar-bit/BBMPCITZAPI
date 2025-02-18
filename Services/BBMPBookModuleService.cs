@@ -2078,6 +2078,23 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
+        public DataSet GET_NEW_KHATA_REPORT()
+        {
+            string sp_name = "NEW_KHATA_DETAILS.GET_NEW_KHATA_REPORT";
+            OracleParameter[] prm = new OracleParameter[] {
+
+              new OracleParameter("C_RECORD",OracleDbType.RefCursor,ParameterDirection.Output)
+            };
+
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
         public DataSet GenarateWORKFLOWID(Int64 propertyepid, string createdby,string isAutoWorkflow)
         {
             string sp_name = "NEW_KHATA_DETAILS.WORKFLOW_GENERATION";

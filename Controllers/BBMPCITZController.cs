@@ -17,7 +17,7 @@ using NUPMS_BA;
 namespace BBMPCITZAPI.Controllers
 {
     [ApiController]
-   // [Authorize]
+    [Authorize]
     [Route("v1/BBMPCITZAPI")]
     public class BBMPCITZController : ControllerBase
     {

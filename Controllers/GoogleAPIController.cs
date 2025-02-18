@@ -6,11 +6,13 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;
 using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BBMPCITZAPI.Controllers
 {
     [Route("v1/GoogleAPI")]
     [ApiController]
+    [Authorize]
     public class GoogleAPIController : ControllerBase
     {
         private readonly ILogger<BBMPCITZController> _logger;

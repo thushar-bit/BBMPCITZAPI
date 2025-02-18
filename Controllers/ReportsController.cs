@@ -4,7 +4,7 @@ using BBMPCITZAPI.Services;
 using BBMPCITZAPI.Services.Interfaces;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Options;
@@ -29,7 +29,7 @@ using System.Xml;
 namespace BBMPCITZAPI.Controllers
 {
     [ApiController]
-    //Authorize]
+    [Authorize]
     [Route("v1/Report")]
     public class ReportsController : ControllerBase
     {
@@ -2137,6 +2137,25 @@ namespace BBMPCITZAPI.Controllers
 
                 _logger.LogError(ex, "Error occurred while retrieving GET_Final_eKhatha_Status_Based_on_ePID");
                 _errorLogService.LogError(ex, "GET_Final_eKhatha_Status_Based_on_ePID");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GET_NEW_KHATA_REPORT")]
+        public ActionResult<DataSet> GET_NEW_KHATA_REPORT()
+        {
+            try
+            {
+                DataSet dataSet = _BBMPBookService.GET_NEW_KHATA_REPORT();
+                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
+                return Ok(json);
+            }
+
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+
+                _logger.LogError(ex, "Error occurred while retrieving GET_NEW_KHATA_REPORT");
+                _errorLogService.LogError(ex, "GET_NEW_KHATA_REPORT");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
