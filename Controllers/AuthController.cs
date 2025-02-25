@@ -77,7 +77,7 @@ namespace BBMPCITZAPI.Controllers
                     {
                 new Claim(ClaimTypes.Name, username)
                     }),
-                    Expires = DateTime.UtcNow.AddSeconds(45),
+                    Expires = DateTime.UtcNow.AddMinutes(5),
                     Issuer = _issuer,
                     Audience = _audience,
                     

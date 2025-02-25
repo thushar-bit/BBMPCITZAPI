@@ -135,25 +135,14 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("INS_NCL_MUTATION_AMALGAMATION_MAIN")]
-        public async Task<string> INS_NCL_MUTATION_AMALGAMATION_MAIN()
+        public async Task<string> INS_NCL_MUTATION_AMALGAMATION_MAIN(Int64 mutationApplicationId)
         {
             _logger.LogInformation("GET request received at INS_NCL_MUTATION_AMALGAMATION_MAIN");
             try
             {
 
-                var dataSet = _amalgamationService.INS_NCL_MUTATION_AMALGAMATION_MAIN();
-                string json = JsonConvert.SerializeObject(dataSet, Newtonsoft.Json.Formatting.Indented);
-                long AmalgamationMutationId = 0;
-
-                if (dataSet.Tables.Count > 0 &&
-                    dataSet.Tables[0].Rows.Count > 0 &&
-                    dataSet.Tables[0].Columns.Contains("AMAL_APPL_ID") &&
-                    dataSet.Tables[0].Rows[0]["AMAL_APPL_ID"] != DBNull.Value)
-                {
-                    AmalgamationMutationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["AMAL_APPL_ID"]);
-                }
-
-                string json1 = await GetEKYCRequest(1, AmalgamationMutationId, 10, "Amalgamation");
+              
+                string json1 = await GetEKYCRequest(1, mutationApplicationId, 10, "Amalgamation");
                 return json1;
             }
             catch (Exception ex)

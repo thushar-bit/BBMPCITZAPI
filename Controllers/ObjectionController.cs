@@ -298,6 +298,24 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL")]
+        public ActionResult<int> NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL(Models.NCLPropIdentification NCLPropID)
+        {
+            _logger.LogInformation("GET request received at NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
+            try
+            {
+                int dataSet = _ObjectionService.NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL(NCLPropID);
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
+                _logger.LogError(ex, "Error occurred while executing stored procedure.NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
+                throw;
+            }
+        }
         [HttpPost("INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT")]
         public ActionResult<DataSet> INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT(INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT final)
         {
@@ -317,24 +335,7 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL")]
-        public ActionResult<int> NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL(Models.NCLPropIdentification NCLPropID)
-        {
-            _logger.LogInformation("GET request received at NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
-            try
-            {
-                int dataSet = _ObjectionService.NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL(NCLPropID);
-                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-
-                return Ok(json);
-            }
-            catch (Exception ex)
-            {
-                _errorLogService.LogError(ex, "NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
-                _logger.LogError(ex, "Error occurred while executing stored procedure.NCL_PROPERTY_OBJECTION_DOCUMENT_TEMP_DEL");
-                throw;
-            }
-        }
+       
        
 
        

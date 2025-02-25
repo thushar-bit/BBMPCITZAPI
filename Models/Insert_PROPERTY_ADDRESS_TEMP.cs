@@ -282,5 +282,6 @@
         public string? CREATEDIP { get; set; }
         public long? P_BOOKS_PROP_APPNO { get; set; }
     }
+    
 
 }
