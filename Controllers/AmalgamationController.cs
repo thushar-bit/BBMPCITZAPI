@@ -248,8 +248,8 @@ namespace BBMPCITZAPI.Controllers
                     objMAIN.UPDATEDBY = AmalFinal.LoginId;
                     objMAIN.APPLICATIONSTATUS = "REC";
                     objNWF.ULBCODE = AmalFinal.UlbCode;
-                    objNWF.ULBCODETYPEID = 5;
-                    objNWF.TRANTYPEID = 6;
+                    objNWF.ULBCODETYPEID = 7;
+                    objNWF.TRANTYPEID = 5;
                     objNWF.PROPERTYCODE = int.Parse(ds.Tables[0].Rows[0]["PROPERTYCODE"].ToString());
                     int propertyCode = int.Parse(ds.Tables[0].Rows[0]["PROPERTYCODE"].ToString());
                     var REQ = objBA.REC_MUTATION_APPL(propertyCode, AmalFinal.UlbCode, Convert.ToInt64(AmalFinal.MUTAPPLID), objNWF, objMAIN);

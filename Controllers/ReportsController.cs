@@ -41,8 +41,11 @@ namespace BBMPCITZAPI.Controllers
         private readonly IObjectionService _ObjectionService;
         private readonly IMutationObjectionService _MutationService;
         private readonly IErrorLogService _errorLogService;
+        private readonly IAmalgamationService _amalgamationService;
         public ReportsController(ILogger<ReportsController> logger, IConfiguration configuration, IOptions<ESignSettings> eSignSettings, INameMatchingService NameMatchService, IErrorLogService errorLogService,
-           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService,ISearchService searchService, IMutationObjectionService mutationObjection)
+           IBBMPBookModuleService BBMPBookService, IObjectionService objectionService,ISearchService searchService, IMutationObjectionService mutationObjection,
+            IAmalgamationService amalgamationService
+            )
         {
             _logger = logger;
             _Esign = eSignSettings.Value;
@@ -52,6 +55,7 @@ namespace BBMPCITZAPI.Controllers
             _ObjectionService = objectionService;
             _SearchService = searchService;
             _MutationService = mutationObjection;
+            _amalgamationService = amalgamationService;
         }
 
         NUPMS_BA.ObjectionModuleBA objModule = new NUPMS_BA.ObjectionModuleBA();
@@ -2037,8 +2041,8 @@ namespace BBMPCITZAPI.Controllers
             }
             catch (Exception ex)
             {
-                _errorLogService.LogError(ex, "ObjectorsAcknowledgement");
-                _logger.LogError(ex, "Error ObjectorsAcknowledgement function the report.");
+                _errorLogService.LogError(ex, "GetFinalSearchAcknowledgementReport");
+                _logger.LogError(ex, "Error GetFinalSearchAcknowledgementReport function the report.");
                 throw;
             }
         }
@@ -2390,6 +2394,95 @@ namespace BBMPCITZAPI.Controllers
                 throw;
             }
         }
+
+        [HttpGet("GetFinalAmalgamationAcknowledgementReport")]
+        public IActionResult GetFinalAmalgamationAcknowledgementReport(int MuttationApplicationId)
+        {
+            try
+            {
+                string Date = DateTime.Now.ToShortDateString();
+
+                DataSet dsReportData = _amalgamationService.SEL_CitzAmalgamationAck(Convert.ToInt32(MuttationApplicationId));
+                LocalReport report = new LocalReport
+                {
+                    EnableExternalImages = true,
+                    ReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "CitzAmalgamationPropertyAck.rdlc")
+                };
+
+
+                report.DataSources.Clear();
+
+                string SASNO = "";
+                SASNO = dsReportData.Tables[0].Rows.Count > 0 && dsReportData.Tables[0].Rows[0]["SASAPPLICATIONNO"] != DBNull.Value
+     ? Convert.ToString(dsReportData.Tables[0].Rows[0]["SASAPPLICATIONNO"])
+     : string.Empty;
+
+
+                // Set up parameters
+
+                ReportParameter[] param = new ReportParameter[8];
+
+                param[0] = new ReportParameter("P_BOOKS_PROP_APPNO", "A-" + Convert.ToString(MuttationApplicationId));
+                param[1] = new ReportParameter("P_Hname", "Property Amalgamation Request");
+                param[2] = new ReportParameter("P_LANGUAGE", "0");
+                param[3] = new ReportParameter("P_ZONENAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["ZONENAME"]));
+                param[4] = new ReportParameter("P_WARD_NAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARD_NAME"]));
+                param[5] = new ReportParameter("P_WARD_NUMBER", Convert.ToString(dsReportData.Tables[0].Rows[0]["WARDNUMBER"]));
+                param[6] = new ReportParameter("P_APPLICANTNAME", Convert.ToString(dsReportData.Tables[0].Rows[0]["APPLICANTNAME"]));
+                param[7] = new ReportParameter("P_SASAPPLICATIONNUMBER", SASNO);
+
+
+
+                DataTable ds = new DataTable();
+                report.DataSources.Add(new ReportDataSource("DataSet1", ds));
+                report.DataSources.Add(new ReportDataSource("PropSite", ds));
+                report.DataSources.Add(new ReportDataSource("PropPhoto", ds));
+                report.DataSources.Add(new ReportDataSource("PropDimention", ds));
+                report.DataSources.Add(new ReportDataSource("PropCoordinates", ds));
+                report.DataSources.Add(new ReportDataSource("OwnerDet", ds));
+                report.DataSources.Add(new ReportDataSource("Rights", ds));
+                report.DataSources.Add(new ReportDataSource("DocsToUpl", ds));
+                report.DataSources.Add(new ReportDataSource("Apartment", ds));
+                report.DataSources.Add(new ReportDataSource("Kattada", ds));
+                report.DataSources.Add(new ReportDataSource("PropSurvey", ds));
+                report.DataSources.Add(new ReportDataSource("Liabilities", ds));
+                report.DataSources.Add(new ReportDataSource("MOBuilding", ds));
+                report.SetParameters(param);
+                report.Refresh();
+                string reportType = "PDF";
+                string mimeType;
+                string encoding;
+                string deviceInfo = "<DeviceInfo>" +
+                   "  <OutputFormat>PDF</OutputFormat>" +
+                   "  <PageWidth>8.90in</PageWidth>" +
+                   "  <PageHeight>10.69in</PageHeight>" +
+                   "  <MarginTop>0.2in</MarginTop>" +
+                   "  <MarginLeft>0.2in</MarginLeft>" +
+                   "  <MarginRight>0.2in</MarginRight>" +
+                   "  <MarginBottom>0.2in</MarginBottom>" +
+                   "</DeviceInfo>";
+
+                Warning[] warnings;
+                string[] streamIds;
+                string extension = string.Empty;
+                byte[] bytes = report.Render(reportType, deviceInfo, out mimeType, out encoding, out extension, out streamIds, out warnings);
+                string fileName = String.Empty;
+                fileName = "Amalgamation Request Acknowledgement";
+                return File(bytes, mimeType, "Amalgamation Request Acknowledgement.pdf");
+                // return bytes;
+
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "GetFinalAmalgamationAcknowledgementReport");
+                _logger.LogError(ex, "Error GetFinalAmalgamationAcknowledgementReport function the report.");
+                throw;
+            }
+        }
+
+
+
+
     }
 }
 

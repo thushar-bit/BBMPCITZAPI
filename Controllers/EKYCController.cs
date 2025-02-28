@@ -135,14 +135,14 @@ namespace BBMPCITZAPI.Controllers
             }
         }
         [HttpPost("INS_NCL_MUTATION_AMALGAMATION_MAIN")]
-        public async Task<string> INS_NCL_MUTATION_AMALGAMATION_MAIN(Int64 mutationApplicationId)
+        public async Task<string> INS_NCL_MUTATION_AMALGAMATION_MAIN()
         {
             _logger.LogInformation("GET request received at INS_NCL_MUTATION_AMALGAMATION_MAIN");
             try
             {
 
               
-                string json1 = await GetEKYCRequest(1, mutationApplicationId, 10, "Amalgamation");
+                string json1 = await GetEKYCRequest(1, 1, 10, "Amalgamation");
                 return json1;
             }
             catch (Exception ex)

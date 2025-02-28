@@ -21,5 +21,6 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet NCL_AMALGAMATION_DOCUMENTS_TEMP_INS(int ID_BASIC_PROPERTY, Models.NCLPropIdentification NCLPropID);
 
         public int REC_MUTATION_APPL(Int64 PROPERTYCODE, int ULBCODE, Int64 MUTAPPLID, NWFTaskFlow objNWF, NMT_APPL_MAIN objMAIN);
+        public DataSet SEL_CitzAmalgamationAck(int AmalgamationId);
     }
 }

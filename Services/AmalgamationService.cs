@@ -455,7 +455,27 @@ namespace BBMPCITZAPI.Services
             prm[8].Value = objMAIN.APPLICATIONNO;
             return _databaseService.ExecuteNonQuery(sp_name, prm);
         }
+        public DataSet SEL_CitzAmalgamationAck(int AmalgamationId)
+        {
+            try
+            {
+                string sp_name = "AMALGAMATION_REACT.SEL_CitzAmalAcknowledgement";
+                OracleParameter[] prm = new OracleParameter[]
+                {
+                new OracleParameter("P_AMAL_MUT_REQ_ID", OracleDbType.Int64, ParameterDirection.Input),
+                new OracleParameter("C_RECORD", OracleDbType.RefCursor, ParameterDirection.Output),
 
-
+                };
+                prm[0].Value = AmalgamationId;
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while executing AMALGAMATION_REACT.SEL_CitzAmalgamationAck stored procedure.");
+                throw;
+            }
         }
+
+
+    }
 }
