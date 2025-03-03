@@ -2148,7 +2148,7 @@ namespace BBMPCITZAPI.Services
                 throw Ex;
             }
         }
-        public int Insert_New_khata_details(newkhatadetails newkhata, Int64 propertycode, Int64 books_app_no, List<NUPMS_BO.EKYCDetailsBO> mainParameters1, KaveriData.DocumentDetails documentDetails,
+        public int Insert_New_khata_details(newkhatadetails newkhata, Int64 propertycode, List<NUPMS_BO.EKYCDetailsBO> mainParameters1, KaveriData.DocumentDetails documentDetails,
             KaveriData.EcData ECdocumentDetails, string fromdate, string todate, byte[] DeedAfter2004Base64, byte[] ECAfter2004Base64)
         {
 
@@ -2187,7 +2187,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+           
             new OracleParameter("P_KRSId", OracleDbType.Int64) { Value = newkhata.KRSId },
             new OracleParameter("P_EPID", OracleDbType.Varchar2) { Value = newkhata.EPID },
             new OracleParameter("P_KhataType", OracleDbType.Varchar2) { Value = newkhata.KhataType },
@@ -2218,7 +2218,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
              new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+           
             new OracleParameter("P_SASNo", OracleDbType.Varchar2) { Value = newkhata.SASNo },
               new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber }
         }
@@ -2230,7 +2230,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
           new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
             new OracleParameter("P_PropertyPhotoBase64", OracleDbType.Blob) { Value = newkhata.PropertyDetails.PropertyPhotoBase64 },
               new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber }
         }
@@ -2242,7 +2242,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+          
             new OracleParameter("P_DoorOrPlotNo", OracleDbType.Varchar2) { Value = newkhata.PropertyAddress.DoorOrPlotNo },
              new OracleParameter("P_BuildingOrLand", OracleDbType.Varchar2) { Value = newkhata.PropertyAddress.BuildingOrLand },
               new OracleParameter("P_LandMark", OracleDbType.Varchar2) { Value = newkhata.PropertyAddress.LandMark },
@@ -2260,7 +2260,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
              new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+         
             new OracleParameter("P_Latitude", OracleDbType.Varchar2) { Value = newkhata.PropertyAddress.Latitude },
               new OracleParameter("P_Longitude", OracleDbType.Varchar2) { Value = newkhata.PropertyAddress.Longitude },
                 new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
@@ -2274,7 +2274,7 @@ namespace BBMPCITZAPI.Services
                 identificationParameters.Add(new OracleParameter[]
                 {
                      new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+          
             new OracleParameter("P_MasterDocumentId", OracleDbType.Int32) { Value = identification.EasthiDocumentId },
             new OracleParameter("P_MasterDocumentText", OracleDbType.Varchar2) { Value = identification.MasterDocumentText },
             new OracleParameter("P_MasterSubDocumentId", OracleDbType.Int32) { Value = identification.EasthiMasterSubDocumentId },
@@ -2292,7 +2292,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+         
             new OracleParameter("P_MasterDocumentId", OracleDbType.Int32) { Value = 34 }, //EC Before 2004
             new OracleParameter("P_MasterDocumentText", OracleDbType.Varchar2) { Value = newkhata.KaveriECInformation.DeedNumber },
             new OracleParameter("P_MasterSubDocumentId", OracleDbType.Int32) { Value = 0 },
@@ -2303,7 +2303,7 @@ namespace BBMPCITZAPI.Services
          new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+           
             new OracleParameter("P_MasterDocumentId", OracleDbType.Int32) { Value = 270 }, //DEED BEfore 2004
             new OracleParameter("P_MasterDocumentText", OracleDbType.Varchar2) { Value = newkhata.KaveriDeedInformation.DeedNumber },
             new OracleParameter("P_MasterSubDocumentId", OracleDbType.Int32) { Value = 0 },
@@ -2323,7 +2323,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+          
             new OracleParameter("P_MasterDocumentId", OracleDbType.Int32) { Value = 34 }, //EC After 2004
             new OracleParameter("P_MasterDocumentText", OracleDbType.Varchar2) { Value = newkhata.KaveriECInformation.DeedNumber },
             new OracleParameter("P_MasterSubDocumentId", OracleDbType.Int32) { Value = 0 },
@@ -2334,7 +2334,7 @@ namespace BBMPCITZAPI.Services
          new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+        
             new OracleParameter("P_MasterDocumentId", OracleDbType.Int32) { Value = 270 }, //EC After 2004
             new OracleParameter("P_MasterDocumentText", OracleDbType.Varchar2) { Value = newkhata.KaveriDeedInformation.DeedNumber },
             new OracleParameter("P_MasterSubDocumentId", OracleDbType.Int32) { Value = 0 },
@@ -2355,7 +2355,7 @@ namespace BBMPCITZAPI.Services
                     BescomParameters.Add(new OracleParameter[]
                             {
                              new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+        
             new OracleParameter("P_MeterNo", OracleDbType.Varchar2) { Value = bescomdetails.MeterNo },
             new OracleParameter("P_EscomName", OracleDbType.Varchar2) { Value = bescomdetails.EscomName  },
             new OracleParameter("P_AccountId", OracleDbType.Varchar2) { Value = bescomdetails.AccountId },
@@ -2376,7 +2376,7 @@ namespace BBMPCITZAPI.Services
                 ownerParameters.Add(new OracleParameter[]
                         {
            new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+        
             new OracleParameter("P_EKYCJSON", OracleDbType.Clob) { Value = newkhata.OwnerData[i].EKYCJSON },
              new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
               new OracleParameter("P_OWNERNAME", OracleDbType.Varchar2) { Value = newkhata.OwnerData[i].OwnerName },
@@ -2407,7 +2407,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                new OracleParameter("P_REGISTRATIONNUMBER", OracleDbType.Varchar2) { Value = newkhata.KaveriDeedInformation.DeedNumber },
                 new OracleParameter("P_KaveriDeedInfoRawAPIResponseJSON", OracleDbType.Clob) { Value = newkhata.KaveriDeedInformation.KaveriDeedInfoRawAPIResponseJSON },
                  new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
@@ -2425,7 +2425,7 @@ namespace BBMPCITZAPI.Services
                     kaveriDocPROPERTYDETAILSParameters.Add(new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
             new OracleParameter("P_REGISTRATIONNUMBER", OracleDbType.Varchar2) { Value = newkhata.KaveriDeedInformation.DeedNumber },
             new OracleParameter("P_PROPERTYID", OracleDbType.Varchar2) { Value = newkhata.EPID },
@@ -2450,7 +2450,7 @@ namespace BBMPCITZAPI.Services
                     kaveriDocPARTIESParameters.Add(new OracleParameter[]
     {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
                 new OracleParameter("P_REGISTRATIONNUMBER", OracleDbType.Clob) { Value = newkhata.KaveriDeedInformation.MainDeedNumber },
                  new OracleParameter("P_PARTYNAME", OracleDbType.Varchar2) { Value = documentDetails.partyinfo[i].partyname },
@@ -2473,7 +2473,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                 new OracleParameter("P_ECNUMBER", OracleDbType.Varchar2) { Value = newkhata.KaveriECInformation.EncumbranceCertificate },
                  new OracleParameter("P_KaveriECInfoRawAPIResponseJSON", OracleDbType.Clob) { Value = newkhata.KaveriECInformation.KaveriECInfoRawAPIResponseJSON },
                  new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
@@ -2492,7 +2492,7 @@ namespace BBMPCITZAPI.Services
                         kaveriECClaimantsOwnerParameters.Add(new OracleParameter[]
                        {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
 
 
                  new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
@@ -2514,7 +2514,7 @@ namespace BBMPCITZAPI.Services
                         kaveriECClaimantsOwnerParameters.Add(new OracleParameter[]
                        {
             new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
 
                  new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
                 new OracleParameter("P_REGISTRATIONNUMBER", OracleDbType.Varchar2) { Value =newkhata.KaveriECInformation.DeedNumber},
@@ -2534,7 +2534,7 @@ namespace BBMPCITZAPI.Services
                     oddSiteParameters.Add(new OracleParameter[]
                     {
                  new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                   new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
                       new OracleParameter("P_SIDENUMBER", OracleDbType.Varchar2) { Value = IrregularDimensionDetails.Position },
                           new OracleParameter("P_SideFacingLenft", OracleDbType.Varchar2) { Value =IrregularDimensionDetails.SideFacingLenft },
@@ -2549,7 +2549,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
        new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                   new OracleParameter("P_Status", OracleDbType.Varchar2) { Value = newkhata.OverallRecommendation.Status },
                       new OracleParameter("P_StatusId", OracleDbType.Varchar2) { Value = newkhata.OverallRecommendation.StatusId },
                           new OracleParameter("P_StatusReason", OracleDbType.Clob) { Value =  newkhata.OverallRecommendation.StatusReason },
@@ -2564,7 +2564,7 @@ namespace BBMPCITZAPI.Services
         new OracleParameter[]
         {
    new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                  new OracleParameter("P_PBID_RowId", OracleDbType.Int64) { Value = newkhata.BuiltUpAreaDetailsForMultiStory.PBID_RowId },
 new OracleParameter("P_SuperBuiltUpAreaSqFt", OracleDbType.Double) { Value = Convert.ToDouble(newkhata.BuiltUpAreaDetailsForMultiStory.SuperBuiltUpAreaSqFt) },
 new OracleParameter("P_SuperBuiltUpAreaSqMt", OracleDbType.Double) { Value = Convert.ToDouble(newkhata.BuiltUpAreaDetailsForMultiStory.SuperBuiltUpAreaSqMt) },
@@ -2596,7 +2596,7 @@ new OracleParameter("P_FlatNo", OracleDbType.Varchar2) { Value = newkhata.BuiltU
         new OracleParameter[]
         {
           new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
             new OracleParameter("P_ISNEWKHATA_APPROVAL_TYPE" ,OracleDbType.Int32) {Value = newkhata.OverallRecommendation.StatusId  == 8? 22 : 21 },
             new OracleParameter("P_ISKAVERIDOC_UPLOADED",OracleDbType.Int32) {Value = newkhata.KaveriDeedInformation.IsDeedBefore01042004 == false ? 1:2 },
               new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
@@ -2610,7 +2610,7 @@ new OracleParameter("P_FlatNo", OracleDbType.Varchar2) { Value = newkhata.BuiltU
         new OracleParameter[]
         {
           new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
               new OracleParameter("P_EastWestft", OracleDbType.Varchar2) { Value = Convert.ToString(newkhata.KRSRegularShapeDetailsRequestParamater.EastWestft) },
                   new OracleParameter("P_NorthSouthft", OracleDbType.Varchar2) { Value = Convert.ToString(newkhata.KRSRegularShapeDetailsRequestParamater.NorthSouthft) },
                       new OracleParameter("P_EastWestMt", OracleDbType.Varchar2) { Value = Convert.ToString(newkhata.KRSRegularShapeDetailsRequestParamater.EastWestMt) },
@@ -2629,7 +2629,7 @@ new OracleParameter("P_FlatNo", OracleDbType.Varchar2) { Value = newkhata.BuiltU
                     BwssBParameters.Add(new OracleParameter[]
                     {
                  new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
                   new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
                       new OracleParameter("P_BWSSBNUMBER", OracleDbType.Varchar2) { Value = BwssBDetails.BWSSBNumber },
                           new OracleParameter("P_SASAPPLICATIONNO", OracleDbType.Varchar2) { Value =newkhata.SASNo != "" ?newkhata.SASNo  : null  },
@@ -2649,7 +2649,7 @@ new OracleParameter("P_FlatNo", OracleDbType.Varchar2) { Value = newkhata.BuiltU
         new OracleParameter[]
         {
           new OracleParameter("P_PROPERTYCODE", OracleDbType.Int64) { Value = propertycode },
-            new OracleParameter("P_BOOKS_PROP_APPNO", OracleDbType.Int64) { Value = books_app_no },
+            
               new OracleParameter("P_CREATEDBY", OracleDbType.Varchar2) { Value = newkhata.LoginInformation.UserMobileNumber },
                             new OracleParameter("P_KAVERISITEAREA_FT", OracleDbType.Decimal) { Value = newkhata.KaveriDeedInformation.PropAreaSqft },
                                           new OracleParameter("P_KAVERISITEAREA_MT", OracleDbType.Decimal) { Value = newkhata.KaveriDeedInformation.PropAreaSqMt },

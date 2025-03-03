@@ -430,29 +430,17 @@ namespace BBMPCITZAPI.Controllers
                     if (ids != null && ids.Tables.Count > 0 && ids.Tables[0].Rows.Count > 0)
                     {
                         Int64 pr = Convert.ToInt64(ids.Tables[0].Rows[0]["PROPERTYCODE"]);
-                        Int64 bk = Convert.ToInt64(ids.Tables[0].Rows[0]["BOOKS_PROP_APPNO"]);
-
-
-
-
-
-
-                        int dataSet = _IBBMPBOOKMODULE.Insert_New_khata_details(newkhatajson, pr, bk, mainParameters, documentDetails, Dosc, fromdate, toDate,
+                        int dataSet = _IBBMPBOOKMODULE.Insert_New_khata_details(newkhatajson, pr, mainParameters, documentDetails, Dosc, fromdate, toDate,
                             kaveriDocBase64.base64, ECbase64String1);
-
-
-
-
-                            
                         if (dataSet == 1)
                         {
                             Console.WriteLine("File Processed Sucessfully", fileName);
-                            if (newkhatajson.OverallRecommendation.StatusId == 8)
-                            {
-                                DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber, "N");
-                            }
+                            //if (newkhatajson.OverallRecommendation.StatusId == 8)
+                            //{
+                            //    DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber, "N");
+                            //}
 
-                            if (newkhatajson.SASNo != "" && newkhatajson.OverallRecommendation.StatusId == 10)
+                            if (newkhatajson.SASNo != "" )
                             {
                                 Console.WriteLine("Auto Approve Initiatied");
                                 DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber, "Y");
