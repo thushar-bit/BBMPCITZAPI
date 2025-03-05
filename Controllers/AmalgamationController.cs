@@ -45,14 +45,16 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at GET_NCL_MUTATION_AMALGAMATION_MAIN");
             try
             {
+                NMT_BA objBA = new NMT_BA();
                 int count = _AmalgamationService.GET_NCL_MUTATION_AMALGAMATION_MAIN_COUNT(PropertyId, ulbcode);
-
+                decimal totalArea = 0 ;
+               
                 if (count == 0)
                 {
                     var NpmPropDetail = _AmalgamationService.GET_NCL_MUTATION_AMALGAMATION_MAIN(PropertyId, ulbcode);
-                    if (NpmPropDetail.Tables[0].Rows[0]["PROPERTYCATEGORYID"].ToString() == "1" || (NpmPropDetail.Tables[0].Rows[0]["PROPERTYCATEGORYID"].ToString() == "2" && ulbcode.ToString() != "555"))
+                    if (NpmPropDetail.Tables[0].Rows[0]["PROPERTYCATEGORYID"].ToString() == "1" || (NpmPropDetail.Tables[0].Rows[0]["PROPERTYCATEGORYID"].ToString() == "2" && ulbcode.ToString() == "555"))
                     {
-                        if (NpmPropDetail.Tables[0].Rows[0]["PROPERTYCLASSIFICATIONID"].ToString() == "1")
+                        if (NpmPropDetail.Tables[0].Rows[0]["PROPERTYCLASSIFICATIONID"].ToString() == "1" ) 
                         {
                             string json = JsonConvert.SerializeObject(NpmPropDetail, Formatting.Indented);
                             if (IsAdd == true)
@@ -74,7 +76,23 @@ namespace BBMPCITZAPI.Controllers
                                     AmalFinal.PROPERTYCODE = Convert.ToInt64(NpmPropDetail.Tables[0].Rows[0]["PROPERTYCODE"]);
                                     AmalFinal.UlbCode = ulbcode;
                                     _AmalgamationService.CopyNPMtoNMTMain(AmalFinal);
-                                    return Ok(new { success = true, MutationApplicationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]), Details = json });
+                                    DataSet NmpPropDetail = new DataSet();
+                                    NmpPropDetail = objBA.GetNmpAmalgPropDetails(Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]),555);
+                                    if (NmpPropDetail.Tables.Count > 0)
+                                    {
+                                        if (NmpPropDetail.Tables[0].Rows.Count > 0)
+                                        {
+
+                                            DataTable table;
+                                            table = NmpPropDetail.Tables[0];
+                                            object sumSiteObject;
+                                            object sumBuildingObject;
+                                            sumSiteObject = table.Compute("Sum(SITEAREA)", "");
+                                           // sumBuildingObject = table.Compute("Sum(AREA)", "0");
+                                            totalArea = Convert.ToDecimal(sumSiteObject);
+                                        }
+                                    }
+                                            return Ok(new { success = true, MutationApplicationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]), Details = json,TotalArea = totalArea });
                                 }
                                 else
                                 {
@@ -84,12 +102,29 @@ namespace BBMPCITZAPI.Controllers
                                     AmalFinal.PROPERTYCODE = Convert.ToInt64(NpmPropDetail.Tables[0].Rows[0]["PROPERTYCODE"]);
                                     AmalFinal.UlbCode = ulbcode;
                                     _AmalgamationService.CopyNPMtoNMTMain(AmalFinal);
-                                    return Ok(new { success = true, MutationApplicationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["NEW_MUTAAPPLID"]), Details = json });
+                                    DataSet NmpPropDetail = new DataSet();
+                                    NmpPropDetail = objBA.GetNmpAmalgPropDetails(Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]), 555);
+                                    if (NmpPropDetail.Tables.Count > 0)
+                                    {
+                                        if (NmpPropDetail.Tables[0].Rows.Count > 0)
+                                        {
+
+                                            DataTable table;
+                                            table = NmpPropDetail.Tables[0];
+                                            object sumSiteObject;
+                                            object sumBuildingObject;
+                                            sumSiteObject = table.Compute("Sum(SITEAREA)", "");
+                                            // sumBuildingObject = table.Compute("Sum(AREA)", "0");
+                                            totalArea = Convert.ToDecimal(sumSiteObject);
+                                        }
+                                    }
+                                    NmpPropDetail = objBA.GetNmpAmalgPropDetails(Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]), 555);
+                                    return Ok(new { success = true, MutationApplicationId = Convert.ToInt64(dataSet.Tables[0].Rows[0]["NEW_MUTAAPPLID"]), Details = json,TotalArea = totalArea });
                                 }
                             }
                             else
                             {
-                                return Ok(new { success = true, MutationApplicationId =0, Details = json });
+                                return Ok(new { success = true, MutationApplicationId =0, Details = json, TotalArea = totalArea });
                             }
 
                         }
@@ -219,7 +254,7 @@ namespace BBMPCITZAPI.Controllers
 
 
         [HttpPost("INS_NCL_PROPERTY_SEARCH_FINAL_SUBMIT")]
-        public ActionResult<DataSet> INS_NCL_PROPERTY_AMAL_FINAL_SUBMIT(AMalGamation_final AmalFinal)
+        public ActionResult<string> INS_NCL_PROPERTY_AMAL_FINAL_SUBMIT(AMalGamation_final AmalFinal)
         {
             _logger.LogInformation("GET request received at INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT");
             try
@@ -252,7 +287,16 @@ namespace BBMPCITZAPI.Controllers
                     objNWF.TRANTYPEID = 5;
                     objNWF.PROPERTYCODE = int.Parse(ds.Tables[0].Rows[0]["PROPERTYCODE"].ToString());
                     int propertyCode = int.Parse(ds.Tables[0].Rows[0]["PROPERTYCODE"].ToString());
-                    var REQ = objBA.REC_MUTATION_APPL(propertyCode, AmalFinal.UlbCode, Convert.ToInt64(AmalFinal.MUTAPPLID), objNWF, objMAIN);
+                    try
+                    {
+                        var REQ = objBA.REC_MUTATION_APPL(propertyCode, AmalFinal.UlbCode, Convert.ToInt64(AmalFinal.MUTAPPLID), objNWF, objMAIN);
+                    }catch(Exception ex)
+                    {
+                        if (ex.Message.Contains("TASK ALREADY GENERATED", StringComparison.OrdinalIgnoreCase))
+                        {
+                          return "Application Already Submitted";
+                        }
+                    }
                 }
 
 
