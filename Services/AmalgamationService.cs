@@ -217,9 +217,9 @@ namespace BBMPCITZAPI.Services
                 prm[1].Direction = ParameterDirection.Input;
                 prm[1].Value = AmalFinal.MUTAPPLID;
                 prm[2].Direction = ParameterDirection.Input;
-                prm[2].Value = AmalFinal.AmalOrderNumber;
+                prm[2].Value = null;
                 prm[3].Direction = ParameterDirection.Input;
-                prm[3].Value = AmalFinal.AmalOrderDate;
+                prm[3].Value = null;
                 prm[4].Direction = ParameterDirection.Input;
                 prm[4].Value = AmalFinal.VaultRefNumber;
                 prm[5].Direction = ParameterDirection.Input;
@@ -273,7 +273,7 @@ namespace BBMPCITZAPI.Services
                 prm[0].Value = AmalFinal.PROPERTYCODE;
                 prm[1].Value = 555;
                 prm[2].Value = AmalFinal.MUTAPPLID;
-                prm[3].Value = AmalFinal.UGD;
+                prm[3].Value = "Y";
                 prm[4].Value = AmalFinal.CORNERSITE;
                 prm[5].Value = "MUE";
                 prm[6].Value = AmalFinal.CHECKBANDI_NORTH;
@@ -287,7 +287,7 @@ namespace BBMPCITZAPI.Services
                 prm[14].Value = AmalFinal.SITEAREA;
                 prm[15].Value = AmalFinal.PROPERTYCATEGORYID;
                 prm[16].Value = AmalFinal.PROPERTYPHOTO;
-                prm[17].Value = AmalFinal.SURVEYNO;
+                prm[17].Value = null;
                 prm[18].Value = AmalFinal.ASSESMENTNUMBER;
                 prm[19].Direction = ParameterDirection.Output;
                 prm[20].Direction = ParameterDirection.Output;
@@ -333,7 +333,7 @@ namespace BBMPCITZAPI.Services
                 prm[0].Value = AmalFinal.PROPERTYCODE;
                 prm[1].Value = AmalFinal.UlbCode;
                 prm[2].Value = AmalFinal.MUTAPPLID;
-                prm[3].Value = AmalFinal.UGD;
+                prm[3].Value = "Y";
                 prm[4].Value = AmalFinal.CORNERSITE;
                 prm[5].Value = "MUT";
                 prm[6].Value = AmalFinal.CHECKBANDI_NORTH;

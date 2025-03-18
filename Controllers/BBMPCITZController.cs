@@ -6,11 +6,7 @@ using BBMPCITZAPI.Services.Interfaces;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Text;
 using Microsoft.Reporting.Map.WebForms.BingMaps;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using NUPMS_BO;
 using NUPMS_BA;
 
@@ -45,6 +41,7 @@ IErrorLogService errorLogService
         NUPMS_BA.Objection_BA objBa = new NUPMS_BA.Objection_BA();
         NUPMS_BA.GetReportData NUMPSdata = new NUPMS_BA.GetReportData();
         NUPMS_BA.BBD_BA BBDBA = new NUPMS_BA.BBD_BA();
+        NUPMS_BA.CitizenReactBA citzReactBA = new CitizenReactBA();
        
         //   NUPMS_BA.CitizenBA ciTz= new NUPMS_BA.CitizenBA();
         #region Initial
@@ -295,6 +292,25 @@ IErrorLogService errorLogService
         //        throw;
         //    }
         //}
+        [HttpPost("INS_UPD_NCL_BOOKDATA_LOCATION_EDIT_DETAILS")]
+        public async Task<IActionResult> INS_UPD_NCL_BOOKDATA_LOCATION_EDIT_DETAILS(string PropertyId, Int64 P_BOOKS_PROP_APPNO, int Propertycode,int wardName,Int32 streetname ,string oldPropertyNumber,string LoginId)
+        {
+            _logger.LogInformation("GET request received at INS_UPD_NCL_BOOKDATA_LOCATION_EDIT_DETAILS");
+            try
+            {
+                //  string cacheKey = "NCL_TEMP_KEY" + Propertycode + P_BOOKS_PROP_APPNO;
+                DataSet dataSet = citzReactBA.INS_UPD_NCL_BOOKDATA_LOCATION_EDIT_DETAILS(PropertyId,  P_BOOKS_PROP_APPNO,  Propertycode,  wardName,  streetname,  oldPropertyNumber,  LoginId,"");
+                string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                //    await _cacheService.SetCacheDataAsync(cacheKey, json);
+                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                _errorLogService.LogError(ex, "INS_UPD_NCL_BOOKDATA_LOCATION_EDIT_DETAILS");
+                _logger.LogError(ex, "Error occurred while executing stored procedure. INS_UPD_NCL_BOOKDATA_LOCATION_EDIT_DETAILS");
+                throw;
+            }
+        }
         [HttpPost("INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP")]
         public ActionResult<int> INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP(INS_UPD_NCL_PROPERTY_CATEGORY_SASDATA_TEMP insertCITZProperty)
         {
@@ -332,21 +348,19 @@ IErrorLogService errorLogService
             }
         }
 
-        [HttpGet("Get_Ctz_ObjectionModPendingAppl")]
-        public ActionResult<string> Get_Ctz_ObjectionModPendingAppl(string LoginId, string propertycode, string propertyid)
+       
+        [HttpGet("COPY_DATA_FROM_BBDDRAFT_NCLTEMP")]
+        public ActionResult<string> COPY_DATA_FROM_BBDDRAFT_NCLTEMP(string LoginId, string propertycode, string propertyid)
         {
-            _logger.LogInformation("GET request received at Get_Ctz_ObjectionModPendingAppl");
+            _logger.LogInformation("GET request received at COPY_DATA_FROM_BBDDRAFT_NCLTEMP");
             try
             {
-                //  string propertycode = _PropertyDetails.PROPERTYCODE;
-                // string propertyid = _PropertyDetails.PROPERTYID;
-                _logger.LogInformation(" Get_Ctz_ObjectionModPendingAppl" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
-                DataSet dsProperties = objModule.Get_Ctz_ObjectionModPendingAppl("EID", LoginId, propertyid, "", 0, "");
-
-                if ((dsProperties != null && dsProperties.Tables.Count > 0 && dsProperties.Tables[0].Rows.Count > 0))
+               
+                DataSet rowsEffected = objModule.COPY_DATA_FROM_BBDDRAFT_NCLTEMP(Convert.ToInt64(propertycode), Convert.ToString(LoginId));
+                if ((rowsEffected != null && rowsEffected.Tables.Count > 0 && rowsEffected.Tables[0].Rows.Count > 0))
                 {
-                    string P_BOOKS_PROP_APPNO = dsProperties.Tables[0].Rows[0]["BOOKS_PROP_APPNO"].ToString()!;
-                    string PropertyId = dsProperties.Tables[0].Rows[0]["PROPERTYCODE"].ToString()!;
+                    string P_BOOKS_PROP_APPNO = rowsEffected.Tables[0].Rows[0]["BOOKS_PROP_APPNO"].ToString()!;
+                    string PropertyId = rowsEffected.Tables[0].Rows[0]["PROPERTYCODE"].ToString()!;
                     var data = new
                     {
                         P_BOOKS_PROP_APPNO = P_BOOKS_PROP_APPNO,
@@ -356,31 +370,12 @@ IErrorLogService errorLogService
 
                     return Ok(json);
                 }
-                else
+                else  
                 {
-                    return "There is a issue while copying the data from Book Module.No Data Found";
+                    return "There is a issue while copying the data from Book.";
                 }
-
-            }
-            catch (Exception ex)
-            {
-                _errorLogService.LogError(ex, "Get_Ctz_ObjectionModPendingAppl");
-                _logger.LogError(ex, "Error occurred while executing stored procedure Get_Ctz_ObjectionModPendingAppl.");
-                throw;
-            }
-        }
-        [HttpGet("COPY_DATA_FROM_BBDDRAFT_NCLTEMP")]
-        public ActionResult<string> COPY_DATA_FROM_BBDDRAFT_NCLTEMP(string LoginId, string propertycode, string propertyid)
-        {
-            _logger.LogInformation("GET request received at COPY_DATA_FROM_BBDDRAFT_NCLTEMP");
-            try
-            {
-                //      string propertycode = _PropertyDetails.PROPERTYCODE;
-                //    string propertyid = _PropertyDetails.PROPERTYID;
-                _logger.LogInformation(" COPY_DATA_FROM_BBDDRAFT_NCLTEMP" + "propertycode =" + propertycode + "propertyid = " + propertyid + "loginIDs= " + LoginId);
-                DataSet rowsEffected = objModule.COPY_DATA_FROM_BBDDRAFT_NCLTEMP(Convert.ToInt64(propertycode), Convert.ToString(LoginId));
-                string json = JsonConvert.SerializeObject(rowsEffected, Formatting.Indented);
-                return Ok(json);
+               
+                
             }
             catch (Exception ex)
             {

@@ -80,11 +80,15 @@
     public class UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA 
     {
         public long? propertyCode { get; set; }
-        public decimal? CARPETAREA { get; set; }
-        public decimal? ADDITIONALAREA { get; set; }
+        public decimal? BOOKS_PROP_APPNO { get; set; }
         public decimal? SUPERBUILTUPAREA { get; set; }
-        public string? loginId { get; set; }
-        public long? P_BOOKS_PROP_APPNO { get; set; }
+        public decimal? SUPERBUILTUPAREA_FT { get; set; }
+        public string? KAVERI_SUPERBUILTUPAREA_FT { get; set; }
+        public long? KAVERI_SUPERBUILTUPAREA_MT { get; set; }
+        public long? TAX_SUPERBUILTUPAREA_FT { get; set; }
+        public long? TAX_SUPERBUILTUPAREA_MT { get; set; }
+        public long? AREACHOICE { get; set; }
+        public long? loginId { get; set; }
     }
     public class UPD_NCL_PROPERTY_SITE_TEMP_USAGE 
     {

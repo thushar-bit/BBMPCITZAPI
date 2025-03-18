@@ -470,20 +470,29 @@ namespace BBMPCITZAPI.Services
             {
                 string sp_name = "OBJECTIONMODULE.UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA";
                 OracleParameter[] prm = new OracleParameter[] {
-              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int32,ParameterDirection.Input),
-              new OracleParameter("P_CARPETAREA",OracleDbType.Decimal,ParameterDirection.Input),
-              new OracleParameter("P_ADDITIONALAREA",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64,ParameterDirection.Input),
+              new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int64,ParameterDirection.Input),
               new OracleParameter("P_SUPERBUILTUPAREA",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_SUPERBUILTUPAREA_FT",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_KAVERI_SUPERBUILTUPAREA_FT",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_KAVERI_SUPERBUILTUPAREA_MT",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_TAX_SUPERBUILTUPAREA_FT",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_TAX_SUPERBUILTUPAREA_MT",OracleDbType.Decimal,ParameterDirection.Input),
+              new OracleParameter("P_AREACHOICE",OracleDbType.Varchar2,ParameterDirection.Input),
               new OracleParameter("P_CREATEDBY",OracleDbType.Varchar2,ParameterDirection.Input),
-                  new OracleParameter("P_BOOKS_PROP_APPNO",OracleDbType.Int32,ParameterDirection.Input)
+              new OracleParameter("C_APARTDET",OracleDbType.RefCursor,ParameterDirection.Output)
                     };
 
                 prm[0].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.propertyCode;
-                prm[1].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.CARPETAREA;
-                prm[2].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.ADDITIONALAREA;
-                prm[3].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.SUPERBUILTUPAREA;
-                prm[4].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.loginId;
-                prm[5].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.P_BOOKS_PROP_APPNO;
+                prm[1].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.BOOKS_PROP_APPNO;
+                prm[2].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.SUPERBUILTUPAREA;
+                prm[3].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.SUPERBUILTUPAREA_FT;
+                prm[4].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.KAVERI_SUPERBUILTUPAREA_FT;
+                prm[5].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.KAVERI_SUPERBUILTUPAREA_MT;
+                prm[6].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.TAX_SUPERBUILTUPAREA_FT;
+                prm[7].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.TAX_SUPERBUILTUPAREA_MT;
+                prm[8].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.AREACHOICE;
+                prm[9].Value = UPD_NCL_PROPERTY_APARTMENT_TEMP_AREA.loginId;
 
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
             }
@@ -2142,6 +2151,44 @@ namespace BBMPCITZAPI.Services
             try
             {
                 return _databaseService.ExecuteNonQuery(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet FETCH_BUILDING_DETAILS(Int64 PropertyCode)
+        {
+            string sp_name = "NEW_KHATA_DETAILS.FETCH_BUILDING_DETAILS";
+            OracleParameter[] prm = new OracleParameter[] {
+                    new OracleParameter("P_PROPERTYCODE",OracleDbType.Int64,ParameterDirection.Input),
+                new OracleParameter("C_RECORD1",OracleDbType.RefCursor,ParameterDirection.Output),
+
+            };
+            prm[0].Value = PropertyCode;
+           
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
+            }
+            catch (OracleException Ex)
+            {
+                throw Ex;
+            }
+        }
+        public DataSet GET_DRAFT_FILE_PATH(string PropertyId)
+        {
+            string sp_name = "OBJECTIONMODULE_REACT.GET_DRAFT_FILE_PATH";
+            OracleParameter[] prm = new OracleParameter[] {
+                    new OracleParameter("P_PROPERTYID",OracleDbType.Int64,ParameterDirection.Input),
+                new OracleParameter("C_RECORD",OracleDbType.RefCursor,ParameterDirection.Output),
+
+            };
+            prm[0].Value = PropertyId;
+
+            try
+            {
+                return _databaseService.ExecuteDataset(sp_name, prm);
             }
             catch (OracleException Ex)
             {

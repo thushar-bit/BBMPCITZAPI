@@ -1,28 +1,15 @@
 ﻿using BBMPCITZAPI.Models;
 using BBMPCITZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NUPMS_BA;
-using NUPMS_BO;
-using Org.BouncyCastle.Utilities;
-using System;
 using System.Data;
-using System.DirectoryServices.Protocols;
-using System.IdentityModel.Claims;
-using System.IO;
 using System.Net;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
-using System.ServiceModel.Channels;
 using System.Text;
-using static BBMPCITZAPI.Controllers.KaveriController;
 using static BBMPCITZAPI.Models.KaveriData;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace BBMPCITZAPI.Controllers
@@ -51,7 +38,8 @@ namespace BBMPCITZAPI.Controllers
             _auth = Auth;
         }
         NUPMS_BA.ObjectionModuleBA obj = new NUPMS_BA.ObjectionModuleBA();
-      
+        NUPMS_BA.CitizenReactBA citz = new NUPMS_BA.CitizenReactBA();
+
 
         private Dictionary<string, string> ExtractJsonParameters(JObject Obj_Json, List<string> lstParameters)
         {
@@ -83,7 +71,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at KaveriAPIRequest");
             try
             {
-                Int64 transactionNo = 0;
+                DataSet transactionNo = new();
                 //   ViewState["Kaveri_TransactionNo"] = transactionNo;
                 string Json = "";
                 string rsaKeyDetails = "<RSAKeyValue><Modulus>" + Convert.ToString(_kaveriSettings.KaveriPublicKey) + " </Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
@@ -99,7 +87,7 @@ namespace BBMPCITZAPI.Controllers
                     requestUri = new Uri(_kaveriSettings.KaveriDocDetailsAPI);
                     //Json = "{\r\n  \"username\": \"" + username + "\",\r\n  \"password\": \"" + password + "\",\r\n  \"finalRegNumber\": \"" + RegistrationNo + "\"\r\n}";
                     Json = "{\r\n \"apikey\":\""+ Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"finalRegNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
-                    transactionNo = obj.INS_KAVERI_API_DOCUMENT_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
+                    transactionNo = citz.INS_KAVERI_API_DOCUMENT_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
                 }
                 else if (urlKeyWord == "KaveriECDocAPI")
                 {
@@ -107,7 +95,7 @@ namespace BBMPCITZAPI.Controllers
                     requestUri = new Uri(_kaveriSettings.KaveriECDocAPI);
                     Json = "{\r\n \"apikey\":\""+ Convert.ToString(_kaveriSettings.KaveriAPIKey) + "\",\r\n  \"username\": \"" + Encrypt(_kaveriSettings.KaveriUsername.ToString(), rsaKeyDetails) + "\",\r\n  \"password\": \"" + Encrypt(_kaveriSettings.KaveriPassword.ToString(), rsaKeyDetails) + "\",\r\n  \"certificateNumber\": \"" + Encrypt(RegistrationNoECNumber, rsaKeyDetails) + "\"}";
                     //   Json = "{\"apikey\": \"1\",\"username\": \"StazL1fAkoRt+o7I01iekrPbHaTQ32wBkAtrULKQ1otSv3DcbI0DLMBI63xevCyYSp3zLNonRI+bE5Q0W7k2unQvfCl0EpK1SmEF33El1ACe44nQbwfiIc5L2CTL8zgeQR0rc1CyTkirEVGlVlr8nrSGd8W5ACVNS12aj4vsdrc=\",\"password\": \"kzpJ98Kio4FNocARzdqSLu7lQhEBQ1fcf4AHYTC2I5UC+/e0VJPEVv+pnV17DWBAJXIMJY7ybPvRJ7Z+Eggm2uSL2/aWN+K9Jo19YiWq8pTzOpg7vFygPdYgIVPc9qdhHoBovpzQp6GvjI3n85BmqxlIc8peBtKyNjYd4HMk6+Y=\",\"certificateNumber\": \"d+BB+O9L/4lW0de9+t4LAZ42/3CtPpHKSyZMA5k0OkEjFciQhCnwAO0NHNC6dJWD3jGzXlWmYbdVJnbNfdZ5QM4PbMR50CudjelEATRTvD9eB2A0tphnX1x5k4J+RmBJxUmsfNTCKzRVpWTaOAYWozbeqf2sSbDMJXMK543LfEo=\"}";
-                    transactionNo = obj.INS_KAVERI_API_ECDOC_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
+                    transactionNo = citz.INS_KAVERI_API_ECDOC_REQUEST(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoECNumber, Json, Convert.ToString(LoginId));
                 }
                 // ViewState["Kaveri_TransactionNo"] = transactionNo;
 
@@ -117,7 +105,7 @@ namespace BBMPCITZAPI.Controllers
                 TransactionDetails trc = new()
                 {
                     httpResponseMessage = httpResponse,
-                    transactionId = transactionNo,
+                    transactionId = Convert.ToInt64(transactionNo.Tables[0].Rows[0]["TRANSACTIONNO"]),
 
                 };
                 return trc;
@@ -195,7 +183,7 @@ namespace BBMPCITZAPI.Controllers
                 {
                     APIResponseStatus = "SUCCESS";
 
-                    string KAVERIDOC_RESPONSE_ROWID = obj.INS_KAVERI_API_DOCUMENT_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse);
+                    string KAVERIDOC_RESPONSE_ROWID = citz.INS_KAVERI_API_DOCUMENT_RESPONSE(httpResponse.transactionId, APIResponseStatus, APIResponse);
                     isResponseStored = true;
                     var response = JsonConvert.DeserializeObject<KaveriData.KAVERI_API_DOC_DETAILS_RESPONSE>(respornseContent);
                     var documentDetailsList = new List<KaveriData.DocumentDetails>();
@@ -211,8 +199,8 @@ namespace BBMPCITZAPI.Controllers
                             {
                                 var documentDetails = JsonConvert.DeserializeObject<KaveriData.DocumentDetails>(response.json);
                                 documentDetailsList.Add(documentDetails);
-                                obj.INS_NCL_PROPERTY_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
-                                    documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime,KAVERIDOC_RESPONSE_ROWID, LoginId);
+                            citz.INS_NCL_PROPERTY_KAVERI_DOC_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber,
+                                    documentDetails.naturedeed, documentDetails.applicationnumber, documentDetails.registrationdatetime, documentDetails.articleCode,KAVERIDOC_RESPONSE_ROWID, LoginId);
 
                                 if (documentDetails.propertyinfo != null)
                                 {
@@ -243,12 +231,12 @@ namespace BBMPCITZAPI.Controllers
                                         loginId = LoginId,
                                     };
                                     _IBBMPBOOKMODULE.UPD_AREA_CHECKBANDI_KAVERI_DATA(s);
-                                    obj.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "KAVERIDOC_RESPONSE_ROWID", KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId));
+                                    citz.UPD_COL_NCL_PROPERTY_COMPARE_MATRIX_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), "KAVERIDOC_RESPONSE_ROWID", KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId));
                                 }
                                 foreach (var propertyinfo in documentDetails.propertyinfo)
                                 {
-                                    obj.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
-                                    RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, totalKavAreaMT, KAVERIDOC_RESPONSE_ROWID, LoginId);
+                                  //  citz.INS_NCL_PROPERTY_KAVERI_PROPERTY_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode),
+                                  //  RegistrationNoNumber, propertyinfo.propertyid, propertyinfo.documentid, propertyinfo.villagenamee, propertyinfo.sroname, propertyinfo.hobli, propertyinfo.zonenamee, totalKavAreaMT, KAVERIDOC_RESPONSE_ROWID, LoginId);
                                 }
                             }
                                 if (documentDetails.partyinfo != null)
@@ -257,9 +245,9 @@ namespace BBMPCITZAPI.Controllers
                                   
                                             foreach (var party in documentDetails.partyinfo)
                                     {
-                                      
-                                        obj.INS_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber, party.partyname, party.address, party.idprooftypedesc, party.idproofnumber, party.partytypename,
-                                            party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId), ownerNumber, "", 0);
+
+                                  //  citz.INS_NCL_PROPERTY_KAVERI_PARTIES_DETAILS_TEMP(Convert.ToInt64(BOOKS_APP_NO), Convert.ToInt64(PropertyCode), RegistrationNoNumber, party.partyname, party.address, party.idprooftypedesc, party.idproofnumber, party.partytypename,
+                                     //      party.admissiondate, KAVERIDOC_RESPONSE_ROWID, Convert.ToString(LoginId), ownerNumber, "", 0);
                                     }
                                 }
                                 
@@ -336,7 +324,7 @@ namespace BBMPCITZAPI.Controllers
                             List<KaveriData.EcData> ECdocumentDetails = JsonConvert.DeserializeObject<List<KaveriData.EcData>>(base64String);
                     
                         var documentSummaries = new HashSet<string>(ECdocumentDetails.Select(doc => doc.DocSummary));
-                            RegistrationNoNumber = RegistrationNoNumber.ToUpper();
+                            RegistrationNoNumber = RegistrationNoNumber.ToUpper().Trim();
                         bool DoesExist = documentSummaries.Contains(RegistrationNoNumber);
                         var registrationNumberPosition = 0;
                         if (DoesExist)

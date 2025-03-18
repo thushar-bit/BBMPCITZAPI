@@ -101,6 +101,9 @@ namespace BBMPCITZAPI.Services.Interfaces
         public DataSet GENERATE_NEW_KHATA_PROPERTYCODE();
         public DataSet GET_NEW_KHATA_REPORT();
         public DataSet GenarateWORKFLOWID(Int64 propertyepid,string createdby, string isAutoWorkflow);
+        public DataSet FETCH_BUILDING_DETAILS(Int64 PropertyCode);
+
+        public DataSet GET_DRAFT_FILE_PATH(string PropertyId);
 
         public int INS_NEW_KHATA_PROPERTY_API_STATUS(string propetyId, string status, string isException, string isSp_error, string failedReason, string exceptionMessage,string ExceptionStackTrace, string fileName);
         public int Insert_New_khata_details(newkhatadetails newkhata,Int64 propertycode, List<NUPMS_BO.EKYCDetailsBO> mainParameters, KaveriData.DocumentDetails documentDetails, KaveriData.EcData ECdocumentDetails,string fromdate, string todate, byte[] DeedAfter2004Base64, byte[] ECAfter2004Base64);

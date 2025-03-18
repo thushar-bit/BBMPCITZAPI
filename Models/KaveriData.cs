@@ -144,6 +144,7 @@
             public string stamparticlename { get; set; }
             public string naturedeed { get; set; }
             public string book { get; set; }
+            public int articleCode { get; set; }
             public List<PropertyInfo> propertyinfo { get; set; }
             public List<PartyInfo> partyinfo { get; set; }
             public List<propertyschedules> propertyschedules { get; set; }

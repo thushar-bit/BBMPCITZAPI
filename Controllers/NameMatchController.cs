@@ -264,7 +264,7 @@ namespace BBMPCITZAPI.Controllers
 
             PropertyMatrixCalculation propertyMatrix = new PropertyMatrixCalculation();
          //   var folderPath = @"E:\NewKhathaFiles\Inbox";
-            var folderPath = _PropertyDetails.NewKhataReadingFiles;
+             var folderPath = _PropertyDetails.NewKhataReadingFiles;
             var jsonFiles = Directory.GetFiles(folderPath, "*.json");
             if (jsonFiles.Length == 0)
             {
@@ -430,8 +430,11 @@ namespace BBMPCITZAPI.Controllers
                     if (ids != null && ids.Tables.Count > 0 && ids.Tables[0].Rows.Count > 0)
                     {
                         Int64 pr = Convert.ToInt64(ids.Tables[0].Rows[0]["PROPERTYCODE"]);
+                       
                         int dataSet = _IBBMPBOOKMODULE.Insert_New_khata_details(newkhatajson, pr, mainParameters, documentDetails, Dosc, fromdate, toDate,
                             kaveriDocBase64.base64, ECbase64String1);
+
+                    
                         if (dataSet == 1)
                         {
                             Console.WriteLine("File Processed Sucessfully", fileName);
@@ -443,8 +446,11 @@ namespace BBMPCITZAPI.Controllers
                             if (newkhatajson.SASNo != "" )
                             {
                                 Console.WriteLine("Auto Approve Initiatied");
+                                //just calling tax
+                               //bool istrue = obj.callAutoApproval(pr, newkhatajson.SASNo);
+                               // _IBBMPBOOKMODULE.FETCH_BUILDING_DETAILS(pr);
                                 DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, newkhatajson.LoginInformation.UserMobileNumber, "Y");
-                                bool istrue = obj.callAutoApproval(pr, newkhatajson.SASNo, Convert.ToInt64(workFlowId.Tables[0].Rows[0]["WORKFLOWID"])); //taskid
+                                //taskid
                                 string CertPath = @"E:\File\jcrevenue.pfx";
                                 string Password = "10031970";
                                 string signatureString = "";
@@ -462,10 +468,10 @@ namespace BBMPCITZAPI.Controllers
 
 
                                     // New Property Creation
-                                    int apx = prop.ApproveProperty(pr.ToString(), "555", Convert.ToString(xml), signatureString, "", subject, "", Convert.ToInt64(workFlowId.Tables[0].Rows[0]["WORKFLOWID"]), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+                                    int apx = prop.ApproveProperty(pr.ToString(), "555", Convert.ToString(xml), signatureString, "", subject, newkhatajson.LoginInformation.UserMobileNumber, Convert.ToInt64(workFlowId.Tables[0].Rows[0]["WORKFLOWID"]), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 
-                                    GetBbmpTax(Convert.ToInt32(pr), CertPath, Password, "AutoApprooval", newkhatajson.EPID);
-                                    Console.WriteLine("Auto Approve Successfull", fileName);
+                                    GetBbmpTax(Convert.ToInt32(pr), CertPath, Password, "AutoApprooval_New_Khata", newkhatajson.EPID);
+                                   
                                 }
                                 //      if (isExecutedWithOutError == true)
                                 //      {
@@ -561,7 +567,7 @@ namespace BBMPCITZAPI.Controllers
                 }
 
             }
-            Console.WriteLine("All FILES PROCESSED!!");
+          
             //  return "All Files Processed .No More Files";
 
 
@@ -576,7 +582,7 @@ namespace BBMPCITZAPI.Controllers
             {
 
               //  DataSet workFlowId = _IBBMPBOOKMODULE.GenarateWORKFLOWID(pr, MobileNumber, "Y");
-                bool istrue = obj.callAutoApproval(pr, sasNo, WorkFlowId); //taskid
+                bool istrue = obj.callAutoApproval(pr, sasNo); //taskid //calling auto approve
                 string CertPath = @"E:\File\jcrevenue.pfx";
                 string Password = "10031970";
                 string signatureString = "";

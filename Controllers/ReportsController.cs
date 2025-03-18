@@ -16,7 +16,9 @@ using Oracle.ManagedDataAccess.Client;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Utilities;
 using Serilog;
+using System;
 using System.Data;
+using System.Management;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -29,7 +31,7 @@ using System.Xml;
 namespace BBMPCITZAPI.Controllers
 {
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [Route("v1/Report")]
     public class ReportsController : ControllerBase
     {
@@ -1581,10 +1583,12 @@ namespace BBMPCITZAPI.Controllers
             string url = _Esign.DraftURL;
             _logger.LogError(url, "DraftURL");
             // Create an HTTP client to send the request
+           
             using (var httpClient = new HttpClient())
             {
                 try
                 {
+                    httpClient.Timeout = TimeSpan.FromMinutes(15);
                     // Prepare the JSON request body
                     var requestBody = new
                     {
@@ -1599,7 +1603,7 @@ namespace BBMPCITZAPI.Controllers
                     var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
                     // Send the POST request with the JSON body
-                    var response = await httpClient.PostAsync(url, content);
+                    var  response = await httpClient.PostAsync(url, content);
 
                     // Check if the response is successful
                     if (response.IsSuccessStatusCode)
@@ -1627,10 +1631,10 @@ namespace BBMPCITZAPI.Controllers
                 catch (Exception ex)
                 {
                     // Log the exception (optional)
-                    
+                    _BBMPBookService.Ins_PDF_Draft_Exception_log(propertyData.PropertyCode, propertyData.ProperytyId, ex.Message, ex.StackTrace, "FAILED EXCEPTION IN GetDraftKhataDownloadURL function ");
                     _logger.LogError(ex, "Error occurred while retrieving GetDraftKhataDownloadURL");
                     _errorLogService.LogError(ex, "GetDraftKhataDownloadURL");
-                    return $"Internal server error: {ex.Message}";
+                    return $"Something Went Wrong in DataAPI.Check the DataAPI logs =  {ex.Message} ";
                 }
             }
         }
@@ -1644,14 +1648,148 @@ namespace BBMPCITZAPI.Controllers
         [HttpPost("DownloadDraftPDF")]
         public async Task<IActionResult> GetDraftDownload(PropertyData propertyData)
         {
-            //url will be sent as a parameter.
+
             _logger.LogInformation("url coming from GetDraftKhataDownloadURL" + "bookid:" + propertyData.BookId, "booknumber:" + propertyData.BookNumber, "bookpropertycode:" + propertyData.PropertyCode, "propertyid:" + propertyData.ProperytyId);
+            if (!string.IsNullOrWhiteSpace(propertyData.ProperytyId))
+            {
+                DataSet draftlocalUrl = _BBMPBookService.GET_DRAFT_FILE_PATH(propertyData.ProperytyId);
+
+                if (draftlocalUrl.Tables.Count > 0 &&
+                    draftlocalUrl.Tables[0].Rows.Count > 0 &&
+                    draftlocalUrl.Tables[0].Columns.Contains("DRAFT_FILEPATH") &&
+                    draftlocalUrl.Tables[0].Rows[0]["DRAFT_FILEPATH"] != DBNull.Value)
+                {
+                    try
+                    {
+                        if (!System.IO.File.Exists(Convert.ToString(draftlocalUrl.Tables[0].Rows[0]["DRAFT_FILEPATH"])))
+                        {
+                            return NotFound("File not found.");
+                        }
+                        string Pdf = _Esign.DraftMerge;
+                        string[] pdfFilePaths = new string[] { Pdf };
+                        byte[] pdfBytes = await System.IO.File.ReadAllBytesAsync(Convert.ToString(draftlocalUrl.Tables[0].Rows[0]["DRAFT_FILEPATH"]));
+                        byte[] mergedPdfBytes = MergePDFWithByteAndFile(pdfBytes, pdfFilePaths);
+                        string mimeType = "application/pdf";
+                        string fileName = "DraftReport.pdf";
+
+                        return File(mergedPdfBytes, mimeType, fileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error occurred while retrieving DownloadDraftPDF Local url + {draftlocalUrl.Tables[0].Rows[0]["DRAFT_FILEPATH"]}");
+                        _errorLogService.LogError(ex, $"Error occurred while retrieving DownloadDraftPDF Local url + {draftlocalUrl.Tables[0].Rows[0]["DRAFT_FILEPATH"]}");
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+                else
+                {
+
+                    string url = await GetDraftKhataDownloadURL(propertyData);
+                    _logger.LogError($"url coming from GetDraftKhataDownloadURL: {url}");
+
+
+
+
+                    using (var httpClient = new HttpClient())
+                    {
+                        try
+                        {
+
+                            _logger.LogError($"inside GetDraftDownload method ,inside httpClient = : {url}");
+                            var response = await httpClient.GetAsync(url);
+                            _logger.LogError($"After GetAsync GetDraftDownload method ,inside httpClient = : {url}");
+
+                            if (response.IsSuccessStatusCode)
+                            {
+
+                                byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
+
+
+                                string mimeType = "application/pdf";
+
+
+                                return File(pdfBytes, mimeType, "DraftReport.pdf");
+                            }
+                            else
+                            {
+                                return BadRequest("Failed to download the PDF.");
+                            }
+
+                        }
+
+                        catch (Exception ex)
+                        {
+                            // Log the exception (optional)
+                            _logger.LogError(ex, $"Error occurred while retrieving DownloadDraftPDF + {url}");
+                            _errorLogService.LogError(ex, $"DownloadDraftPDF + {url}");
+                            return StatusCode(500, $"Internal server error: {ex.Message}");
+                        }
+                    }
+                }
+
+
+            }
+            
+
+            else
+            {
+
+                string url = await GetDraftKhataDownloadURL(propertyData);
+                _logger.LogError($"url coming from GetDraftKhataDownloadURL: {url}");
+
+
+
+
+                using (var httpClient = new HttpClient())
+                {
+                    try
+                    {
+
+                        _logger.LogError($"inside GetDraftDownload method ,inside httpClient = : {url}");
+                        var response = await httpClient.GetAsync(url);
+                        _logger.LogError($"After GetAsync GetDraftDownload method ,inside httpClient = : {url}");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+
+                            byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
+
+
+                            string mimeType = "application/pdf";
+
+
+                            return File(pdfBytes, mimeType, "DraftReport.pdf");
+                        }
+                        else
+                        {
+                            return BadRequest("Failed to download the PDF.");
+                        }
+
+                    }
+
+                    catch (Exception ex)
+                    {
+                        // Log the exception (optional)
+                        _logger.LogError(ex, $"Error occurred while retrieving DownloadDraftPDF + {url}");
+                        _errorLogService.LogError(ex, $"DownloadDraftPDF + {url}");
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        [HttpGet("DownloadDraftPDFTEST")]
+        public async Task<IActionResult> GetDraftDownloadTEST()
+        {
+            //url will be sent as a parameter.
+            //  _logger.LogInformation("url coming from GetDraftKhataDownloadURL" + "bookid:" + propertyData.BookId, "booknumber:" + propertyData.BookNumber, "bookpropertycode:" + propertyData.PropertyCode, "propertyid:" + propertyData.ProperytyId);
             // string url = "http://10.10.133.197/eaasthirestapi/TempFiles/thushar.pdf";
 
 
             // string url = "http://10.10.133.197/eaasthirestapi/api/eaasthidata/GetDraft";
 
-            string url = await GetDraftKhataDownloadURL(propertyData);
+            //  string url = await GetDraftKhataDownloadURL(propertyData);
+            string url = "http://10.10.133.197/TempFilesNew/ece38739-97de-4a7f-b6ab-71fa591947b4.pdf";
             _logger.LogError($"url coming from GetDraftKhataDownloadURL: {url}");
 
 
@@ -1660,10 +1798,11 @@ namespace BBMPCITZAPI.Controllers
             using (var httpClient = new HttpClient())
             {
                 try
-                {  
+                {
 
+                    _logger.LogError($"inside GetDraftDownload method ,inside httpClient = : {url}");
                     var response = await httpClient.GetAsync(url);
-
+                    _logger.LogError($"After GetAsync GetDraftDownload method ,inside httpClient = : {url}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -1684,12 +1823,53 @@ namespace BBMPCITZAPI.Controllers
                 catch (Exception ex)
                 {
                     // Log the exception (optional)
-                    _logger.LogError(ex, "Error occurred while retrieving DownloadDraftPDF");
-                    _errorLogService.LogError(ex, "DownloadDraftPDF");
+                    _logger.LogError(ex, $"Error occurred while retrieving DownloadDraftPDF + {url}");
+                    _errorLogService.LogError(ex, $"DownloadDraftPDF + {url}");
                     return StatusCode(500, $"Internal server error: {ex.Message}");
                 }
             }
         }
+
+        private static byte[] MergePDFWithByteAndFile(byte[] pdfBytes, string[] pdfFilePaths)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                // Create the document and PdfCopy object
+                Document document = new Document();
+                PdfCopy copy = new PdfCopy(document, ms);
+                document.Open();
+
+
+                // Add pages from the file paths
+                foreach (string filePath in pdfFilePaths)
+                {
+                    using (PdfReader fileReader = new PdfReader(filePath))
+                    {
+                        for (int i = 1; i <= fileReader.NumberOfPages; i++)
+                        {
+                            copy.AddPage(copy.GetImportedPage(fileReader, i));
+                        }
+                    }
+                }
+
+                // Add pages from the byte array
+                using (PdfReader byteReader = new PdfReader(pdfBytes))
+                {
+                    for (int i = 1; i <= byteReader.NumberOfPages; i++)
+                    {
+                        copy.AddPage(copy.GetImportedPage(byteReader, i));
+                    }
+                }
+
+                // Close the document
+                document.Close();
+
+                // Return the merged PDF as a byte array
+                return ms.ToArray();
+            }
+        }
+
+
         [HttpPost("DownloadPagePDF")]
         public async Task<IActionResult> GetPageDocumentDownload(string BookNo, string pageno)
         {

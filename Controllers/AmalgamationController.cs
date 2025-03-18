@@ -1,20 +1,14 @@
-﻿using BBMPCITZAPI.Database;
+﻿
 using BBMPCITZAPI.Models;
-using BBMPCITZAPI.Services;
 using BBMPCITZAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Reporting.Map.WebForms.BingMaps;
 using Newtonsoft.Json;
 using NUPMS_BA;
 using NUPMS_BO;
-using Oracle.ManagedDataAccess.Client;
-using Org.BouncyCastle.Ocsp;
 using System.Data;
 using static BBMPCITZAPI.Models.Amalgamation;
-using static BBMPCITZAPI.Models.ObjectionModels;
 
 namespace BBMPCITZAPI.Controllers
 {
@@ -40,7 +34,7 @@ namespace BBMPCITZAPI.Controllers
 
         }
         [HttpGet("GET_NCL_MUTATION_AMALGAMATION_MAIN")]   //existing 
-        public async Task<ActionResult> GET_NCL_MUTATION_AMALGAMATION_MAIN(string PropertyId,int ulbcode,Int64 MutatioAppl,bool IsAdd)
+        public async Task<ActionResult> GET_NCL_MUTATION_AMALGAMATION_MAIN(string PropertyId,int ulbcode,Int64 MutatioAppl,bool IsAdd,string LoginId)
         {
             _logger.LogInformation("GET request received at GET_NCL_MUTATION_AMALGAMATION_MAIN");
             try
@@ -72,7 +66,7 @@ namespace BBMPCITZAPI.Controllers
                                 {
                                     _AmalgamationService.INS_NCL_AMAL_APPL_MAIN(ulbcode, Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]), "crc");
                                     AmalFinal.MUTAPPLID = Convert.ToInt64(dataSet.Tables[0].Rows[0]["MUTTAPPLIID"]);
-                                    AmalFinal.LoginId = "CRC";
+                                    AmalFinal.LoginId = LoginId;
                                     AmalFinal.PROPERTYCODE = Convert.ToInt64(NpmPropDetail.Tables[0].Rows[0]["PROPERTYCODE"]);
                                     AmalFinal.UlbCode = ulbcode;
                                     _AmalgamationService.CopyNPMtoNMTMain(AmalFinal);
@@ -98,7 +92,7 @@ namespace BBMPCITZAPI.Controllers
                                 {
                                     _AmalgamationService.INS_NCL_AMAL_APPL_MAIN(ulbcode, Convert.ToInt64(dataSet.Tables[0].Rows[0]["NEW_MUTAAPPLID"]), "crc");
                                     AmalFinal.MUTAPPLID = Convert.ToInt64(dataSet.Tables[0].Rows[0]["NEW_MUTAAPPLID"]);
-                                    AmalFinal.LoginId = "CRC";
+                                    AmalFinal.LoginId = LoginId;
                                     AmalFinal.PROPERTYCODE = Convert.ToInt64(NpmPropDetail.Tables[0].Rows[0]["PROPERTYCODE"]);
                                     AmalFinal.UlbCode = ulbcode;
                                     _AmalgamationService.CopyNPMtoNMTMain(AmalFinal);
@@ -259,13 +253,7 @@ namespace BBMPCITZAPI.Controllers
             _logger.LogInformation("GET request received at INS_NCL_PROPERTY_OBJECTORS_FINAL_SUBMIT");
             try
             {
-                if (AmalFinal.AmalOrderDate != null)
-                {
-                    DateTime? documentDate = AmalFinal.AmalOrderDate;
-
-                    DateTime? d2 = documentDate?.AddDays(1);
-                    AmalFinal.AmalOrderDate = d2;
-                }
+                
                 var amal = _AmalgamationService.INS_NCL_PROPERTY_AMAL_FINAL_SUBMIT_APPL(AmalFinal);
                 var dataSet = _AmalgamationService.INS_NCL_PROPERTY_AMAL_FINAL_SUBMIT(AmalFinal);
                 int ApplNO;

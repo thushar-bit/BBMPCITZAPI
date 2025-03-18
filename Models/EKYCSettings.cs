@@ -44,6 +44,7 @@
         public string ESignServicesURL_ctz { get; set; }
         public string TempURl_ctz { get; set; }
         public string DraftURL { get; set; }
+        public string DraftMerge { get; set; }
     }
     public class BescomSettings
     {
